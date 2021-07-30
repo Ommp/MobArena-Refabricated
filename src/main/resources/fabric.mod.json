@@ -1,0 +1,24 @@
+{
+    "schemaVersion": 1,
+    "id": "mobarena-refabricated",
+    "version": "${version}",
+    "name": "MobArena: Refabricated",
+    "description": "Fight in arenas full of monsters to earn rewards.",
+    "authors": ["Adrian"],
+    "license": "LGPL-v3",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+          "mobarena.MobArena"
+        ]
+      },
+    "mixins": [],
+    "depends": {
+      "fabricloader": ">=0.11.3",
+      "fabric": "*",
+      "minecraft": "1.16.5"
+    },
+    "suggests": {
+      "another-mod": "*"
+    }
+  }
