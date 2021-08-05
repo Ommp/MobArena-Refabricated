@@ -20,8 +20,10 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 
-
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,6 +32,8 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import static net.minecraft.world.World.OVERWORLD;
 
 
 public class MobArena implements ModInitializer {
@@ -47,17 +51,21 @@ public class MobArena implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Initalised MobArena Mod for Minecraft v1.16");
 
-
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+//			String Position1 = {"a", "b", "c"};
 			dispatcher
 					.register(
-							CommandManager.literal("createarena").then(CommandManager.argument("name", StringArgumentType.greedyString()))
+							CommandManager.literal("createarena")
 									.executes(context -> {
-										System.out.println("Created an arena!");
-
+//										String arenaName = StringArgumentType.getString(context, "arenaname");
+//										World world = context.getSource().getEntityOrThrow().getEntityWorld();
+//										BlockPos pos1 = context.getSource().getEntityOrThrow().getBlockPos();
+										ArenaLocation pos1 = new ArenaLocation(OVERWORLD, 60, 65, 80);
+										ArenaLocation pos2 = new ArenaLocation(OVERWORLD, 80, 85, 100);
+										System.out.println("Created an arena at: ");
+										System.out.println(pos1);
 										return 1;
 									}));
-
 		});
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
 			dispatcher
