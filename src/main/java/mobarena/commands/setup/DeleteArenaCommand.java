@@ -4,17 +4,18 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.LiteralText;
 
 public class DeleteArenaCommand {
 
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("deletearena")
-                                    .then(CommandManager.argument("name", StringArgumentType.word()))
+                                    .then(CommandManager.argument("arenaname", StringArgumentType.word())
                                     .executes(context -> {
-                                        System.out.println("Deleted arena!");
-
+                                        String arenaName = StringArgumentType.getString(context, "arenaname");
+                                        context.getSource().sendFeedback(new LiteralText("Deleted arena: " + arenaName), true);
                                         return 1;
-                                    }));
+                                    })));
     }
 }
