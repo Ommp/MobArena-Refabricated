@@ -1,10 +1,12 @@
 package mobarena.commands.setup;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import mobarena.Arena;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -12,6 +14,9 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
+
+import java.io.*;
+import java.nio.file.Path;
 
 public class ArenaAddCommand {
 
@@ -40,10 +45,25 @@ public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
 
                             Arena arena = new Arena(arenaName, pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, world.getValue().toString());
 
-                            Gson gson = new Gson();
-                            String json = gson.toJson(arena);
+                            Gson gson = new GsonBuilder()
+                                    .setPrettyPrinting()
+                                    .create();
 
-                            context.getSource().sendFeedback(new LiteralText(json), true);
+                            String json = gson.toJson(arena);
+                            Path configFolder = FabricLoader.getInstance().getConfigDir();
+                            File arenas = new File(configFolder + "/arenas.json");
+                            try {
+                                arenas.createNewFile();
+                                FileOutputStream fOut = new FileOutputStream(arenas);
+                                OutputStreamWriter myOutWriter =new OutputStreamWriter(fOut);
+                                myOutWriter.append(json);
+                                myOutWriter.close();
+                                fOut.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            context.getSource().sendFeedback(new LiteralText(arenas.toString()), true);
                             return 1;
                     })))))))));
         }
