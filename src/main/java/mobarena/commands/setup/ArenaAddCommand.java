@@ -38,15 +38,12 @@ public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
                             context.getSource().sendFeedback(new LiteralText("From: " + pos1 + " to: " + pos2), true);
                             context.getSource().sendFeedback(new LiteralText("In world: " + world.getValue()), true);
 
+                            Arena arena = new Arena(arenaName, pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, world.getValue().toString());
+
                             Gson gson = new Gson();
-
-                            Arena arena = new Arena(arenaName, pos1, pos2, world);
-
-
                             String json = gson.toJson(arena);
 
                             context.getSource().sendFeedback(new LiteralText(json), true);
-
                             return 1;
                     })))))))));
         }
