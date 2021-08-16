@@ -4,7 +4,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import mobarena.database.Arena;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -12,8 +11,6 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
-
-import java.nio.file.Path;
 
 public class ArenaAddCommand {
 
@@ -36,11 +33,13 @@ public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
                             Vec3d pos1 = new Vec3d(DoubleArgumentType.getDouble(context, "x_1"), DoubleArgumentType.getDouble(context, "y_1"), DoubleArgumentType.getDouble(context, "z_1"));
                             Vec3d pos2 = new Vec3d(DoubleArgumentType.getDouble(context, "x_2"), DoubleArgumentType.getDouble(context, "y_2"), DoubleArgumentType.getDouble(context, "z_2"));
 
-                            context.getSource().sendFeedback(new LiteralText("Created arena: " + name), true);
-                            context.getSource().sendFeedback(new LiteralText("From: " + pos1 + " to: " + pos2), true);
-                            context.getSource().sendFeedback(new LiteralText("In world: " + world.getValue()), true);
+                            if (Arena.get(name) != null) {
+                                context.getSource().sendFeedback(new LiteralText("Error: Arena already exists!"), true);
+                                return 0;
+                            }
 
                             Arena.add(name, pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, world.getValue().toString());
+                            context.getSource().sendFeedback(new LiteralText("Successfully created arena."), true);
                             return 1;
                     })))))))));
         }
