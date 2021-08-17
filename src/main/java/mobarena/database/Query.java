@@ -49,6 +49,12 @@ public class Query {
         return 0;
     }
 
+    public float getFloat(String columnName) {
+        try {
+            return result.getFloat(columnName);
+        } catch (SQLException e) {error();}
+        return 0;
+    }
 
     public Query executeUpdate() {
         try {

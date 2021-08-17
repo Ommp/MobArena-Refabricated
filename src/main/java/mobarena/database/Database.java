@@ -23,19 +23,30 @@ public class Database {
                                         z_2 REAL,
                                         world VARCHAR(255)
                                     );
+                                    CREATE TABLE IF NOT EXISTS MainWarp (
+                                    arena VARCHAR(255),
+                                    x REAL,
+                                    y REAL,
+                                    z REAL,
+                                    yaw REAL,
+                                    pitch REAL,
+                                    world VARCHAR(255),
+                                    FOREIGN KEY(arena) REFERENCES Arena(name) ON DELETE CASCADE
+                                    );
+                                    
                     """).executeUpdate();
             MobArena.LOGGER.info("[MOBARENA]: Successfully connected to database.");
         } catch (SQLException e) {
             e.printStackTrace();
-            MobArena.LOGGER.info("Error connecting to and setting up database.");
+            MobArena.LOGGER.info("[MOBARENA]:Error connecting to and setting up database.");
         }
     }
     public static void disconnect() {
         try {
             conn.close();
-            MobArena.LOGGER.info("Successfully disconnected from database");
+            MobArena.LOGGER.info("[MOBARENA]:Successfully disconnected from database");
         } catch (SQLException e) {
-            MobArena.LOGGER.error("Error disconnecting from database");
+            MobArena.LOGGER.error("[MOBARENA]:Error disconnecting from database");
         }
     }
 }

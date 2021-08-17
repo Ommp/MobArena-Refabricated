@@ -34,9 +34,8 @@ public class MobArena implements ModInitializer {
 			DeleteArenaCommand.register(dispatcher);
 			FetchArenaCommand.register(dispatcher);
 			ListArenasCommand.register(dispatcher);
+			SetWarpCommand.register(dispatcher);
 		});
-
-
 	}
 
 	}
