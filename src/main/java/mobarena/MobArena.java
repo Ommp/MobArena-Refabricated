@@ -3,6 +3,7 @@ package mobarena;
 import mobarena.commands.FetchArenaCommand;
 import mobarena.commands.ListArenasCommand;
 import mobarena.commands.setup.*;
+import mobarena.commands.user.JoinCommand;
 import mobarena.database.Database;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
@@ -35,6 +36,7 @@ public class MobArena implements ModInitializer {
 			FetchArenaCommand.register(dispatcher);
 			ListArenasCommand.register(dispatcher);
 			SetWarpCommand.register(dispatcher);
+			JoinCommand.register(dispatcher);
 		});
 	}
 
