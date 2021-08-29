@@ -21,10 +21,12 @@ public class JoinCommand {
                             RegistryKey<World> world = Player.world.getRegistryKey();
                             String arenaName = StringArgumentType.getString(context, "arenaname");
 
-                            if (Warp.getMainWarp(arenaName) != null) {
-                                Warp mainWarp = Warp.getMainWarp(arenaName);
+                            //changed mainwarp to lobbywarp
+                            //TODO check for world
+                            if (Warp.getLobbyWarp(arenaName) != null) {
+                                Warp lobbyWarp = Warp.getLobbyWarp(arenaName);
                                 if (Player.isSleeping()) Player.wakeUp(true, true);
-                                Player.networkHandler.requestTeleport(mainWarp.x, mainWarp.y, mainWarp.z, mainWarp.yaw, mainWarp.pitch);
+                                Player.networkHandler.requestTeleport(lobbyWarp.x, lobbyWarp.y, lobbyWarp.z, lobbyWarp.yaw, lobbyWarp.pitch);
                                 return 1;
                             } else {
                                 context.getSource().sendFeedback(new LiteralText("Arena or warp does not exist!"), false);

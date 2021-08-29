@@ -23,7 +23,27 @@ public class Database {
                                         z_2 REAL,
                                         world VARCHAR(255)
                                     );
-                                    CREATE TABLE IF NOT EXISTS MainWarp (
+                                    CREATE TABLE IF NOT EXISTS LobbyWarp (
+                                    arena VARCHAR(255),
+                                    x REAL,
+                                    y REAL,
+                                    z REAL,
+                                    yaw REAL,
+                                    pitch REAL,
+                                    world VARCHAR(255),
+                                    FOREIGN KEY(arena) REFERENCES Arena(name) ON DELETE CASCADE
+                                    );
+                                    CREATE TABLE IF NOT EXISTS ArenaWarp (
+                                    arena VARCHAR(255),
+                                    x REAL,
+                                    y REAL,
+                                    z REAL,
+                                    yaw REAL,
+                                    pitch REAL,
+                                    world VARCHAR(255),
+                                    FOREIGN KEY(arena) REFERENCES Arena(name) ON DELETE CASCADE
+                                    );
+                                    CREATE TABLE IF NOT EXISTS ExitWarp (
                                     arena VARCHAR(255),
                                     x REAL,
                                     y REAL,

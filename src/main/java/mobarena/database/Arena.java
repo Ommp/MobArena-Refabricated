@@ -44,9 +44,13 @@ public class Arena {
         if (!query.success) {
             return null;
         }
-
-//        return new Arena(query.getString("name"), query.getDouble("x_1"), query.getDouble("y_1"), query.getDouble("z_1"), query.getDouble("x_2"), query.getDouble("y_2"), query.getDouble("x_2"), query.getString("world"));
         return new Arena(name, x_1, y_1, z_1, x_2, y_2, x_2, world);
+    }
+
+    public void deleteArena() {
+        new Query("DELETE FROM Arena WHERE name = ?;")
+                .set(name)
+                .executeUpdate();
     }
 
     public static ArrayList<Arena> all() {

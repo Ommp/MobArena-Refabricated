@@ -33,7 +33,7 @@ public class SetWarpCommand {
                                 return 0;
                             }
                             context.getSource().sendFeedback(new LiteralText(world.getValue().toString()), false);
-                            Warp.setMainWarp(name, Player.getX(),Player.getY(),Player.getZ(), Player.yaw, Player.pitch, world.getValue().toString());
+                            Warp.setArenaWarp(name, Player.getX(),Player.getY(),Player.getZ(), Player.yaw, Player.pitch, world.getValue().toString());
 
                             context.getSource().sendFeedback(new LiteralText("Successfully set warp."), false);
                             return 1;

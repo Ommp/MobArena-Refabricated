@@ -9,8 +9,28 @@ public class Warp {
     public float pitch;
     public String world;
 
-    public static Warp getMainWarp(String arenaName) {
-        Query query = new Query("SELECT * FROM MainWarp WHERE arena = ?;")
+    public static Warp getArenaWarp(String arenaName) {
+        Query query = new Query("SELECT * FROM ArenaWarp WHERE arena = ?;")
+                .set(arenaName)
+                .executeQuery();
+
+        if (!query.success) return null;
+        return new Warp(arenaName, query.getDouble("x"), query.getDouble("y"), query.getDouble("z"),
+                query.getFloat("yaw"), query.getFloat("pitch"), query.getString("world")
+        );
+    }
+    public static Warp getLobbyWarp(String arenaName) {
+        Query query = new Query("SELECT * FROM LobbyWarp WHERE arena = ?;")
+                .set(arenaName)
+                .executeQuery();
+
+        if (!query.success) return null;
+        return new Warp(arenaName, query.getDouble("x"), query.getDouble("y"), query.getDouble("z"),
+                query.getFloat("yaw"), query.getFloat("pitch"), query.getString("world")
+        );
+    }
+    public static Warp getExitWarp(String arenaName) {
+        Query query = new Query("SELECT * FROM ExitWarp WHERE arena = ?;")
                 .set(arenaName)
                 .executeQuery();
 
@@ -20,8 +40,9 @@ public class Warp {
         );
     }
 
-    public static Warp setMainWarp(String arenaName, double x, double y, double z, float yaw, float pitch, String world){
-        Query query = new Query("INSERT INTO MainWarp VALUES (?, ?, ?, ?, ?, ?, ?);")
+    public static Warp setArenaWarp(String arenaName, double x, double y, double z, float yaw, float pitch, String world){
+        //only if MainWarp null?
+        Query query = new Query("INSERT INTO ArenaWarp VALUES (?, ?, ?, ?, ?, ?, ?);")
                 .set(arenaName, x, y, z, yaw, pitch, world)
                 .executeUpdate();
         if (!query.success) return null;
