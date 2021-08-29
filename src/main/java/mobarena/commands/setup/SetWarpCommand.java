@@ -17,8 +17,7 @@ public class SetWarpCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("masetwarp")
                 .then(CommandManager.argument("name", StringArgumentType.word())
-                        //TODO add warp type argument
-//                .then(CommandManager.argument("warptype", StringArgumentType.word())
+                .then(CommandManager.argument("warptype", StringArgumentType.word())
 
                         .executes(context -> {
                             final ServerCommandSource source = context.getSource();
@@ -26,17 +25,30 @@ public class SetWarpCommand {
 
                             RegistryKey<World> world = Player.world.getRegistryKey();
                             String name = StringArgumentType.getString(context, "name");
+                            String warpType = StringArgumentType.getString(context, "warptype");
 
 
                             if (Arena.get(name) == null) {
                                 context.getSource().sendFeedback(new LiteralText("Error: That arena does not exist!"), true);
                                 return 0;
                             }
-                            context.getSource().sendFeedback(new LiteralText(world.getValue().toString()), false);
-                            Warp.setArenaWarp(name, Player.getX(),Player.getY(),Player.getZ(), Player.yaw, Player.pitch, world.getValue().toString());
+                            switch (warpType){
+                                case "arena":
+                                    Warp.setArenaWarp(name, Player.getX(),Player.getY(),Player.getZ(), Player.yaw, Player.pitch, world.getValue().toString());
+                                    break;
+                                case "lobby":
+                                    Warp.setLobbyWarp(name, Player.getX(),Player.getY(),Player.getZ(), Player.yaw, Player.pitch, world.getValue().toString());
+                                    break;
+                                case "exit":
+                                    Warp.setExitWarp(name, Player.getX(),Player.getY(),Player.getZ(), Player.yaw, Player.pitch, world.getValue().toString());
+                                    break;
+                                default:
+                                    context.getSource().sendFeedback(new LiteralText("Invalid warp type."), false);
+                                    return 0;
+                            }
 
-                            context.getSource().sendFeedback(new LiteralText("Successfully set warp."), false);
+                            context.getSource().sendFeedback(new LiteralText("Successfully set warp " + warpType), false);
                             return 1;
-                        })));
+                        }))));
     }
 }
