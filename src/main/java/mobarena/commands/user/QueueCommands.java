@@ -10,21 +10,26 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
-public class JoinCommand {
+public class QueueCommands {
+    public static ServerCommandSource source;
+    public static ServerPlayerEntity Player;
+    public static String arenaName;
+
+
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(CommandManager.literal("joinarena")
+        dispatcher.register(CommandManager.literal("majoin")
                 .then(CommandManager.argument("arenaname", StringArgumentType.word())
                         .executes(context -> {
-                            final ServerCommandSource source = context.getSource();
-                            ServerPlayerEntity Player = source.getPlayer();
+                            source = context.getSource();
+                            Player = source.getPlayer();
 
                             RegistryKey<World> world = Player.world.getRegistryKey();
-                            String arenaName = StringArgumentType.getString(context, "arenaname");
+                            arenaName = StringArgumentType.getString(context, "arenaname");
 
-                            //TODO check for world
                             if (Warp.getLobbyWarp(arenaName) != null) {
                                 Warp lobbyWarp = Warp.getLobbyWarp(arenaName);
                                 if (Player.isSleeping()) Player.wakeUp(true, true);
+                                //TODO check for world
                                 Player.networkHandler.requestTeleport(lobbyWarp.x, lobbyWarp.y, lobbyWarp.z, lobbyWarp.yaw, lobbyWarp.pitch);
                                 return 1;
                             } else {
@@ -32,5 +37,19 @@ public class JoinCommand {
                                 return 0;
                             }
                         })));
+
+        dispatcher.register(CommandManager.literal("maready")
+                .executes(context -> {
+                    if (Warp.getArenaWarp(arenaName) != null) {
+                        Warp arenaWarp = Warp.getArenaWarp(arenaName);
+                        if (Player.isSleeping()) Player.wakeUp(true, true);
+                        //TODO check for world
+                        Player.networkHandler.requestTeleport(arenaWarp.x, arenaWarp.y, arenaWarp.z, arenaWarp.yaw, arenaWarp.pitch);
+                        return 1;
+                    } else {
+                        context.getSource().sendFeedback(new LiteralText("Warp has not been set up or is unavailable"), false);
+                        return 0;
+                    }
+                }));
     }
 }
