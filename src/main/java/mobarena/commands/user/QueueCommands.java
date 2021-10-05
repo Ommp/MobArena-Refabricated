@@ -10,10 +10,16 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 public class QueueCommands {
-    public static ServerCommandSource source;
-    public static ServerPlayerEntity Player;
-    public static String arenaName;
+    private static ServerCommandSource source;
+    private static ServerPlayerEntity Player;
+    private static String arenaName;
+    private static ArrayList<UUID> joinedPlayers = new ArrayList<>();
+    private static ArrayList<UUID> readyPlayers = new ArrayList<>();
+    private static ArrayList<UUID> activePlayers = new ArrayList<>();
 
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
@@ -30,10 +36,16 @@ public class QueueCommands {
                                 Warp lobbyWarp = Warp.getLobbyWarp(arenaName);
                                 if (Player.isSleeping()) Player.wakeUp(true, true);
                                 //TODO check for world
+                                joinedPlayers.add(Player.getUuid());
                                 Player.networkHandler.requestTeleport(lobbyWarp.x, lobbyWarp.y, lobbyWarp.z, lobbyWarp.yaw, lobbyWarp.pitch);
                                 return 1;
-                            } else {
-                                context.getSource().sendFeedback(new LiteralText("Arena or warp does not exist!"), false);
+                            } else if(activePlayers.size() >= 1){
+                                source.sendFeedback(new LiteralText("Arena is busy: there are still players in that arena."), false);
+                                return 0;
+                            }
+
+                            else {
+                                source.sendFeedback(new LiteralText("Arena or warp does not exist!"), false);
                                 return 0;
                             }
                         })));
@@ -44,10 +56,31 @@ public class QueueCommands {
                         Warp arenaWarp = Warp.getArenaWarp(arenaName);
                         if (Player.isSleeping()) Player.wakeUp(true, true);
                         //TODO check for world
-                        Player.networkHandler.requestTeleport(arenaWarp.x, arenaWarp.y, arenaWarp.z, arenaWarp.yaw, arenaWarp.pitch);
+                        readyPlayers.add(Player.getUuid());
+                        joinedPlayers.remove(Player.getUuid());
+                        if(joinedPlayers.isEmpty() & readyPlayers.size() >= 1) {
+                            Player.networkHandler.requestTeleport(arenaWarp.x, arenaWarp.y, arenaWarp.z, arenaWarp.yaw, arenaWarp.pitch);
+                            joinedPlayers.add(Player.getUuid());
+                            readyPlayers.remove(Player.getUuid());
+                        }
                         return 1;
                     } else {
-                        context.getSource().sendFeedback(new LiteralText("Warp has not been set up or is unavailable"), false);
+                        source.sendFeedback(new LiteralText("Warp has not been set up or is unavailable"), false);
+                        return 0;
+                    }
+                }));
+
+        dispatcher.register(CommandManager.literal("maleave")
+                .executes(context -> {
+                    if (Warp.getExitWarp(arenaName) != null) {
+                        Warp exitWarp = Warp.getExitWarp(arenaName);
+                        if (Player.isSleeping()) Player.wakeUp(true, true);
+                        //TODO check for world
+                        activePlayers.remove(Player.getUuid());
+                        Player.networkHandler.requestTeleport(exitWarp.x, exitWarp.y, exitWarp.z, exitWarp.yaw, exitWarp.pitch);
+                        return 1;
+                    } else {
+                        source.sendFeedback(new LiteralText("Warp has not been set up or is unavailable"), false);
                         return 0;
                     }
                 }));
