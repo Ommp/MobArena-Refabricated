@@ -1,3 +1,6 @@
 fabric-example-mod/
 .gradle/
 build/
+.vscode/
+.idea/
+run/
