@@ -3,10 +3,17 @@ package mobarena.commands.user;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import mobarena.database.Warp;
+import net.minecraft.block.Block;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
@@ -54,14 +61,22 @@ public class QueueCommands {
                 .executes(context -> {
                     if (Warp.getArenaWarp(arenaName) != null) {
                         Warp arenaWarp = Warp.getArenaWarp(arenaName);
+
                         if (Player.isSleeping()) Player.wakeUp(true, true);
-                        //TODO check for world
+
                         readyPlayers.add(Player.getUuid());
                         joinedPlayers.remove(Player.getUuid());
+
                         if(joinedPlayers.isEmpty() & readyPlayers.size() >= 1) {
                             Player.networkHandler.requestTeleport(arenaWarp.x, arenaWarp.y, arenaWarp.z, arenaWarp.yaw, arenaWarp.pitch);
-                            joinedPlayers.add(Player.getUuid());
+                            activePlayers.add(Player.getUuid());
                             readyPlayers.remove(Player.getUuid());
+                            BlockPos MobSpawnPoint = Player.getBlockPos();
+                            MobSpawnPoint = MobSpawnPoint.up(4).east(-2).south(-2);
+                            ZombieEntity zombieEntity = EntityType.ZOMBIE.create(source.getWorld());
+                            zombieEntity.refreshPositionAndAngles(MobSpawnPoint, 0.0F, 0.0F);
+                            World world = Player.world;
+                            world.spawnEntity(zombieEntity);
                         }
                         return 1;
                     } else {

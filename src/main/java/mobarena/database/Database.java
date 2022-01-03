@@ -15,12 +15,6 @@ public class Database {
             new Query("""
                                     CREATE TABLE IF NOT EXISTS Arena (
                                         name VARCHAR(255) PRIMARY KEY,
-                                        x_1 REAL,
-                                        y_1 REAL,
-                                        z_1 REAL,
-                                        x_2 REAL,
-                                        y_2 REAL,
-                                        z_2 REAL,
                                         world VARCHAR(255)
                                     );
                                     CREATE TABLE IF NOT EXISTS LobbyWarp (
@@ -53,6 +47,9 @@ public class Database {
                                     world VARCHAR(255),
                                     FOREIGN KEY(arena) REFERENCES Arena(name) ON DELETE CASCADE
                                     );
+                                    /*
+                                    CREATE TABLE IF NOT EXISTS ArenaArea
+                                    */
                                     
                     """).executeUpdate();
             MobArena.LOGGER.info("[MOBARENA]: Successfully connected to database.");
