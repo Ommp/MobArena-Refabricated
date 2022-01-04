@@ -3,30 +3,25 @@ package mobarena.commands.user;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import mobarena.database.Warp;
-import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.ZombieEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class QueueCommands {
     private static ServerCommandSource source;
     private static ServerPlayerEntity Player;
     private static String arenaName;
-    private static ArrayList<UUID> joinedPlayers = new ArrayList<>();
-    private static ArrayList<UUID> readyPlayers = new ArrayList<>();
-    private static ArrayList<UUID> activePlayers = new ArrayList<>();
+    static ArrayList<UUID> joinedPlayers = new ArrayList<>();
+    static ArrayList<UUID> readyPlayers = new ArrayList<>();
+    static ArrayList<UUID> activePlayers = new ArrayList<>();
 
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
@@ -36,7 +31,6 @@ public class QueueCommands {
                             source = context.getSource();
                             Player = source.getPlayer();
 
-                            RegistryKey<World> world = Player.world.getRegistryKey();
                             arenaName = StringArgumentType.getString(context, "arenaname");
 
                             if (Warp.getLobbyWarp(arenaName) != null) {
@@ -70,11 +64,19 @@ public class QueueCommands {
                         if(joinedPlayers.isEmpty() & readyPlayers.size() >= 1) {
                             Player.networkHandler.requestTeleport(arenaWarp.x, arenaWarp.y, arenaWarp.z, arenaWarp.yaw, arenaWarp.pitch);
                             activePlayers.add(Player.getUuid());
-                            readyPlayers.remove(Player.getUuid());
-                            BlockPos MobSpawnPoint = Player.getBlockPos();
-                            MobSpawnPoint = MobSpawnPoint.up(4).east(-2).south(-2);
+                            readyPlayers.clear();
+
+                            BlockPos mobSpawnPointTest = new BlockPos(Player.getBlockPos());
+                            BlockPos mobSpawnPointTest2 = new BlockPos(Player.getBlockPos().getX()+3, Player.getBlockPos().getY()+1, Player.getBlockPos().getZ()+2);
+
+                            List<BlockPos> mobSpawnPointList = new ArrayList<>();
+                            mobSpawnPointList.add(mobSpawnPointTest);
+                            mobSpawnPointList.add(mobSpawnPointTest2);
+
+                            BlockPos randomSpawnPoint = mobSpawnPointList.get(ThreadLocalRandom.current().nextInt(mobSpawnPointList.size()));
+
                             ZombieEntity zombieEntity = EntityType.ZOMBIE.create(source.getWorld());
-                            zombieEntity.refreshPositionAndAngles(MobSpawnPoint, 0.0F, 0.0F);
+                            zombieEntity.refreshPositionAndAngles(randomSpawnPoint, 0.0F, 0.0F);
                             World world = Player.world;
                             world.spawnEntity(zombieEntity);
                         }
