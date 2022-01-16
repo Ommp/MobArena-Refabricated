@@ -1,18 +1,32 @@
 package mobarena;
 
-import mobarena.commands.FetchArenaCommand;
-import mobarena.commands.ListArenasCommand;
-import mobarena.commands.setup.*;
-import mobarena.commands.user.QueueCommands;
-import mobarena.database.Database;
+import mobarena.items.GuiItem;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
 public class MobArena implements ModInitializer {
+
+	private ArenaMaster arenaMaster;
+
+	private void setupArenaMaster() {
+		ArenaMaster arenaMaster = new ArenaMaster();
+	}
+
+	private void setup() {
+		setupArenaMaster();
+	}
+
+
+
+	public static Item GUI_ITEM = new GuiItem(new Item.Settings().group(ItemGroup.MISC));
 
     public static final String MOD_ID = "mobarena";
     public static final Logger LOGGER = LogManager.getLogger("mobarena");
@@ -27,17 +41,12 @@ public class MobArena implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Initalised MobArena Mod for Minecraft v1.16");
-		Database.connect();
 
-		//register commands
-		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-			ArenaAddCommand.register(dispatcher);
-			DeleteArenaCommand.register(dispatcher);
-			FetchArenaCommand.register(dispatcher);
-			ListArenasCommand.register(dispatcher);
-			SetWarpCommand.register(dispatcher);
-			QueueCommands.register(dispatcher);
-		});
+		Registry.register(Registry.ITEM, new Identifier("mobarena", "gui_item"), GUI_ITEM);
+
+
 	}
+
+//	ServerWorldEvents.Load
 
 	}

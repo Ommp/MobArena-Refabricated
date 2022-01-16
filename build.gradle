@@ -15,6 +15,10 @@ repositories {
 		url 'https://repo.maven.apache.org/maven2'
 		name 'Maven Central'
 	}
+	maven {
+		name = "CottonMC"
+		url = "https://server.bbkr.space/artifactory/libs-release"
+	}
 
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
@@ -32,8 +36,7 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	include "com.h2database:h2:1.4.200"
-
+	modImplementation include("io.github.cottonmc:LibGui:3.4.0+1.16.5")
 }
 
 processResources {
