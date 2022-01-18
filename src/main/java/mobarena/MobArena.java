@@ -5,7 +5,9 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +24,13 @@ public class MobArena implements ModInitializer {
 
 	private void setup() {
 		setupArenaMaster();
+	}
+
+	public static void setupArenaObject(String name){
+		Arena arena = new Arena(name);
+		Location lobbyWarp = new Location(new BlockPos(10,50,10),0,0);
+		arena.setLobbyWarp(lobbyWarp);
+
 	}
 
 
@@ -43,7 +52,6 @@ public class MobArena implements ModInitializer {
 		LOGGER.info("Initalised MobArena Mod for Minecraft v1.16");
 
 		Registry.register(Registry.ITEM, new Identifier("mobarena", "gui_item"), GUI_ITEM);
-
 
 	}
 
