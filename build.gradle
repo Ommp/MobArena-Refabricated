@@ -37,6 +37,8 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	modImplementation include("io.github.cottonmc:LibGui:3.4.0+1.16.5")
+
+	implementation 'com.electronwill.night-config:yaml:3.6.5'
 }
 
 processResources {

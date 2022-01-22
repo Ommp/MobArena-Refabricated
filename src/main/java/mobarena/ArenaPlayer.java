@@ -6,7 +6,7 @@ public class ArenaPlayer {
     private ServerPlayerEntity player;
     private boolean isDead;
 
-    public ArenaPlayer(ServerPlayerEntity player, Arena arena){
+    public ArenaPlayer(ServerPlayerEntity player, Arena arena, MobArena mod){
         this.player = player;
     }
 

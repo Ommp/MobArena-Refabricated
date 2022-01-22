@@ -1,113 +1,51 @@
 package mobarena;
 
-
-
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
-public class ArenaMaster {
+public interface ArenaMaster {
+    MobArena getMod();
 
-    private List<Arena> arenas;
-    private Map<ServerPlayerEntity, Arena> arenaMap;
+    List<Arena> getArenas();
 
+    void addPlayer(ServerPlayerEntity player, Arena arena);
 
-    public ArenaMaster() {
-        this.arenas = new ArrayList<>();
-        this.arenaMap = new HashMap<>();
-    }
+    Arena removePlayer(ServerPlayerEntity player);
 
-    public List<Arena> getArenas() {
-        return arenas;
-    }
+    Arena getArenaWithName(Collection<Arena> arenas, String name);
 
-    public void addPlayer(ServerPlayerEntity player, Arena arena) {
-        arenaMap.put(player, arena);
-    }
+    Arena getArenaWithName(String name);
 
-    public Arena removePlayer(ServerPlayerEntity player) {
-        return arenaMap.remove(player);
-    }
+    List<Arena> getArenasInWorld(ServerWorld world);
 
-    public Arena getArenaWithName(Collection<Arena> arenas, String name) {
-        return getArenaWithName(this.arenas, name);
-    }
+    List<ServerPlayerEntity> getAllPlayers();
 
-    public Arena getArenaWithName(String name) {
-        return getArenaWithName(this.arenas, name);
-    }
+    List<ServerPlayerEntity> getAllPlayersInArena(String name);
 
-    public List<Arena> getArenasInWorld(ServerWorld world) {
-        List<Arena> result = new ArrayList<>(arenas.size());
-        for (Arena arena : arenas)
-            if (arena.getWorld().equals(world))
-                result.add(arena);
-        return result;
-    }
+    List<ServerPlayerEntity> getAllLivingPlayers();
 
-    public List<ServerPlayerEntity> getAllPlayers() {
-        List<ServerPlayerEntity> result = new ArrayList<>(arenas.size());
-        for (Arena arena : arenas)
-            result.addAll(arena.getAllPlayers());
-        return result;
-    }
+    List<ServerPlayerEntity> getLivingPlayersInArena(String arenaName);
 
-    public List<ServerPlayerEntity> getAllPlayersInArena(String name) {
-        Arena arena = getArenaWithName(name);
-        return (arena != null) ? new ArrayList<>(arena.getPlayersInArena()) : new ArrayList<>();
-    }
+    Arena getArenaWithPlayer(ServerPlayerEntity player);
 
-    public List<ServerPlayerEntity> getAllLivingPlayers() {
-        List<ServerPlayerEntity> result = new ArrayList<>();
-        for (Arena arena : arenas)
-            result.addAll(arena.getPlayersInArena());
-        return result;
-    }
+    Arena getArenaWithSpectator(ServerPlayerEntity player);
 
-    public List<ServerPlayerEntity> getLivingPlayersInArena(String arenaName) {
-        Arena arena = getArenaWithName(arenaName);
-        return (arena != null) ? new ArrayList<>(arena.getPlayersInArena()) : new ArrayList<>();
-    }
+    Arena getArenaAtLocation(ServerWorld w, BlockPos l);
 
-    public Arena getArenaWithPlayer(ServerPlayerEntity player) {
-        return arenaMap.get(player);
-    }
+    boolean isEnabled();
 
-    public Arena getArenaWithSpectator(ServerPlayerEntity player) {
-        for (Arena arena : arenas) {
-            if (arena.getSpectators().contains(player))
-                return arena;
-        }
-        return null;
-    }
+    void setEnabled(boolean value);
 
-//    public void loadArenasInWorld(String worldName) {
-////        Set<String> arenaNames = config.getConfigurationSection("arenas").getKeys(false);
-//
-//        List<Arena> arenas = new ArrayList<>();
-//        for (String arenaName : arenaNames) {
-//            Arena arena = getArenaWithName(arenaName);
-//            if (arena != null) continue;
-//
-//            Arena loaded = loadArena(arenaName);
-//            if (loaded != null) {
-//                arenas.add(loaded);
-//            }
-//        }
-//    }
+    void reloadConfig();
 
+    void saveConfig();
 
-    private Arena loadArena(String name) {
-
-//        ServerWorld world;
-
-//        Arena arena = new Arena(name, world);
-        Arena arena = new Arena(name);
-        return arena;
-    }
-
-
-
+    Arena getArenaWithMonster(Entity e);
 
 }

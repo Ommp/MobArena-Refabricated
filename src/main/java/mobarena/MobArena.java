@@ -1,39 +1,70 @@
 package mobarena;
 
+import com.electronwill.nightconfig.core.file.FileConfig;
+import mobarena.config.LoadsConfigFile;
 import mobarena.items.GuiItem;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 
 public class MobArena implements ModInitializer {
 
 	private ArenaMaster arenaMaster;
 
-	private void setupArenaMaster() {
-		ArenaMaster arenaMaster = new ArenaMaster();
-	}
+	private Throwable lastFailureCause;
+	private FileConfig config;
+	private LoadsConfigFile loadsConfigFile;
 
 	private void setup() {
 		setupArenaMaster();
+//		setup other things...
 	}
 
-	public static void setupArenaObject(String name){
-		Arena arena = new Arena(name);
-		Location lobbyWarp = new Location(new BlockPos(10,50,10),0,0);
-		arena.setLobbyWarp(lobbyWarp);
-
+	private void setupArenaMaster() {
+		arenaMaster = new ArenaMasterImpl(this);
 	}
 
+	public ArenaMaster getArenaMaster() {
+		return arenaMaster;
+	}
 
+	public Throwable getLastFailureCause() {
+		return lastFailureCause;
+	}
+
+	public void saveConfig() {
+		getConfig().save();
+	}
+
+	public FileConfig getConfig() {
+		if (config == null) {
+			reloadConfig();
+		}
+		return config;
+	}
+
+	public void reloadConfig() {
+		if (loadsConfigFile == null) {
+			loadsConfigFile = new LoadsConfigFile(this);
+		}
+		config = loadsConfigFile.load();
+	}
+
+	public void reload(){
+		reloadConfig();
+		reloadArenaMaster();
+	}
+
+	private void reloadArenaMaster(){
+		arenaMaster.getArenas().forEach(Arena::endArena);
+	}
 
 	public static Item GUI_ITEM = new GuiItem(new Item.Settings().group(ItemGroup.MISC));
 
@@ -46,15 +77,17 @@ public class MobArena implements ModInitializer {
 		LOGGER.log(level, logPrefix.concat(message));
 	}
 
-
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Initalised MobArena Mod for Minecraft v1.16");
+		LOGGER.info("Initialised MobArena Mod for Minecraft v1.16");
 
 		Registry.register(Registry.ITEM, new Identifier("mobarena", "gui_item"), GUI_ITEM);
 
+		setup();
+
+		loadsConfigFile = new LoadsConfigFile(this);
+		loadsConfigFile.load();
 	}
 
-//	ServerWorldEvents.Load
 
-	}
+}

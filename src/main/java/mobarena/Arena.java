@@ -1,110 +1,76 @@
 package mobarena;
 
+import mobarena.region.ArenaRegion;
+import net.minecraft.block.Block;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
-public class Arena {
+public interface Arena {
+    String getName();
 
-     private String name;
-     private ServerWorld world;
-     private Location lobbyWarp;
+    void setName(String name);
 
-     private Set<ServerPlayerEntity> arenaPlayers, lobbyPlayers, specPlayers, deadPlayers, readyPlayers;
-     private Map<ServerPlayerEntity,ArenaPlayer> arenaPlayerMap;
+    ServerWorld getWorld();
 
+    void setWorld(ServerWorld world);
 
+    BlockPos getLobbyWarp();
 
-//     Set<ServerPlayerEntity> playersInSpec;
+    void setLobbyWarp(BlockPos lobbyWarp);
 
+    List<ServerPlayerEntity> getAllPlayers();
 
-     public Arena(String name, ServerWorld world) {
-          if (world == null)
-               throw new NullPointerException("[MobArena] ERROR! World for arena '" + name + "' does not exist!");
+    Collection<ArenaPlayer> getArenaPlayerSet();
 
-          this.name = name;
-          this.world = world;
-          this.arenaPlayerMap = new HashMap<>();
-          this.arenaPlayers   = new HashSet<>();
-          this.lobbyPlayers   = new HashSet<>();
-          this.readyPlayers   = new HashSet<>();
-          this.specPlayers    = new HashSet<>();
-          this.deadPlayers    = new HashSet<>();
-     }
+    List<ServerPlayerEntity> getNonreadyPlayers();
 
+    Set<ServerPlayerEntity> getReadyPlayersInLobby();
 
-//     Temporarily used until I figure out how to access "the world" without using a method on a player running a command
-     public Arena(String name) {
-          this.name = name;
-          this.arenaPlayerMap = new HashMap<>();
-          this.arenaPlayers   = new HashSet<>();
-          this.lobbyPlayers   = new HashSet<>();
-          this.readyPlayers   = new HashSet<>();
-          this.specPlayers    = new HashSet<>();
-          this.deadPlayers    = new HashSet<>();
-     }
+    Set<ServerPlayerEntity> getSpectators();
 
-     public String getName() {
-          return name;
-     }
+    Set<ServerPlayerEntity> getPlayersInArena();
 
-     public void setName(String name) {
-          this.name = name;
-     }
+    MobArena getMod();
 
-     public ServerWorld getWorld() {
-          return world;
-     }
+    ArenaRegion getRegion();
 
-     public void setWorld(ServerWorld world) {
-          this.world = world;
-     }
+    boolean playerJoin(ServerPlayerEntity p, BlockPos loc);
 
-     public Location getLobbyWarp() {
-          return lobbyWarp;
-     }
+    void playerReady(ServerPlayerEntity p);
 
-     public void setLobbyWarp(Location lobbyWarp) {
-          this.lobbyWarp = lobbyWarp;
-     }
+    boolean startArena();
 
-     public List<ServerPlayerEntity> getAllPlayers(){
-          List<ServerPlayerEntity> result = new LinkedList<>();
-          result.addAll(arenaPlayers);
-          result.addAll(lobbyPlayers);
-          result.addAll(specPlayers);
+    boolean endArena();
 
-          return result;
-     }
+    boolean inArena(ServerPlayerEntity p);
 
-     public Collection<ArenaPlayer> getArenaPlayerSet()
-     {
-          return arenaPlayerMap.values();
-     }
+    boolean inLobby(ServerPlayerEntity p);
 
-     public List<ServerPlayerEntity> getNonreadyPlayers()
-     {
-          List<ServerPlayerEntity> result = new LinkedList<>();
-          result.addAll(lobbyPlayers);
-          result.removeAll(readyPlayers);
-          return result;
-     }
+    boolean inSpec(ServerPlayerEntity p);
 
-     public Set<ServerPlayerEntity> getReadyPlayersInLobby() {
-          return Collections.unmodifiableSet(readyPlayers);
-     }
+    boolean isDead(ServerPlayerEntity p);
 
-     public Set<ServerPlayerEntity> getSpectators() {
-          return Collections.unmodifiableSet(specPlayers);
-     }
+    boolean isRunning();
 
-     public Set<ServerPlayerEntity> getPlayersInArena() {
-          return Collections.unmodifiableSet(arenaPlayers);
-     }
+    boolean inEditMode();
 
+    void setEditMode(boolean value);
 
+    Set<Block> getBlocks();
 
+    void addBlock(Block b);
 
+    boolean removeBlock(Block b);
+
+    void forceEnd();
+
+    MonsterManager getMonsterManager();
+
+    boolean isEnabled();
 
 }

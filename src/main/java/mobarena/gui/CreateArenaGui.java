@@ -4,8 +4,11 @@ import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WButton;
 import io.github.cottonmc.cotton.gui.widget.WGridPanel;
 import io.github.cottonmc.cotton.gui.widget.WLabel;
+import mobarena.Arena;
+import mobarena.Location;
 import mobarena.MobArena;
 import net.minecraft.text.LiteralText;
+import net.minecraft.util.math.BlockPos;
 
 
 public class CreateArenaGui extends LightweightGuiDescription {
@@ -22,7 +25,12 @@ public class CreateArenaGui extends LightweightGuiDescription {
         root.add(label, 20,20);
 
 
-          button.setOnClick(() -> MobArena.setupArenaObject("test"));
+          button.setOnClick(() -> {
+//              Arena arena = new Arena("test");
+//              Location lobbyWarp = new Location(new BlockPos(10,50,10),0,0);
+              MobArena.LOGGER.info("Arena button test");
+              
+          });
           root.validate(this);
 
 
