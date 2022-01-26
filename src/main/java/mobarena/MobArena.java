@@ -1,7 +1,9 @@
 package mobarena;
 
-import com.electronwill.nightconfig.core.file.FileConfig;
-import mobarena.config.LoadsConfigFile;
+import com.google.gson.JsonObject;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
+import mobarena.config.MobArenaConfig;
 import mobarena.items.GuiItem;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.item.Item;
@@ -19,8 +21,10 @@ public class MobArena implements ModInitializer {
 	private ArenaMaster arenaMaster;
 
 	private Throwable lastFailureCause;
-	private FileConfig config;
-	private LoadsConfigFile loadsConfigFile;
+
+	public static MobArenaConfig config;
+
+	public static JsonObject arenaData;
 
 	private void setup() {
 		setupArenaMaster();
@@ -39,29 +43,6 @@ public class MobArena implements ModInitializer {
 		return lastFailureCause;
 	}
 
-	public void saveConfig() {
-		getConfig().save();
-	}
-
-	public FileConfig getConfig() {
-		if (config == null) {
-			reloadConfig();
-		}
-		return config;
-	}
-
-	public void reloadConfig() {
-		if (loadsConfigFile == null) {
-			loadsConfigFile = new LoadsConfigFile(this);
-		}
-		config = loadsConfigFile.load();
-	}
-
-	public void reload(){
-		reloadConfig();
-		reloadArenaMaster();
-	}
-
 	private void reloadArenaMaster(){
 		arenaMaster.getArenas().forEach(Arena::endArena);
 	}
@@ -70,7 +51,6 @@ public class MobArena implements ModInitializer {
 
     public static final String MOD_ID = "mobarena";
     public static final Logger LOGGER = LogManager.getLogger("mobarena");
-
 
 	public static void log(Level level, String message) {
 		final String logPrefix = "[MobArena]: ";
@@ -85,9 +65,7 @@ public class MobArena implements ModInitializer {
 
 		setup();
 
-		loadsConfigFile = new LoadsConfigFile(this);
-		loadsConfigFile.load();
+		AutoConfig.register(MobArenaConfig.class, GsonConfigSerializer::new);
+		MobArenaConfig config = AutoConfig.getConfigHolder(MobArenaConfig.class).getConfig();
 	}
-
-
 }

@@ -38,13 +38,9 @@ public interface ArenaMaster {
 
     Arena getArenaAtLocation(ServerWorld w, BlockPos l);
 
-    boolean isEnabled();
-
-    void setEnabled(boolean value);
-
-    void reloadConfig();
-
-    void saveConfig();
+//    void reloadConfig();
+//
+//    void saveConfig();
 
     Arena getArenaWithMonster(Entity e);
 

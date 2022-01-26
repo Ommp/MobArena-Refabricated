@@ -19,6 +19,9 @@ repositories {
 		name = "CottonMC"
 		url = "https://server.bbkr.space/artifactory/libs-release"
 	}
+	maven {
+		url "https://maven.shedaniel.me/"
+	}
 
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
@@ -38,7 +41,7 @@ dependencies {
 
 	modImplementation include("io.github.cottonmc:LibGui:3.4.0+1.16.5")
 
-	implementation 'com.electronwill.night-config:yaml:3.6.5'
+	modApi("me.shedaniel.cloth:cloth-config-fabric:4.13.49")
 }
 
 processResources {
