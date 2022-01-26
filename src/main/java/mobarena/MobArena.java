@@ -1,8 +1,5 @@
 package mobarena;
 
-import com.google.gson.JsonObject;
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import mobarena.config.MobArenaConfig;
 import mobarena.items.GuiItem;
 import net.fabricmc.api.ModInitializer;
@@ -14,17 +11,13 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-
 public class MobArena implements ModInitializer {
 
 	private ArenaMaster arenaMaster;
 
 	private Throwable lastFailureCause;
 
-	public static MobArenaConfig config;
-
-	public static JsonObject arenaData;
+	public static final MobArenaConfig config = MobArenaConfig.getInstance();
 
 	private void setup() {
 		setupArenaMaster();
@@ -64,8 +57,6 @@ public class MobArena implements ModInitializer {
 		Registry.register(Registry.ITEM, new Identifier("mobarena", "gui_item"), GUI_ITEM);
 
 		setup();
-
-		AutoConfig.register(MobArenaConfig.class, GsonConfigSerializer::new);
-		MobArenaConfig config = AutoConfig.getConfigHolder(MobArenaConfig.class).getConfig();
+//		config.arenas.add()
 	}
 }

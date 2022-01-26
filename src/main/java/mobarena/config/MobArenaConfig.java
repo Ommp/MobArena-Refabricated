@@ -1,33 +1,34 @@
 package mobarena.config;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import me.shedaniel.autoconfig.ConfigData;
-import me.shedaniel.autoconfig.annotation.Config;
-import me.shedaniel.autoconfig.annotation.ConfigEntry;
-import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
-import mobarena.MobArena;
+import net.fabricmc.loader.api.FabricLoader;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
-@Config(name=MobArena.MOD_ID)
-public class MobArenaConfig implements ConfigData {
+public class MobArenaConfig {
 
-    @ConfigEntry.Gui.CollapsibleObject
-    public GlobalSettings globalSettings = new GlobalSettings();
+    private static MobArenaConfig INSTANCE=null;
 
-    @ConfigEntry.Gui.CollapsibleObject
-    public ArenaList arenaList = new ArenaList();
 
-    public static class ArenaList {
+    public boolean globalEnabled = true;
 
-        @ConfigEntry.Gui.CollapsibleObject
-        Arena arena = new Arena();
+    public JsonObject arenasJsonObject;
+
+    public class ArenaContainer {
+        public List<ArenaTemplate> arenasList;
     }
 
-    public static class Arena {
+    public class ArenaTemplate {
         public String name;
+
         public int dimensionId;
-        public boolean enabled = true;
+        public boolean arenaEnabled = true;
 
         public List<Double> arenaWarp;
         public List<Double> lobbyWarp;
@@ -39,7 +40,47 @@ public class MobArenaConfig implements ConfigData {
         public List<Integer> p1, p2, l1, l2;
     }
 
-    public static class GlobalSettings {
-        public boolean enabled = true;
+
+    public static void loadConfig() {
+        INSTANCE = new MobArenaConfig();
+        Gson gson = new Gson();
+        File configFile = new File(FabricLoader.getInstance().getConfigDir().toString(), "mobarena.json");
+
+        try (FileReader reader = new FileReader(configFile)) {
+            INSTANCE = gson.fromJson(reader, MobArenaConfig.class);
+            System.out.println("Config: " + INSTANCE);
+
+            try (FileWriter writer = new FileWriter(configFile)) {
+                writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(INSTANCE));
+                System.out.println("Config updated");
+            } catch (IOException e2) {
+                System.out.println("Failed to update config file");
+                }
+
+            System.out.println("Config loaded");
+            }
+            catch (IOException e) {
+                System.out.println("No config found, generating one...");
+                INSTANCE = new MobArenaConfig();
+
+                try (FileWriter writer = new FileWriter(configFile)) {
+                    writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(INSTANCE));
+                } catch (IOException e2) {
+                    System.out.println("Failed to generate config file!");
+                }
+            }
     }
+
+    public static void saveConfig() {
+
+    }
+
+    public static MobArenaConfig getInstance() {
+        if (INSTANCE == null) {
+            loadConfig();
+        }
+        return INSTANCE;
+    }
+
+
 }
