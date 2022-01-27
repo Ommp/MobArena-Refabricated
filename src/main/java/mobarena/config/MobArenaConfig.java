@@ -16,8 +16,6 @@ public class MobArenaConfig {
 
     public boolean globalEnabled = true;
 
-
-
 //        public String name;
 //
 //        public int dimensionId;
@@ -33,42 +31,30 @@ public class MobArenaConfig {
 //        public List<Integer> p1, p2, l1, l2;
 
 
-    public JsonObject ArenaDataTemplate(String name, int dimensionId, boolean arenaEnabled,
-                                        List<Double> arenaWarp, List<Double> lobbyWarp, List<Double> exitWarp, List<Double> specWarp,
-                                        List<Float> arenaWarpYawPitch,  List<Float> lobbyWarpYawPitch,  List<Float> exitWarpPitch,  List<Float> specWarpYawPitch,
-                                        ArrayList<Integer> p1, List<Integer> p2, List<Integer> l1, List<Integer> l2) {
-
-        JsonArray pointOne = new JsonArray();
-        pointOne.addAll(arenaWarp);
-
-//        JsonArray arenaWarpTest = new JsonArray();
-//        arenaWarpTest.add(50);
-//        arenaWarpTest.add(50.5);
-//        arenaWarpTest.add(70.5);
-//
-//        arena.add("arenaWarp", arenaWarpTest);
-
-
-
+    public JsonObject ArenaDataTemplate(String name, int dimensionId,
+                                        /*boolean arenaEnabled,*/
+                                        JsonObject arenaWarp, JsonObject lobbyWarp, JsonObject exitWarp, JsonObject specWarp,
+                                        JsonObject arenaWarpYawPitch,  JsonObject lobbyWarpYawPitch,  JsonObject exitWarpPitch,  JsonObject specWarpYawPitch,
+                                        JsonObject p1, JsonObject p2, JsonObject l1, JsonObject l2) {
 
         JsonObject arena = new JsonObject();
         arena.add("dimensionId", new JsonPrimitive(dimensionId));
         arena.add("arenaEnabled", new JsonPrimitive(true));
 
-        arena.add("arenaWarp", new JsonPrimitive((Number) arenaWarp));
-        arena.add("lobbyWarp", new JsonPrimitive((Number) lobbyWarp));
-        arena.add("exitWarp", new JsonPrimitive((Number) exitWarp));
-        arena.add("specWarp", new JsonPrimitive((Number) specWarp));
+        arena.add("arenaWarp", arenaWarp);
+        arena.add("lobbyWarp", lobbyWarp);
+        arena.add("exitWarp", exitWarp);
+        arena.add("specWarp", specWarp);
 
-        arena.add("arenaWarpYawPitch", new JsonPrimitive((Number) arenaWarpYawPitch));
-        arena.add("lobbyWarpYawPitch", new JsonPrimitive((Number) lobbyWarpYawPitch));
-        arena.add("exitWarpPitch", new JsonPrimitive((Number) exitWarpPitch));
-        arena.add("specWarpYawPitch", new JsonPrimitive((Number) specWarpYawPitch));
+        arena.add("arenaWarpYawPitch", arenaWarpYawPitch);
+        arena.add("lobbyWarpYawPitch", lobbyWarpYawPitch);
+        arena.add("exitWarpPitch", exitWarpPitch);
+        arena.add("specWarpYawPitch", specWarpYawPitch);
 
-        arena.add("p1", new JsonArray(p1));
-        arena.add("p2", new JsonPrimitive((Number) p2));
-        arena.add("l1", new JsonPrimitive((Number) l1));
-        arena.add("l2", new JsonPrimitive((Number) l2));
+        arena.add("p1", p1);
+        arena.add("p2", p2);
+        arena.add("l1", l1);
+        arena.add("l2", l2);
 
         JsonObject list = new JsonObject();
         list.add(name, arena);
@@ -76,6 +62,33 @@ public class MobArenaConfig {
         return list;
     }
 
+    //use this when player runs create command
+    public JsonObject ArenaDataTemplate(String name, int dimensionId) {
+
+        JsonObject arena = new JsonObject();
+        arena.add("dimensionId", new JsonPrimitive(dimensionId));
+        arena.add("arenaEnabled", new JsonPrimitive(true));
+
+        arena.add("arenaWarp", new JsonPrimitive(""));
+        arena.add("lobbyWarp", new JsonPrimitive(""));
+        arena.add("exitWarp", new JsonPrimitive(""));
+        arena.add("specWarp", new JsonPrimitive(""));
+
+        arena.add("arenaWarpYawPitch", new JsonPrimitive(""));
+        arena.add("lobbyWarpYawPitch", new JsonPrimitive(""));
+        arena.add("exitWarpPitch", new JsonPrimitive(""));
+        arena.add("specWarpYawPitch", new JsonPrimitive(""));
+
+        arena.add("p1", new JsonPrimitive(""));
+        arena.add("p2", new JsonPrimitive(""));
+        arena.add("l1", new JsonPrimitive(""));
+        arena.add("l2", new JsonPrimitive(""));
+
+        JsonObject list = new JsonObject();
+        list.add(name, arena);
+
+        return list;
+    }
 
     public static void loadConfig() {
         INSTANCE = new MobArenaConfig();
@@ -117,6 +130,4 @@ public class MobArenaConfig {
         }
         return INSTANCE;
     }
-
-
 }

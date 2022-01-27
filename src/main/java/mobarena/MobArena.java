@@ -1,5 +1,6 @@
 package mobarena;
 
+import com.google.gson.JsonObject;
 import mobarena.config.MobArenaConfig;
 import mobarena.items.GuiItem;
 import net.fabricmc.api.ModInitializer;
@@ -58,5 +59,7 @@ public class MobArena implements ModInitializer {
 
 		setup();
 //		config.arenas.add()
+		JsonObject testArena = config.ArenaDataTemplate("Fire Arena", 0);
+		LOGGER.info(testArena.getAsJsonObject());
 	}
 }
