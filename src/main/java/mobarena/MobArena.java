@@ -18,7 +18,7 @@ public class MobArena implements ModInitializer {
 
 	private Throwable lastFailureCause;
 
-	public static final MobArenaConfig config = MobArenaConfig.getInstance();
+	public static final MobArenaConfig config = new MobArenaConfig();
 
 	private void setup() {
 		setupArenaMaster();
@@ -58,8 +58,6 @@ public class MobArena implements ModInitializer {
 		Registry.register(Registry.ITEM, new Identifier("mobarena", "gui_item"), GUI_ITEM);
 
 		setup();
-//		config.arenas.add()
-		JsonObject testArena = config.ArenaDataTemplate("Fire Arena", 0);
-		LOGGER.info(testArena.getAsJsonObject());
+		config.loadConfig();
 	}
 }
