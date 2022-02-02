@@ -15,7 +15,6 @@ public class ArenaMasterImpl implements ArenaMaster {
 
     private boolean enabled;
 
-
     public ArenaMasterImpl(MobArena mod) {
         this.mod = mod;
 

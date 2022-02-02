@@ -1,6 +1,7 @@
 package mobarena;
 
 import com.google.gson.JsonObject;
+import com.google.gson.stream.JsonReader;
 import mobarena.config.MobArenaConfig;
 import mobarena.items.GuiItem;
 import net.fabricmc.api.ModInitializer;
@@ -11,6 +12,8 @@ import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.InputStreamReader;
 
 public class MobArena implements ModInitializer {
 
@@ -44,7 +47,7 @@ public class MobArena implements ModInitializer {
 	public static Item GUI_ITEM = new GuiItem(new Item.Settings().group(ItemGroup.MISC));
 
     public static final String MOD_ID = "mobarena";
-    public static final Logger LOGGER = LogManager.getLogger("mobarena");
+    public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
 	public static void log(Level level, String message) {
 		final String logPrefix = "[MobArena]: ";
@@ -58,6 +61,10 @@ public class MobArena implements ModInitializer {
 		Registry.register(Registry.ITEM, new Identifier("mobarena", "gui_item"), GUI_ITEM);
 
 		setup();
-		config.loadConfig();
+
+
+		config.createArenaTemplate("testament", "DIM-1");
+		config.addDefaultGlobalSettingsList();
+		LOGGER.info(config.ArenaDataTemplate("testament"));
 	}
 }
