@@ -1,10 +1,14 @@
 package mobarena;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import mobarena.config.ArenaDataTemplate;
 import mobarena.config.MobArenaConfig;
 import mobarena.items.GuiItem;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
@@ -13,7 +17,9 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.file.Path;
+import java.util.ArrayList;
 
 public class MobArena implements ModInitializer {
 
@@ -63,8 +69,28 @@ public class MobArena implements ModInitializer {
 		setup();
 
 
-		config.createArenaTemplate("testament", "DIM-1");
-		config.addDefaultGlobalSettingsList();
-		LOGGER.info(config.ArenaDataTemplate("testament"));
+	config.addArenaToList("testament");
+	config.addArenaToList("testament2");
+	config.arenaList.get(0).world = "world";
+	config.arenaList.get(0).name = "NoLongerTestament";
+
+	LOGGER.info(config.arenaList.get(0).world);
+	LOGGER.info(config.arenaList.get(0).name);
+
+	config.json = config.gson.toJson(config.arenaList);
+	LOGGER.info(config.json);
+
+
+
+		FileReader reader;
+		BufferedReader bufferedReader = null;
+
+		try {
+			reader = new FileReader(FabricLoader.getInstance().getConfigDir().toString() + "/mobarena.json");
+			bufferedReader = new BufferedReader(reader);
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 }
