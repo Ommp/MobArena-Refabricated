@@ -1,5 +1,6 @@
 package mobarena.config;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;

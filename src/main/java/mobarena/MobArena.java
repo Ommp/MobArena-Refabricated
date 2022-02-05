@@ -71,26 +71,13 @@ public class MobArena implements ModInitializer {
 
 	config.addArenaToList("testament");
 	config.addArenaToList("testament2");
-	config.arenaList.get(0).world = "world";
-	config.arenaList.get(0).name = "NoLongerTestament";
-
-	LOGGER.info(config.arenaList.get(0).world);
-	LOGGER.info(config.arenaList.get(0).name);
-
-	config.json = config.gson.toJson(config.arenaList);
-	LOGGER.info(config.json);
-
-
-
-		FileReader reader;
-		BufferedReader bufferedReader = null;
 
 		try {
-			reader = new FileReader(FabricLoader.getInstance().getConfigDir().toString() + "/mobarena.json");
-			bufferedReader = new BufferedReader(reader);
-
-		} catch (FileNotFoundException e) {
+			config.createJson();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		LOGGER.info(config.json);
 	}
 }
