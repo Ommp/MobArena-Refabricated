@@ -26,7 +26,7 @@ public class MobArenaConfig {
     File globalConfigFile;
 
 
-    List<ArenaDataTemplate> arenas = new ArrayList<ArenaDataTemplate>();
+    ArenaListData arenas = new ArenaListData();
     ClassData classes = new ClassData();
     GlobalConfig globalConfig = new GlobalConfig();
 
@@ -45,7 +45,7 @@ public class MobArenaConfig {
     }
 
     public void readJson() throws IOException {
-        arenas = mapper.readValue(arenasConfigFile, List.class);
+        arenas = mapper.readValue(arenasConfigFile, ArenaListData.class);
         classes = mapper.readValue(classConfigFile, ClassData.class);
         globalConfig = mapper.readValue(globalConfigFile, GlobalConfig.class);
 
@@ -58,7 +58,7 @@ public class MobArenaConfig {
     public void addArenaToList(String name){
         ArenaDataTemplate arena = new ArenaDataTemplate();
         arena.name = name;
-        arenas.add(arena);
+        arenas.arenaList.add(arena);
     }
 
 

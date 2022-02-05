@@ -75,7 +75,7 @@ public class MobArena implements ModInitializer {
 		config.loadFile();
 
 		try {
-//			config.createJson();
+			config.createJson();
 			config.readJson();
 		} catch (IOException e) {
 			e.printStackTrace();
