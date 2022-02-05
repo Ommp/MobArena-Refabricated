@@ -17,7 +17,7 @@ public class MobArenaConfig {
 
     public static final Logger LOGGER = LogManager.getLogger("MobArena");
     ObjectMapper mapper = new ObjectMapper();
-    public String json;
+//    public String json;
 
     List<ArenaDataTemplate> arenaList = new ArrayList<ArenaDataTemplate>();
 
@@ -33,7 +33,7 @@ public class MobArenaConfig {
         File file = new File(FabricLoader.getInstance().getConfigDir().toString()+"/mobarena.json");
         mapper.writeValue(file, arenaList);
 
-        json = mapper.writeValueAsString(arenaList);
+//        json = mapper.writeValueAsString(arenaList);
     }
 
     public void addArenaToList(String name){

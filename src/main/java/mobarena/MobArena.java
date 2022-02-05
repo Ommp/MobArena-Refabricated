@@ -78,6 +78,6 @@ public class MobArena implements ModInitializer {
 			e.printStackTrace();
 		}
 
-		LOGGER.info(config.json);
+//		LOGGER.info(config.json);
 	}
 }
