@@ -70,10 +70,13 @@ public class MobArena implements ModInitializer {
 
 
 	config.addArenaToList("testament");
-	config.addArenaToList("testament2");
+//	config.addArenaToList("testament2");
+
+		config.loadFile();
 
 		try {
-			config.createJson();
+//			config.createJson();
+			config.readJson();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
