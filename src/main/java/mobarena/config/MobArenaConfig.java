@@ -9,9 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 @JsonIgnoreProperties({"arenas","classes","globalConfig"})
 public class MobArenaConfig {
@@ -26,9 +24,9 @@ public class MobArenaConfig {
     File globalConfigFile;
 
 
-    ArenaListData arenas = new ArenaListData();
-    ClassData classes = new ClassData();
-    GlobalConfig globalConfig = new GlobalConfig();
+    public ArenaListData arenas = new ArenaListData();
+    public ClassData classes = new ClassData();
+    public GlobalConfig globalConfig = new GlobalConfig();
 
     public void loadFile() {
         arenasConfigFile = new File(FabricLoader.getInstance().getConfigDir().toString()+"/mobarena/arenas.json");
@@ -57,32 +55,6 @@ public class MobArenaConfig {
 
     public void addArenaToList(String name){
         ArenaDataTemplate arena = new ArenaDataTemplate();
-        arena.name = name;
-        arenas.arenaList.add(arena);
+        arenas.arenaList.put(name, arena);
     }
-
-    public ArenaListData getArenas() {
-        return arenas;
-    }
-
-    public void setArenas(ArenaListData arenas) {
-        this.arenas = arenas;
-    }
-
-    public ClassData getClasses() {
-        return classes;
-    }
-
-    public void setClasses(ClassData classes) {
-        this.classes = classes;
-    }
-
-    public GlobalConfig getGlobalConfig() {
-        return globalConfig;
-    }
-
-    public void setGlobalConfig(GlobalConfig globalConfig) {
-        this.globalConfig = globalConfig;
-    }
-
 }

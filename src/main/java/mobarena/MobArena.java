@@ -1,14 +1,8 @@
 package mobarena;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
-import mobarena.config.ArenaDataTemplate;
 import mobarena.config.MobArenaConfig;
 import mobarena.items.GuiItem;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
@@ -18,9 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Locale;
 
 public class MobArena implements ModInitializer {
 
@@ -82,10 +73,6 @@ public class MobArena implements ModInitializer {
 			e.printStackTrace();
 		}
 
-		for (ArenaDataTemplate arenaDataTemplate : config.getArenas().arenaList) {
-			LOGGER.info(arenaDataTemplate.name.toUpperCase(Locale.ROOT));
-		}
-
-
+		LOGGER.info(config.arenas.arenaList.get("testament").enabled);
 	}
 }

@@ -1,10 +1,9 @@
 package mobarena.config;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class ArenaListData {
-    public List<ArenaDataTemplate> arenaList = new ArrayList<>();
+    public HashMap<String, ArenaDataTemplate> arenaList = new HashMap<>();
 
     public ArenaListData() {
     }

@@ -1,16 +1,8 @@
 package mobarena.config;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-
 import java.util.ArrayList;
 
 public class ArenaDataTemplate extends MobArenaConfig {
-    /*
-    TODO
-    Make the actual name of the arena itself be the object containing all the data such as the warps when serializing.
-     */
-    public String name;
     public String world;
     public boolean enabled = true;
     public ArrayList<Integer> arenaWarp;
