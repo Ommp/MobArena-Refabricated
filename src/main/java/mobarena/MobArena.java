@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MobArena implements ModInitializer {
 
@@ -70,7 +71,7 @@ public class MobArena implements ModInitializer {
 
 
 	config.addArenaToList("testament");
-//	config.addArenaToList("testament2");
+	config.addArenaToList("testament2");
 
 		config.loadFile();
 
@@ -81,6 +82,10 @@ public class MobArena implements ModInitializer {
 			e.printStackTrace();
 		}
 
-//		LOGGER.info(config.json);
+		for (ArenaDataTemplate arenaDataTemplate : config.getArenas().arenaList) {
+			LOGGER.info(arenaDataTemplate.name.toUpperCase(Locale.ROOT));
+		}
+
+
 	}
 }
