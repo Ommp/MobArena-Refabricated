@@ -1,10 +1,13 @@
 package mobarena;
 
+import mobarena.config.ArenaDataTemplate;
+import net.minecraft.block.SmokerBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 
+import java.io.IOException;
 import java.util.*;
 
 public class ArenaMasterImpl implements ArenaMaster {
@@ -118,25 +121,68 @@ public class ArenaMasterImpl implements ArenaMaster {
         return null;
     }
 
-//    public void initialize() {
-//        loadSettings();
-////        loadArenas();
-//    }
 
-    /**
-     * Load the global settings.
-     */
-//    public void loadSettings() {
-//        FileConfig section = mod.getConfig();
-//    }
-//
-//    public void reloadConfig() {
-//        mod.reload();
-//    }
-//
-//    public void saveConfig() {
-//        mod.saveConfig();
-//    }
+    @Override
+    public void initialize() {
+        loadSettings();
+        loadArenas();
+        loadClasses();
+    }
+    @Override
+    public void loadSettings() {
+        try {
+            MobArena.config.readGlobalConfigJson();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void loadArenas() {
+        try {
+            MobArena.config.readArenasJson();
+            Set<String> arenanames = MobArena.config.arenas.arenaList.keySet();
 
+            //if no arenas are found, create default arena as example
+            if (MobArena.config.arenas.arenaList.isEmpty()) {
+                createArenaNode("default");
+            }
+            arenas = new ArrayList<>();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    @Override
+    public void loadClasses() {
+        try {
+            MobArena.config.readClassesJson();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void saveArenas(){
+        try {
+            MobArena.config.saveArenaJson();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //figure out how Arena createArenaNode would/should actually work
+    @Override
+    public void createArenaNode(String name) {
+        MobArena.config.arenas.arenaList.put(name, new ArenaDataTemplate());
+        saveArenas();
+    }
+
+    private Arena loadArena(String name) {
+        String worldName = MobArena.config.arenas.arenaList.get(name).world;
+
+        Arena arena = new ArenaImpl(mod, name);
+        arenas.add(arena);
+        MobArena.LOGGER.info("Loaded arena: " + name);
+        return arena;
+    }
 }

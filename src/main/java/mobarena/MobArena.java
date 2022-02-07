@@ -1,5 +1,6 @@
 package mobarena;
 
+import mobarena.config.ArenaDataTemplate;
 import mobarena.config.MobArenaConfig;
 import mobarena.items.GuiItem;
 import net.fabricmc.api.ModInitializer;
@@ -60,19 +61,7 @@ public class MobArena implements ModInitializer {
 
 		setup();
 
-
-	config.addArenaToList("testament");
-	config.addArenaToList("testament2");
-
 		config.loadFile();
-
-		try {
-			config.createJson();
-			config.readJson();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		LOGGER.info(config.arenas.arenaList.get("testament").enabled);
+		arenaMaster.initialize();
 	}
 }
