@@ -140,16 +140,22 @@ public class ArenaMasterImpl implements ArenaMaster {
     public void loadArenas() {
         try {
             MobArena.config.readArenasJson();
-            Set<String> arenanames = MobArena.config.arenas.arenaList.keySet();
 
-            //if no arenas are found, create default arena as example
-            if (MobArena.config.arenas.arenaList.isEmpty()) {
-                createArenaNode("default");
-            }
-            arenas = new ArrayList<>();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Set<String> arenanames = MobArena.config.arenas.arenaList.keySet();
+        //if no arenas are found, create default arena as example
+        if (arenanames.isEmpty()) {
+            createArenaNode("default");
+        }
+
+        arenas = new ArrayList<>();
+
+        for (String arenaName : arenanames) {
+            loadArena(arenaName);
+        }
+
     }
 
     @Override
@@ -177,12 +183,31 @@ public class ArenaMasterImpl implements ArenaMaster {
         saveArenas();
     }
 
-    private Arena loadArena(String name) {
-        String worldName = MobArena.config.arenas.arenaList.get(name).world;
+    @Override
+    public Arena createArenaNode(String name, ServerWorld world) {
+        return createArenaNode(name, world, true);
+    }
 
+    private Arena createArenaNode(String name, ServerWorld world, boolean load) {
+        if (MobArena.config.arenas.arenaList.containsKey(name)) {
+            throw new IllegalArgumentException("Arena already exists!");
+        }
+        ArenaDataTemplate template = new ArenaDataTemplate();
+        template.world = world.toString();
+        MobArena.config.arenas.arenaList.put(name, template);
+        saveArenas();
+
+        return (load ? loadArena(name) : null);
+    }
+
+
+
+    private Arena loadArena(String name) {
         Arena arena = new ArenaImpl(mod, name);
         arenas.add(arena);
         MobArena.LOGGER.info("Loaded arena: " + name);
         return arena;
     }
+
+
 }

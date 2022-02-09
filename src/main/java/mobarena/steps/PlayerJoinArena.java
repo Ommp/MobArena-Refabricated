@@ -5,7 +5,7 @@ import mobarena.MobArena;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+
 
 public class PlayerJoinArena {
     public static StepFactory create(Arena arena){
@@ -20,6 +20,6 @@ public class PlayerJoinArena {
         factories.add(SetGameMode.create());
         factories.add(SetHealth.create());
 
-        return PlayerMultiStep.create(factories, (Logger) MobArena.LOGGER);
+        return PlayerMultiStep.create(factories, MobArena.LOGGER);
     }
 }

@@ -1,12 +1,11 @@
 package mobarena.steps;
 
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * PlayerMultiSteps group lists of {@link StepFactory StepFactories} into a
@@ -45,7 +44,7 @@ public class PlayerMultiStep extends PlayerStep{
                 step.run();
                 history.push(step);
             } catch (RuntimeException up){
-                logger.log(Level.SEVERE, up, () -> "Failed to run step" + step);
+                logger.warn("Failed to run step" + step + up);
                 undo();
                 throw up;
             }
@@ -62,7 +61,7 @@ public class PlayerMultiStep extends PlayerStep{
             try {
                 step.undo();
             } catch (RuntimeException e){
-                logger.log(Level.SEVERE, e, () -> "Failed to undo step" + step);
+                logger.warn("Failed to undo step: " + step + e);
             }
         }
     }

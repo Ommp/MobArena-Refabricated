@@ -1,18 +1,10 @@
 package mobarena;
 
-import mobarena.config.ArenaDataTemplate;
 import mobarena.config.MobArenaConfig;
-import mobarena.items.GuiItem;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.io.*;
 
 public class MobArena implements ModInitializer {
 
@@ -43,8 +35,6 @@ public class MobArena implements ModInitializer {
 		arenaMaster.getArenas().forEach(Arena::endArena);
 	}
 
-	public static Item GUI_ITEM = new GuiItem(new Item.Settings().group(ItemGroup.MISC));
-
     public static final String MOD_ID = "mobarena";
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
@@ -56,8 +46,6 @@ public class MobArena implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Initialised MobArena Mod for Minecraft v1.16");
-
-		Registry.register(Registry.ITEM, new Identifier("mobarena", "gui_item"), GUI_ITEM);
 
 		setup();
 

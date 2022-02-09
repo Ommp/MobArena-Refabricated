@@ -1,12 +1,10 @@
 package mobarena;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -52,4 +50,6 @@ public interface ArenaMaster {
     Arena getArenaWithMonster(Entity e);
 
     void createArenaNode(String name);
+
+    Arena createArenaNode(String name, ServerWorld world);
 }
