@@ -9,32 +9,9 @@ import org.apache.logging.log4j.Logger;
 
 public class MobArena implements ModInitializer {
 
-	private ArenaMaster arenaMaster;
-
-	private Throwable lastFailureCause;
-
 	public static final MobArenaConfig config = new MobArenaConfig();
+	private ArenaManager arenaManager = ArenaManager.getInstance();
 
-	private void setup() {
-		setupArenaMaster();
-//		setup other things...
-	}
-
-	private void setupArenaMaster() {
-		arenaMaster = new ArenaMasterImpl(this);
-	}
-
-	public ArenaMaster getArenaMaster() {
-		return arenaMaster;
-	}
-
-	public Throwable getLastFailureCause() {
-		return lastFailureCause;
-	}
-
-	private void reloadArenaMaster(){
-		arenaMaster.getArenas().forEach(Arena::endArena);
-	}
 
     public static final String MOD_ID = "mobarena";
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
@@ -48,10 +25,10 @@ public class MobArena implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Initialised MobArena Mod for Minecraft v1.16");
 
-		setup();
-
 		config.loadFile();
-		arenaMaster.initialize();
+		String name = "IceArena";
+		arenaManager.addArenaToMap(name);
+
 
 		CommandRegistrationCallback.EVENT.register(MobArenaCommandRegistry::register);
 	}

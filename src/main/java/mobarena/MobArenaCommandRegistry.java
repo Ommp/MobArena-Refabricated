@@ -6,6 +6,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
+import mobarena.commands.ArenaEditCommand;
 import mobarena.commands.ArenaInfoCommand;
 import mobarena.commands.ModInfoCommand;
 import mobarena.commands.suggestion.NameSuggestionProvider;
@@ -48,10 +49,14 @@ public class MobArenaCommandRegistry {
 
         arenaInfoBuilder.then(argument("arena_name", StringArgumentType.word()).suggests(new NameSuggestionProvider.Arena())
                 .executes(new ArenaInfoCommand()));
+        arenaEditBuilder.then(argument("arena_name", StringArgumentType.word()).suggests(new NameSuggestionProvider.Arena())
+                .executes(new ArenaEditCommand()));
+
 
         LiteralCommandNode<ServerCommandSource> arenaNode = arenaBuilder
                 .build();
         arenaNode.addChild(arenaInfoBuilder.build());
+        arenaNode.addChild(arenaEditBuilder.build());
 
        registerNode.accept(arenaNode);
 

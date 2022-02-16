@@ -8,7 +8,7 @@ import java.util.*;
 
 public class MonsterManager {
 
-    private Set<LivingEntity> monsters, sheep, golems;
+    private final Set<LivingEntity> monsters, sheep, golems;
     private Map<LivingEntity, List<ItemStack>> suppliers;
 
     public MonsterManager() {
