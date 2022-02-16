@@ -6,6 +6,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
+import mobarena.commands.ArenaCreateCommand;
 import mobarena.commands.ArenaEditCommand;
 import mobarena.commands.ArenaInfoCommand;
 import mobarena.commands.ModInfoCommand;
@@ -43,6 +44,7 @@ public class MobArenaCommandRegistry {
         LiteralArgumentBuilder<ServerCommandSource> arenaBuilder = CommandManager.literal("arena");
         LiteralArgumentBuilder<ServerCommandSource> arenaInfoBuilder = CommandManager.literal("info");
         LiteralArgumentBuilder<ServerCommandSource> arenaEditBuilder = CommandManager.literal("edit");
+        LiteralArgumentBuilder<ServerCommandSource> arenaCreateBuilder = CommandManager.literal("create");
         LiteralArgumentBuilder<ServerCommandSource> arenaDeleteBuilder = CommandManager.literal("delete");
         LiteralArgumentBuilder<ServerCommandSource> arenaListBuilder = CommandManager.literal("list");
 
@@ -51,12 +53,15 @@ public class MobArenaCommandRegistry {
                 .executes(new ArenaInfoCommand()));
         arenaEditBuilder.then(argument("arena_name", StringArgumentType.word()).suggests(new NameSuggestionProvider.Arena())
                 .executes(new ArenaEditCommand()));
+        arenaCreateBuilder.then(argument("arena_name", StringArgumentType.word()))
+                .executes(new ArenaCreateCommand());
 
 
         LiteralCommandNode<ServerCommandSource> arenaNode = arenaBuilder
                 .build();
         arenaNode.addChild(arenaInfoBuilder.build());
         arenaNode.addChild(arenaEditBuilder.build());
+        arenaNode.addChild(arenaCreateBuilder.build());
 
        registerNode.accept(arenaNode);
 

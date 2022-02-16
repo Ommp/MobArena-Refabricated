@@ -10,5 +10,5 @@ public class ClassData {
     public String legs;
     public String boots;
 
-    public ArrayList<String> inventory;
+    public ArrayList<String> items;
 }

@@ -7,11 +7,12 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+
 public class MobArena implements ModInitializer {
 
-	public static final MobArenaConfig config = new MobArenaConfig();
-	private ArenaManager arenaManager = ArenaManager.getInstance();
-
+	public static MobArenaConfig config = new MobArenaConfig();
+	public static ArenaLoader arenaLoader = new ArenaLoader();
 
     public static final String MOD_ID = "mobarena";
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
@@ -26,10 +27,27 @@ public class MobArena implements ModInitializer {
 		LOGGER.info("Initialised MobArena Mod for Minecraft v1.16");
 
 		config.loadFile();
-		String name = "IceArena";
-		arenaManager.addArenaToMap(name);
-
+		try {
+			config.readGlobalConfigJson();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			config.readArenasJson();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		config.addArenaToList("default");
+		config.addArenaToList("default2");
+		config.addArenaToList("default3");
+		try {
+			config.saveArenaJson();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		arenaLoader.loadAllArenas();
 
 		CommandRegistrationCallback.EVENT.register(MobArenaCommandRegistry::register);
+
 	}
 }

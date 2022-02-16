@@ -15,7 +15,7 @@ public class ArenaEditCommand implements Command<ServerCommandSource> {
 
         String arenaName = StringArgumentType.getString(context, "arena_name");
 
-
+        return 1;
     }
 
 }
