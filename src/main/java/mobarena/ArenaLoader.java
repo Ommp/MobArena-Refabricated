@@ -1,5 +1,6 @@
 package mobarena;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 public class ArenaLoader {
@@ -15,11 +16,15 @@ public class ArenaLoader {
    }
 
    public void loadAllArenas() {
-      arenas = MobArena.config.arenas.arenaList;
+      arenas = MobArena.config.arenas;
    }
 
    public void loadArena(Arena arena) {
       arenas.put(arena.name, arena);
+   }
+
+   public void saveArenas() throws IOException {
+      MobArena.config.saveArenaJson();
    }
 
 }

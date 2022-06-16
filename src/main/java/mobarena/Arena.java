@@ -1,6 +1,5 @@
 package mobarena;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 
@@ -10,7 +9,7 @@ import java.util.Set;
 public class Arena {
 
     public String name;
-    private ServerWorld world;
+    public String worldName;
 
     private boolean isRunning, isProtected, inEditMode;
     public boolean isEnabled;
@@ -76,7 +75,7 @@ public class Arena {
     //used for create command
     public Arena(String name, ServerWorld world) {
         this.name = name;
-        this.world = world;
+        this.worldName = world.toString();
     }
 
 
@@ -84,7 +83,7 @@ public class Arena {
                  HashMap<String, ArenaClass> arenaClasses, Warp arena, Warp lobby, Warp exit, Warp spectator,
                  ArenaRegion arenaRegion, LobbyRegion lobbyRegion) {
         this.name = name;
-        this.world = world;
+        this.worldName = world.toString();
         this.isEnabled = isEnabled;
         this.arenaClasses = arenaClasses;
         this.arena = arena;
@@ -94,4 +93,7 @@ public class Arena {
         this.arenaRegion = arenaRegion;
         this.lobbyRegion = lobbyRegion;
     }
+
+
+
 }

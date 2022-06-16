@@ -1,75 +1,91 @@
 package mobarena.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.gson.Gson;
 import mobarena.Arena;
 import net.fabricmc.loader.api.FabricLoader;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
-
-//@JsonIgnoreProperties({"arenas","classes","globalConfig"})
 public class MobArenaConfig {
 
-    public static final Logger LOGGER = LogManager.getLogger("MobArena");
-    ObjectMapper mapper = new ObjectMapper();
+    public Gson gson = new Gson();
+    public String json;
 
-    public File arenasConfigFile;
-    public File classConfigFile;
-    public File globalConfigFile;
+    public Reader reader;
 
+    File arenasConfigFile = new File(FabricLoader.getInstance().getConfigDir().toString()+"/mobarena/arenas.json");
+    File globalConfigFile = new File(FabricLoader.getInstance().getConfigDir().toString()+"/mobarena/mobarena.json");
 
-    public ArenaListData arenas = new ArenaListData();
-//    public ClassData classes = new ClassData();
+    public HashMap<String, Arena> arenas = new HashMap<>();
     public GlobalConfig globalConfig = new GlobalConfig();
 
+
     public void loadFile() {
-        arenasConfigFile = new File(FabricLoader.getInstance().getConfigDir().toString()+"/mobarena/arenas.json");
-        classConfigFile = new File(FabricLoader.getInstance().getConfigDir().toString()+"/mobarena/classes.json");
-        globalConfigFile = new File(FabricLoader.getInstance().getConfigDir().toString()+"/mobarena/mobarena.json");
+        readArenasJson();
+        readGlobalConfigJson();
     }
 
-    public void saveArenaJson() throws IOException {
-        mapper.writeValue(arenasConfigFile, arenas);
-    }
-
-//    public void saveClassesJson() throws IOException {
-//        mapper.writeValue(classConfigFile, classes);
-//    }
-
-    public void saveGlobalJson() throws IOException {
-        mapper.writeValue(globalConfigFile, globalConfig);
-    }
-
-    public void readArenasJson() throws IOException {
-        if (!arenasConfigFile.exists()) {
-            saveArenaJson();
+    public void readArenasJson() {
+        if (arenasConfigFile.exists()) {
+            try {
+                reader = Files.newBufferedReader(Paths.get(FabricLoader.getInstance().getConfigDir().toString() + "/mobarena/arenas.json"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
-        arenas = mapper.readValue(arenasConfigFile, ArenaListData.class);
+//figure out a way to NOT create an empty arena file and see if that stops the gson.fromjson to cause an error (presumably because of an empty arenas list in the file.
+        // if arena file exists, then map arenas to gson.fromjson, if not, log to console that file does not exist (and no arenas).
+
+//        arenas = gson.fromJson(reader, new TypeToken<HashMap<String, Arena>>(){}.getType());
+
+        arenas = gson.fromJson(reader, HashMap.class);
     }
 
-//    public void readClassesJson() throws IOException {
-//        classes = mapper.readValue(classConfigFile, ClassData.class);
-//    }
+    public void saveArenaJson() {
+        try {
+            FileWriter fileWriter = new FileWriter(FabricLoader.getInstance().getConfigDir().toString()+"/mobarena/arenas.json");
+            json = gson.toJson(arenas);
+            fileWriter.write(json);
+            fileWriter.close();
 
-    public void readGlobalConfigJson() throws IOException {
+            gson.toJson(arenas, fileWriter);
+
+//            arenas = gson.fromJson(new FileReader(FabricLoader.getInstance().getConfigDir().toString()+"/mobarena/arenas.json"), HashMap.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void readGlobalConfigJson() {
         if (!globalConfigFile.exists()) {
+
             saveGlobalJson();
         }
 
-        globalConfig = mapper.readValue(globalConfigFile, GlobalConfig.class);
+        try {
+            globalConfig = gson.fromJson(new FileReader(FabricLoader.getInstance().getConfigDir().toString()+"/mobarena/mobarena.json"), GlobalConfig.class);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    public void addArenaToList(String name){
-         Arena arena = new Arena(name);
-        arenas.arenaList.put(name, arena);
+    public void saveGlobalJson() {
+        try {
+            FileWriter fileWriter = new FileWriter(FabricLoader.getInstance().getConfigDir().toString()+"/mobarena/mobarena.json");
+            String json = gson.toJson(globalConfig);
+            fileWriter.write(json);
+            fileWriter.close();
+
+//            gson.toJson(globalConfig, new FileWriter(FabricLoader.getInstance().getConfigDir().toString()+"/mobarena/mobarena.json"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+
 }

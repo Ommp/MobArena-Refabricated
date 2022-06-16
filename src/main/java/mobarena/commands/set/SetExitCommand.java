@@ -1,27 +1,30 @@
-package mobarena.commands;
+package mobarena.commands.set;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import mobarena.Arena;
 import mobarena.MobArena;
+import mobarena.Warp;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.util.math.BlockPos;
 
-public class ArenaCreateCommand implements Command<ServerCommandSource> {
+public class SetExitCommand implements Command<ServerCommandSource> {
+
+    public SetExitCommand() {}
 
     @Override
     public int run(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 
         String arenaName = StringArgumentType.getString(context, "arena_name");
 
+        BlockPos coordinates = context.getSource().getEntity().getBlockPos();
+        float yaw = context.getSource().getEntity().yaw;
+        float pitch = context.getSource().getEntity().pitch;
 
-        Arena arena = new Arena(arenaName, context.getSource().getWorld());
-        MobArena.config.arenas.put(arena.name, arena);
-        MobArena.config.saveArenaJson();
+        Warp warp = new Warp(coordinates, yaw, pitch);
 
-        context.getSource().sendFeedback(new TranslatableText("mobarena.createdarena", arenaName), false);
+        MobArena.config.arenas.get(arenaName).exit = warp;
 
         return 0;
     }

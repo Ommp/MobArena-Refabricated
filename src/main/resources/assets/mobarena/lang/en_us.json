@@ -1,5 +1,6 @@
 {
   "mobarena.main": "\nThe command of the MobArena mod.\nIt allows you to perform various operations from the mod.",
   "mobarena.modinfo": "MobArena is a mod that allows you create minigames where you fight against mobs.",
-  "mobarena.createdarenacommand": "Created arena with the name: "
+  "mobarena.createdarena": "Created arena with the name: %s",
+  "mobarena.arenainfo": "Arena name: %s \n Arena world name: %s"
 }

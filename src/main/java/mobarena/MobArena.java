@@ -7,8 +7,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-
 public class MobArena implements ModInitializer {
 
 	public static MobArenaConfig config = new MobArenaConfig();
@@ -26,26 +24,18 @@ public class MobArena implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Initialised MobArena Mod for Minecraft v1.16");
 
-		config.loadFile();
-		try {
-			config.readGlobalConfigJson();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			config.readArenasJson();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		config.addArenaToList("default");
-		config.addArenaToList("default2");
-		config.addArenaToList("default3");
-		try {
-			config.saveArenaJson();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		arenaLoader.loadAllArenas();
+//		config.loadFile();
+		config.readGlobalConfigJson();
+		config.readArenasJson();
+		config.arenas.put("default", new Arena("default"));
+//		LOGGER.info(config.arenas.size());
+//		config.saveArenaJson();
+//
+//		config.arenas.put("default", new Arena("default"));
+//		config.arenas.put("FireArena", new Arena("FireArena"));
+//		config.saveArenaJson();
+//		arenaLoader.loadAllArenas();
+//		LOGGER.info(config.arenas.entrySet());
 
 		CommandRegistrationCallback.EVENT.register(MobArenaCommandRegistry::register);
 

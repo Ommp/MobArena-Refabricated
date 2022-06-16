@@ -18,7 +18,7 @@ public class NameSuggestionProvider implements SuggestionProvider<ServerCommandS
 
     public static class Arena extends NameSuggestionProvider {
         public Arena() {
-            this.arenaNames = MobArena.config.arenas.arenaList.keySet();
+            this.arenaNames = MobArena.config.arenas.keySet();
         }
     }
 

@@ -6,7 +6,12 @@ public class Warp {
 
     public BlockPos coordinates;
 
-    private float Pitch;
-    private float Yaw;
+    public float Pitch;
+    public float Yaw;
 
+    public Warp(BlockPos coordinates, float pitch, float yaw) {
+        this.coordinates = coordinates;
+        Pitch = pitch;
+        Yaw = yaw;
+    }
 }
