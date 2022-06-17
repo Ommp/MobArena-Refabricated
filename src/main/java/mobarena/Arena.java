@@ -14,12 +14,8 @@ public class Arena {
     private boolean isRunning, isProtected, inEditMode;
     public boolean isEnabled;
 
-//    public int maxPlayers, minPlayers;
-
     private Set<ServerPlayerEntity> arenaPlayers, lobbyPlayers, specPlayers, deadPlayers, readyLobbyPlayers;
     private Set<ServerPlayerEntity> anyArenaPlayer;
-
-    public HashMap<String, ArenaClass> arenaClasses = new HashMap<>();
 
     public Warp arena, lobby, exit, spectator;
     public ArenaRegion arenaRegion;
@@ -80,18 +76,16 @@ public class Arena {
 
 
     public Arena(String name, ServerWorld world, boolean isEnabled,
-                 HashMap<String, ArenaClass> arenaClasses, Warp arena, Warp lobby, Warp exit, Warp spectator,
-                 ArenaRegion arenaRegion, LobbyRegion lobbyRegion) {
+                 Warp arena, Warp lobby, Warp exit, Warp spectator,
+                 ArenaRegion arenaRegion) {
         this.name = name;
         this.worldName = world.toString();
         this.isEnabled = isEnabled;
-        this.arenaClasses = arenaClasses;
         this.arena = arena;
         this.lobby = lobby;
         this.exit = exit;
         this.spectator = spectator;
         this.arenaRegion = arenaRegion;
-        this.lobbyRegion = lobbyRegion;
     }
 
 

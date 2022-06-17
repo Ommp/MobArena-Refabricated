@@ -14,4 +14,7 @@ public class Warp {
         Pitch = pitch;
         Yaw = yaw;
     }
+    public Warp(BlockPos coordinates) {
+        this.coordinates = coordinates;
+    }
 }

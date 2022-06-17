@@ -1,19 +1,17 @@
 package mobarena;
 
-import mobarena.config.MobArenaConfig;
+import mobarena.database.Database;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class MobArena implements ModInitializer {
-
-	public static MobArenaConfig config = new MobArenaConfig();
-	public static ArenaLoader arenaLoader = new ArenaLoader();
-
     public static final String MOD_ID = "mobarena";
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
+	public static Database database = new Database();
+
+	public static ArenaManager arenaManager = new ArenaManager();
 
 	public static void log(Level level, String message) {
 		final String logPrefix = "[MobArena]: ";
@@ -22,22 +20,12 @@ public class MobArena implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Initialised MobArena Mod for Minecraft v1.16");
+		LOGGER.info("Initialised MobArena Mod for Minecraft v1.18.2");
 
-//		config.loadFile();
-		config.readGlobalConfigJson();
-		config.readArenasJson();
-		config.arenas.put("default", new Arena("default"));
-//		LOGGER.info(config.arenas.size());
-//		config.saveArenaJson();
-//
-//		config.arenas.put("default", new Arena("default"));
-//		config.arenas.put("FireArena", new Arena("FireArena"));
-//		config.saveArenaJson();
-//		arenaLoader.loadAllArenas();
-//		LOGGER.info(config.arenas.entrySet());
 
-		CommandRegistrationCallback.EVENT.register(MobArenaCommandRegistry::register);
-
+		database.connectToDB();
+//		database.addArena("FireArena", 1, 10);
+//		database.updateP1("FireArena", 5, 5, 5);
+		System.out.println(database.getArenaByName("FireArena").get(0));
 	}
 }
