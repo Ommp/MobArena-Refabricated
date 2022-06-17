@@ -22,10 +22,8 @@ public class MobArena implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Initialised MobArena Mod for Minecraft v1.18.2");
 
-
 		database.connectToDB();
-//		database.addArena("FireArena", 1, 10);
-//		database.updateP1("FireArena", 5, 5, 5);
-		System.out.println(database.getArenaByName("FireArena").get(0));
+		//FireArena (which is in database) as an example
+		arenaManager.loadArena("FireArena");
 	}
 }

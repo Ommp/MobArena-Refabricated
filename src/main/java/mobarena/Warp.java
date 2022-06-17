@@ -9,12 +9,13 @@ public class Warp {
     public float Pitch;
     public float Yaw;
 
-    public Warp(BlockPos coordinates, float pitch, float yaw) {
-        this.coordinates = coordinates;
+    public float x,y,z;
+
+    public Warp(float x, float y, float z, float pitch, float yaw) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
         Pitch = pitch;
         Yaw = yaw;
-    }
-    public Warp(BlockPos coordinates) {
-        this.coordinates = coordinates;
     }
 }

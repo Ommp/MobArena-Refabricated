@@ -2,6 +2,7 @@ package mobarena;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -12,7 +13,7 @@ public class Arena {
     public String worldName;
 
     private boolean isRunning, isProtected, inEditMode;
-    public boolean isEnabled;
+    public int isEnabled;
 
     private Set<ServerPlayerEntity> arenaPlayers, lobbyPlayers, specPlayers, deadPlayers, readyLobbyPlayers;
     private Set<ServerPlayerEntity> anyArenaPlayer;
@@ -20,6 +21,11 @@ public class Arena {
     public Warp arena, lobby, exit, spectator;
     public ArenaRegion arenaRegion;
     public LobbyRegion lobbyRegion;
+
+    public int minPlayers;
+    public int maxPlayers;
+
+    ArenaPoint p1, p2;
 
     public Arena(String name) {
         this.name = name;
@@ -68,26 +74,16 @@ public class Arena {
         player.teleport(warp.coordinates.getX(),warp.coordinates.getY(),warp.coordinates.getZ());
     }
 
-    //used for create command
-    public Arena(String name, ServerWorld world) {
+    public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, ArenaPoint p1, ArenaPoint p2, int isEnabled) {
         this.name = name;
-        this.worldName = world.toString();
-    }
-
-
-    public Arena(String name, ServerWorld world, boolean isEnabled,
-                 Warp arena, Warp lobby, Warp exit, Warp spectator,
-                 ArenaRegion arenaRegion) {
-        this.name = name;
-        this.worldName = world.toString();
-        this.isEnabled = isEnabled;
-        this.arena = arena;
+        this.minPlayers = minPlayers;
+        this.maxPlayers = maxPlayers;
         this.lobby = lobby;
-        this.exit = exit;
+        this.arena = arena;
         this.spectator = spectator;
-        this.arenaRegion = arenaRegion;
+        this.exit = exit;
+        this.p1 = p1;
+        this.p2 = p2;
+        this.isEnabled = isEnabled;
     }
-
-
-
 }
