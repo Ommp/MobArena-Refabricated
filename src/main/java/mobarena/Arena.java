@@ -19,8 +19,6 @@ public class Arena {
     private Set<ServerPlayerEntity> anyArenaPlayer;
 
     public Warp arena, lobby, exit, spectator;
-    public ArenaRegion arenaRegion;
-    public LobbyRegion lobbyRegion;
 
     public int minPlayers;
     public int maxPlayers;

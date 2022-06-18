@@ -2,11 +2,10 @@ package mobarena.database;
 
 import mobarena.Arena;
 import mobarena.ArenaPoint;
-import mobarena.MobArena;
 import mobarena.Warp;
-import org.apache.logging.log4j.Level;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class Database {
     public Connection con;
@@ -214,10 +213,10 @@ public class Database {
             ResultSet rs = statement.executeQuery();
 
             return new Arena(rs.getString("name"), rs.getInt("minPlayers"),rs.getInt("maxPlayers"),
-                    new Warp(rs.getFloat(4), rs.getFloat(5),rs.getFloat(6),rs.getFloat(7), rs.getFloat(8)),
-                    new Warp(rs.getFloat(9), rs.getFloat(10), rs.getFloat(11), rs.getFloat(12), rs.getFloat(13)),
-                    new Warp(rs.getFloat(14), rs.getFloat(15), rs.getFloat(16), rs.getFloat(17), rs.getFloat(18)),
-                    new Warp(rs.getFloat(19), rs.getFloat(20), rs.getFloat(21), rs.getFloat(22), rs.getFloat(23)),
+                    new Warp(rs.getFloat("lobby_x"), rs.getFloat("lobby_y"),rs.getFloat("lobby_z"),rs.getFloat("lobby_yaw"), rs.getFloat("lobby_pitch")),
+                    new Warp(rs.getFloat("arena_x"), rs.getFloat("arena_y"), rs.getFloat("arena_z"), rs.getFloat("arena_yaw"), rs.getFloat("arena_pitch")),
+                    new Warp(rs.getFloat("spec_x"), rs.getFloat("spec_y"), rs.getFloat("spec_z"), rs.getFloat("spec_yaw"), rs.getFloat("spec_pitch")),
+                    new Warp(rs.getFloat("exit_x"), rs.getFloat("exit_y"), rs.getFloat("exit_z"), rs.getFloat("exit_yaw"), rs.getFloat("exit_pitch")),
                     new ArenaPoint(rs.getInt("p1_x"), rs.getInt("p1_y"), rs.getInt("p1_z")),
                     new ArenaPoint(rs.getInt("p2_x"), rs.getInt("p2_y"), rs.getInt("p2_z")),
                     rs.getInt("isEnabled"));
@@ -225,5 +224,29 @@ public class Database {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+    public ArrayList<Arena> getAllArenas() {
+        Arena arena;
+        ArrayList<Arena> arenas = new ArrayList<Arena>();
+        String sql = "SELECT * FROM arenas";
+        PreparedStatement statement;
+        try {
+            statement = con.prepareStatement(sql);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()){
+                arena = new Arena(rs.getString("name"), rs.getInt("minPlayers"),rs.getInt("maxPlayers"),
+                        new Warp(rs.getFloat("lobby_x"), rs.getFloat("lobby_y"),rs.getFloat("lobby_z"),rs.getFloat("lobby_yaw"), rs.getFloat("lobby_pitch")),
+                        new Warp(rs.getFloat("arena_x"), rs.getFloat("arena_y"), rs.getFloat("arena_z"), rs.getFloat("arena_yaw"), rs.getFloat("arena_pitch")),
+                        new Warp(rs.getFloat("spec_x"), rs.getFloat("spec_y"), rs.getFloat("spec_z"), rs.getFloat("spec_yaw"), rs.getFloat("spec_pitch")),
+                        new Warp(rs.getFloat("exit_x"), rs.getFloat("exit_y"), rs.getFloat("exit_z"), rs.getFloat("exit_yaw"), rs.getFloat("exit_pitch")),
+                        new ArenaPoint(rs.getInt("p1_x"), rs.getInt("p1_y"), rs.getInt("p1_z")),
+                        new ArenaPoint(rs.getInt("p2_x"), rs.getInt("p2_y"), rs.getInt("p2_z")),
+                        rs.getInt("isEnabled"));
+                arenas.add(arena);
+            }
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return arenas;
     }
 }
