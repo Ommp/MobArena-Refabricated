@@ -69,15 +69,13 @@ public class Database {
             throw new RuntimeException(e);
         }
     }
-    public void addArena(String name, int minPlayers, int maxPlayers) {
-        String sql = "INSERT OR IGNORE INTO arenas(name, minPlayers, maxPlayers) VALUES(?, ?, ?)";
+    public void addArena(String name) {
+        String sql = "INSERT OR IGNORE INTO arenas(name) VALUES(?)";
         PreparedStatement statement;
 
         try {
             statement = con.prepareStatement(sql);
             statement.setString(1, name);
-            statement.setInt(2, minPlayers);
-            statement.setInt(3, maxPlayers);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -113,8 +111,8 @@ public class Database {
             throw new RuntimeException(e);
         }
     }
-    public void updateLobbyWarp(String name, float x, float y, float z) {
-        String sql = "UPDATE arenas SET lobby_x=?, lobby_y=?, lobby_z=? WHERE name=?";
+    public void updateLobbyWarp(String name, float x, float y, float z, float yaw, float pitch) {
+        String sql = "UPDATE arenas SET lobby_x=?, lobby_y=?, lobby_z=?, lobby_yaw=?, lobby_pitch=? WHERE name=?";
         PreparedStatement statement;
 
         try {
@@ -122,14 +120,16 @@ public class Database {
             statement.setFloat(1, x);
             statement.setFloat(2, y);
             statement.setFloat(3, z);
-            statement.setString(4, name);
+            statement.setFloat(4, yaw);
+            statement.setFloat(5, pitch);
+            statement.setString(6, name);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-    public void updateArenaWarp(String name, float x, float y, float z) {
-        String sql = "UPDATE arenas SET arena_x=?, arena_y=?, arena_z=? WHERE name=?";
+    public void updateArenaWarp(String name, float x, float y, float z, float yaw, float pitch) {
+        String sql = "UPDATE arenas SET arena_x=?, arena_y=?, arena_z=?, arena_yaw=?, arena_pitch=? WHERE name=?";
         PreparedStatement statement;
 
         try {
@@ -137,14 +137,16 @@ public class Database {
             statement.setFloat(1, x);
             statement.setFloat(2, y);
             statement.setFloat(3, z);
-            statement.setString(4, name);
+            statement.setFloat(4, yaw);
+            statement.setFloat(5, pitch);
+            statement.setString(6, name);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-    public void updateExitWarp(String name, float x, float y, float z) {
-        String sql = "UPDATE arenas SET exit_x=?, exit_y=?, exit_z=? WHERE name=?";
+    public void updateExitWarp(String name, float x, float y, float z, float yaw, float pitch) {
+        String sql = "UPDATE arenas SET exit_x=?, exit_y=?, exit_z=?, exit_yaw=?, exit_pitch=? WHERE name=?";
         PreparedStatement statement;
 
         try {
@@ -152,14 +154,16 @@ public class Database {
             statement.setFloat(1, x);
             statement.setFloat(2, y);
             statement.setFloat(3, z);
-            statement.setString(4, name);
+            statement.setFloat(4, yaw);
+            statement.setFloat(5, pitch);
+            statement.setString(6, name);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-    public void updateSpecWarp(String name, float x, float y, float z) {
-        String sql = "UPDATE arenas SET spec_x=?, spec_y=?, spec_z=? WHERE name=?";
+    public void updateSpecWarp(String name, float x, float y, float z, float yaw, float pitch) {
+        String sql = "UPDATE arenas SET spec_x=?, spec_y=?, spec_z=?, spec_yaw=?, spec_pitch=? WHERE name=?";
         PreparedStatement statement;
 
         try {
@@ -167,7 +171,9 @@ public class Database {
             statement.setFloat(1, x);
             statement.setFloat(2, y);
             statement.setFloat(3, z);
-            statement.setString(4, name);
+            statement.setFloat(4, yaw);
+            statement.setFloat(5, pitch);
+            statement.setString(6, name);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
