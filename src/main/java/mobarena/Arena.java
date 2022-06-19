@@ -95,7 +95,7 @@ public class Arena {
     public void transportPlayer(ServerPlayerEntity player, String warp) {
         if (warp == "lobby") {
             player.teleport(lobby.x,lobby.y,lobby.z);
-            player.setYaw(lobby.Yaw);
+            player.setHeadYaw(lobby.Yaw);
             player.setPitch(lobby.Pitch);
         } else if (warp == "arena") {
             player.teleport(arena.x, arena.y, arena.z);

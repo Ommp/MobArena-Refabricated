@@ -18,24 +18,24 @@ public class Database {
                     "name varchar, " +
                     "minPlayers int DEFAULT 1, " +
                     "maxPlayers int DEFAULT 5, " +
-                    "lobby_x float," +
-                    "lobby_y float," +
-                    "lobby_z float," +
+                    "lobby_x double," +
+                    "lobby_y double," +
+                    "lobby_z double," +
                     "lobby_yaw float," +
                     "lobby_pitch float," +
-                    "arena_x float," +
-                    "arena_y float," +
-                    "arena_z float," +
+                    "arena_x double," +
+                    "arena_y double," +
+                    "arena_z double," +
                     "arena_yaw float," +
                     "arena_pitch float," +
-                    "spec_x float," +
-                    "spec_y float," +
-                    "spec_z float," +
+                    "spec_x double," +
+                    "spec_y double," +
+                    "spec_z double," +
                     "spec_yaw float," +
                     "spec_pitch float," +
-                    "exit_x float," +
-                    "exit_y float," +
-                    "exit_z float," +
+                    "exit_x double," +
+                    "exit_y double," +
+                    "exit_z double," +
                     "exit_yaw float," +
                     "exit_pitch float," +
                     "p1_x int," +
@@ -111,15 +111,15 @@ public class Database {
             throw new RuntimeException(e);
         }
     }
-    public void updateLobbyWarp(String name, float x, float y, float z, float yaw, float pitch) {
+    public void updateLobbyWarp(String name, double x, double y, double z, float yaw, float pitch) {
         String sql = "UPDATE arenas SET lobby_x=?, lobby_y=?, lobby_z=?, lobby_yaw=?, lobby_pitch=? WHERE name=?";
         PreparedStatement statement;
 
         try {
             statement = con.prepareStatement(sql);
-            statement.setFloat(1, x);
-            statement.setFloat(2, y);
-            statement.setFloat(3, z);
+            statement.setDouble(1, x);
+            statement.setDouble(2, y);
+            statement.setDouble(3, z);
             statement.setFloat(4, yaw);
             statement.setFloat(5, pitch);
             statement.setString(6, name);
@@ -128,15 +128,15 @@ public class Database {
             throw new RuntimeException(e);
         }
     }
-    public void updateArenaWarp(String name, float x, float y, float z, float yaw, float pitch) {
+    public void updateArenaWarp(String name, double x, double y, double z, float yaw, float pitch) {
         String sql = "UPDATE arenas SET arena_x=?, arena_y=?, arena_z=?, arena_yaw=?, arena_pitch=? WHERE name=?";
         PreparedStatement statement;
 
         try {
             statement = con.prepareStatement(sql);
-            statement.setFloat(1, x);
-            statement.setFloat(2, y);
-            statement.setFloat(3, z);
+            statement.setDouble(1, x);
+            statement.setDouble(2, y);
+            statement.setDouble(3, z);
             statement.setFloat(4, yaw);
             statement.setFloat(5, pitch);
             statement.setString(6, name);
@@ -145,15 +145,15 @@ public class Database {
             throw new RuntimeException(e);
         }
     }
-    public void updateExitWarp(String name, float x, float y, float z, float yaw, float pitch) {
+    public void updateExitWarp(String name, double x, double y, double z, float yaw, float pitch) {
         String sql = "UPDATE arenas SET exit_x=?, exit_y=?, exit_z=?, exit_yaw=?, exit_pitch=? WHERE name=?";
         PreparedStatement statement;
 
         try {
             statement = con.prepareStatement(sql);
-            statement.setFloat(1, x);
-            statement.setFloat(2, y);
-            statement.setFloat(3, z);
+            statement.setDouble(1, x);
+            statement.setDouble(2, y);
+            statement.setDouble(3, z);
             statement.setFloat(4, yaw);
             statement.setFloat(5, pitch);
             statement.setString(6, name);
@@ -162,15 +162,15 @@ public class Database {
             throw new RuntimeException(e);
         }
     }
-    public void updateSpecWarp(String name, float x, float y, float z, float yaw, float pitch) {
+    public void updateSpecWarp(String name, double x, double y, double z, float yaw, float pitch) {
         String sql = "UPDATE arenas SET spec_x=?, spec_y=?, spec_z=?, spec_yaw=?, spec_pitch=? WHERE name=?";
         PreparedStatement statement;
 
         try {
             statement = con.prepareStatement(sql);
-            statement.setFloat(1, x);
-            statement.setFloat(2, y);
-            statement.setFloat(3, z);
+            statement.setDouble(1, x);
+            statement.setDouble(2, y);
+            statement.setDouble(3, z);
             statement.setFloat(4, yaw);
             statement.setFloat(5, pitch);
             statement.setString(6, name);
@@ -219,10 +219,10 @@ public class Database {
             ResultSet rs = statement.executeQuery();
 
             return new Arena(rs.getString("name"), rs.getInt("minPlayers"),rs.getInt("maxPlayers"),
-                    new Warp(rs.getFloat("lobby_x"), rs.getFloat("lobby_y"),rs.getFloat("lobby_z"),rs.getFloat("lobby_yaw"), rs.getFloat("lobby_pitch")),
-                    new Warp(rs.getFloat("arena_x"), rs.getFloat("arena_y"), rs.getFloat("arena_z"), rs.getFloat("arena_yaw"), rs.getFloat("arena_pitch")),
-                    new Warp(rs.getFloat("spec_x"), rs.getFloat("spec_y"), rs.getFloat("spec_z"), rs.getFloat("spec_yaw"), rs.getFloat("spec_pitch")),
-                    new Warp(rs.getFloat("exit_x"), rs.getFloat("exit_y"), rs.getFloat("exit_z"), rs.getFloat("exit_yaw"), rs.getFloat("exit_pitch")),
+                    new Warp(rs.getDouble("lobby_x"), rs.getDouble("lobby_y"),rs.getDouble("lobby_z"),rs.getFloat("lobby_yaw"), rs.getFloat("lobby_pitch")),
+                    new Warp(rs.getDouble("arena_x"), rs.getDouble("arena_y"), rs.getDouble("arena_z"), rs.getFloat("arena_yaw"), rs.getFloat("arena_pitch")),
+                    new Warp(rs.getDouble("spec_x"), rs.getDouble("spec_y"), rs.getDouble("spec_z"), rs.getFloat("spec_yaw"), rs.getFloat("spec_pitch")),
+                    new Warp(rs.getDouble("exit_x"), rs.getDouble("exit_y"), rs.getDouble("exit_z"), rs.getFloat("exit_yaw"), rs.getFloat("exit_pitch")),
                     new ArenaPoint(rs.getInt("p1_x"), rs.getInt("p1_y"), rs.getInt("p1_z")),
                     new ArenaPoint(rs.getInt("p2_x"), rs.getInt("p2_y"), rs.getInt("p2_z")),
                     rs.getInt("isEnabled"));
@@ -241,10 +241,10 @@ public class Database {
             ResultSet rs = statement.executeQuery();
             while (rs.next()){
                 arena = new Arena(rs.getString("name"), rs.getInt("minPlayers"),rs.getInt("maxPlayers"),
-                        new Warp(rs.getFloat("lobby_x"), rs.getFloat("lobby_y"),rs.getFloat("lobby_z"),rs.getFloat("lobby_yaw"), rs.getFloat("lobby_pitch")),
-                        new Warp(rs.getFloat("arena_x"), rs.getFloat("arena_y"), rs.getFloat("arena_z"), rs.getFloat("arena_yaw"), rs.getFloat("arena_pitch")),
-                        new Warp(rs.getFloat("spec_x"), rs.getFloat("spec_y"), rs.getFloat("spec_z"), rs.getFloat("spec_yaw"), rs.getFloat("spec_pitch")),
-                        new Warp(rs.getFloat("exit_x"), rs.getFloat("exit_y"), rs.getFloat("exit_z"), rs.getFloat("exit_yaw"), rs.getFloat("exit_pitch")),
+                        new Warp(rs.getDouble("lobby_x"), rs.getDouble("lobby_y"),rs.getDouble("lobby_z"),rs.getFloat("lobby_yaw"), rs.getFloat("lobby_pitch")),
+                        new Warp(rs.getDouble("arena_x"), rs.getDouble("arena_y"), rs.getDouble("arena_z"), rs.getFloat("arena_yaw"), rs.getFloat("arena_pitch")),
+                        new Warp(rs.getDouble("spec_x"), rs.getDouble("spec_y"), rs.getDouble("spec_z"), rs.getFloat("spec_yaw"), rs.getFloat("spec_pitch")),
+                        new Warp(rs.getDouble("exit_x"), rs.getDouble("exit_y"), rs.getDouble("exit_z"), rs.getFloat("exit_yaw"), rs.getFloat("exit_pitch")),
                         new ArenaPoint(rs.getInt("p1_x"), rs.getInt("p1_y"), rs.getInt("p1_z")),
                         new ArenaPoint(rs.getInt("p2_x"), rs.getInt("p2_y"), rs.getInt("p2_z")),
                         rs.getInt("isEnabled"));

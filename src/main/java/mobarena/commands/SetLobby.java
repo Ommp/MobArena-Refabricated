@@ -18,7 +18,7 @@ public class SetLobby implements Command{
         ServerCommandSource source = context.getSource();
         ServerPlayerEntity player = source.getPlayer();
 
-        MobArena.database.updateLobbyWarp(name, player.getBlockX(), player.getBlockY(), player.getBlockZ(), player.getYaw(), player.getPitch());
+        MobArena.database.updateLobbyWarp(name, player.getX(), player.getY(), player.getZ(), player.getYaw(), player.getPitch());
         player.sendMessage(new TranslatableText("mobarena.updatedwarp"), false);
         MobArena.arenaManager.reloadArena(name);
         return 1;

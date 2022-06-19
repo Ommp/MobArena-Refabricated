@@ -5,9 +5,9 @@ public class Warp {
     public float Pitch;
     public float Yaw;
 
-    public float x,y,z;
+    public double x,y,z;
 
-    public Warp(float x, float y, float z, float pitch, float yaw) {
+    public Warp(double x, double y, double z, float pitch, float yaw) {
         this.x = x;
         this.y = y;
         this.z = z;
