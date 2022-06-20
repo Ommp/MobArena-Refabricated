@@ -57,7 +57,8 @@ public class MobArena implements ModInitializer {
 				new Ready(),
 				new SetP1(),
 				new SetP2(),
-				new SetWorld()
+				new SetWorld(),
+				new AddMobSpawn()
 		};
 
 		for (Command command : commands) {

@@ -12,5 +12,6 @@
   "mobarena.leftarena": "You left the arena.",
   "mobarena.allplayersready": "All players are ready! Good luck!",
   "mobarena.updatedpos": "Successfully updated position.",
-  "mobarena.updatedworld": "Successfully updated world."
+  "mobarena.updatedworld": "Successfully updated world.",
+  "mobarena.addedmobspawnpoint": "Successfully added mob spawn point."
 }

@@ -57,9 +57,15 @@ public class Database {
                     "player varchar UNIQUE," +
                     "score int," +
                     "deaths int)";
+            String mobSpawnpointsTable = "CREATE TABLE IF NOT EXISTS mobspawnpoints(" +
+                    "arena varchar," +
+                    "x double," +
+                    "y double," +
+                    "z double," +
+                    "FOREIGN KEY(arena) REFERENCES arenas(name) ON DELETE CASCADE)";
 
             Statement statement = con.createStatement();
-            String[] tables = new String[] {arenaTable, classesTable, scoreboardTable};
+            String[] tables = new String[] {arenaTable, classesTable, scoreboardTable, mobSpawnpointsTable};
             for (String table : tables) {
                 statement.execute(table);
             }
@@ -238,7 +244,8 @@ public class Database {
                     new Warp(rs.getDouble("exit_x"), rs.getDouble("exit_y"), rs.getDouble("exit_z"), rs.getFloat("exit_yaw"), rs.getFloat("exit_pitch")),
                     new ArenaPoint(rs.getInt("p1_x"), rs.getInt("p1_y"), rs.getInt("p1_z")),
                     new ArenaPoint(rs.getInt("p2_x"), rs.getInt("p2_y"), rs.getInt("p2_z")),
-                    rs.getInt("isEnabled"));
+                    rs.getInt("isEnabled"),
+                    rs.getString("dimension"));
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -260,12 +267,29 @@ public class Database {
                         new Warp(rs.getDouble("exit_x"), rs.getDouble("exit_y"), rs.getDouble("exit_z"), rs.getFloat("exit_yaw"), rs.getFloat("exit_pitch")),
                         new ArenaPoint(rs.getInt("p1_x"), rs.getInt("p1_y"), rs.getInt("p1_z")),
                         new ArenaPoint(rs.getInt("p2_x"), rs.getInt("p2_y"), rs.getInt("p2_z")),
-                        rs.getInt("isEnabled"));
+                        rs.getInt("isEnabled"),
+                        rs.getString("dimension"));
                 arenas.add(arena);
             }
         } catch (SQLException e){
             throw new RuntimeException(e);
         }
         return arenas;
+    }
+
+    public void addMobSpawnPoint(String arena, double x, double y, double z) {
+        String sql = "INSERT OR IGNORE INTO mobspawnpoints(arena, x, y, z) VALUES (?,?,?,?)";
+        PreparedStatement statement;
+
+        try {
+            statement = con.prepareStatement(sql);
+            statement.setString(1, arena);
+            statement.setDouble(2, x);
+            statement.setDouble(3, y);
+            statement.setDouble(4, z);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

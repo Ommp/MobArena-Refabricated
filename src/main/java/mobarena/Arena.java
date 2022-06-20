@@ -12,8 +12,7 @@ import java.util.Set;
 public class Arena {
 
     public String name;
-    public String worldName;
-
+    public String dimensionName;
     private boolean isRunning, isProtected, inEditMode;
     public int isEnabled;
 
@@ -98,7 +97,6 @@ public class Arena {
             //Why are yaw and pitch not working?
             player.setHeadYaw(lobby.Yaw);
             player.setPitch(lobby.Pitch);
-            player.headYaw = lobby.Yaw;
         } else if (warp == "arena") {
             player.teleport(arena.x, arena.y, arena.z);
         } else if (warp == "spec") {
@@ -123,7 +121,7 @@ public class Arena {
         }
     }
 
-    public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, ArenaPoint p1, ArenaPoint p2, int isEnabled) {
+    public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, ArenaPoint p1, ArenaPoint p2, int isEnabled, String dimensionName) {
         this.name = name;
         this.minPlayers = minPlayers;
         this.maxPlayers = maxPlayers;
@@ -134,5 +132,6 @@ public class Arena {
         this.p1 = p1;
         this.p2 = p2;
         this.isEnabled = isEnabled;
+        this.dimensionName = dimensionName;
     }
 }
