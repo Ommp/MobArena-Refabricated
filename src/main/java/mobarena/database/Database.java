@@ -45,8 +45,7 @@ public class Database {
                     "p2_y int," +
                     "p2_z int," +
                     "isEnabled int DEFAULT 1," +
-                    "worldName varchar," +
-                    "worldID varchar," +
+                    "dimension varchar," +
                     "PRIMARY KEY (name))";
             String classesTable = "CREATE TABLE IF NOT EXISTS classes(" +
                     "classname varchar UNIQUE," +
@@ -174,6 +173,20 @@ public class Database {
             statement.setFloat(4, yaw);
             statement.setFloat(5, pitch);
             statement.setString(6, name);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updateWorld(String dimension, String arenaName) {
+        String sql = "UPDATE arenas SET dimension=? WHERE name=?";
+        PreparedStatement statement;
+
+        try {
+            statement = con.prepareStatement(sql);
+            statement.setString(1, dimension);
+            statement.setString(2, arenaName);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

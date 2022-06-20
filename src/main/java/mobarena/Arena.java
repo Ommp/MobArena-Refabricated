@@ -98,6 +98,7 @@ public class Arena {
             //Why are yaw and pitch not working?
             player.setHeadYaw(lobby.Yaw);
             player.setPitch(lobby.Pitch);
+            player.headYaw = lobby.Yaw;
         } else if (warp == "arena") {
             player.teleport(arena.x, arena.y, arena.z);
         } else if (warp == "spec") {
