@@ -4,7 +4,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class ArenaManager {
 
@@ -40,6 +39,10 @@ public class ArenaManager {
         String name = activePlayers.get(player);
         activePlayers.remove(player);
         arenas.get(name).removePlayerFromArena(player);
+    }
+
+    public String getArenaFromPlayer(ServerPlayerEntity player) {
+        return activePlayers.get(player);
     }
 
     //TODO add logic that checks if an arena contains all REQUIRED data to run

@@ -2,6 +2,7 @@ package mobarena;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.HashMap;
@@ -57,7 +58,6 @@ public class Arena {
     }
 
     public void addReadyLobbyPlayer(ServerPlayerEntity player) {
-        lobbyPlayers.remove(player);
         readyLobbyPlayers.add(player);
     }
 
@@ -95,6 +95,7 @@ public class Arena {
     public void transportPlayer(ServerPlayerEntity player, String warp) {
         if (warp == "lobby") {
             player.teleport(lobby.x,lobby.y,lobby.z);
+            //Why are yaw and pitch not working?
             player.setHeadYaw(lobby.Yaw);
             player.setPitch(lobby.Pitch);
         } else if (warp == "arena") {
@@ -105,6 +106,20 @@ public class Arena {
             player.teleport(exit.x, exit.y, exit.z);
         }
 
+    }
+
+    public void transportAllToLobby() {
+        if (readyLobbyPlayers.size() == lobbyPlayers.size() && lobbyPlayers.size() != 0 ) {
+            for (ServerPlayerEntity player : lobbyPlayers) {
+                player.sendMessage(new TranslatableText("mobarena.allplayersready"), false);
+                player.teleport(arena.x, arena.y,arena.z);
+                player.setYaw(arena.Yaw);
+                player.setPitch(arena.Pitch);
+                arenaPlayers.add(player);
+            }
+            lobbyPlayers.clear();
+            readyLobbyPlayers.clear();
+        }
     }
 
     public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, ArenaPoint p1, ArenaPoint p2, int isEnabled) {

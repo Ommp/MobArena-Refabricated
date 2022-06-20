@@ -51,14 +51,15 @@ public class MobArena implements ModInitializer {
 				new JoinArena(),
 				new SetLobby(),
 				new SetArena(),
-				new LeaveArena()
+				new LeaveArena(),
+				new SetExit(),
+				new SetSpec(),
+				new Ready()
 		};
 
 		for (Command command : commands) {
 			mobarena.addChild(command.getNode());
 			alias.addChild(command.getNode());
 		}
-
 	}
-
 }

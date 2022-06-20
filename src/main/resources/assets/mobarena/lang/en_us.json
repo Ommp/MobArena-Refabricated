@@ -9,5 +9,6 @@
   "mobarena.alreadyjoined": "You have already joined this arena. Type \"/ma leave\" to leave",
   "mobarena.alreadyinanotherarena": "You are already in another arena!",
   "mobarena.updatedwarp": "Updated warp",
-  "mobarena.leftarena": "You left the arena."
+  "mobarena.leftarena": "You left the arena.",
+  "mobarena.allplayersready": "All players are ready! Good luck!"
 }
