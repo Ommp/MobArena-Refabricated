@@ -6,6 +6,8 @@ import mobarena.commands.*;
 import mobarena.database.Database;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import org.apache.logging.log4j.Level;
@@ -18,6 +20,7 @@ public class MobArena implements ModInitializer {
 	public static Database database = new Database();
 
 	public static ArenaManager arenaManager = new ArenaManager();
+	public static MinecraftServer serverinstance;
 
 	public static void log(Level level, String message) {
 		final String logPrefix = "[MobArena]: ";
@@ -31,6 +34,10 @@ public class MobArena implements ModInitializer {
 		database.connectToDB();
 
 		CommandRegistrationCallback.EVENT.register(MobArena::registerCommands);
+
+		ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
+			serverinstance = server.getOverworld().getServer();
+		});
 
 	}
 

@@ -3,16 +3,17 @@ package mobarena;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 
 public class Arena {
 
     public String name;
     public String dimensionName;
+    public ServerWorld world;
     private boolean isRunning, isProtected, inEditMode;
     public int isEnabled;
 
@@ -93,27 +94,22 @@ public class Arena {
 
     public void transportPlayer(ServerPlayerEntity player, String warp) {
         if (warp == "lobby") {
-            player.teleport(lobby.x,lobby.y,lobby.z);
-            //Why are yaw and pitch not working?
-            player.setHeadYaw(lobby.Yaw);
-            player.setPitch(lobby.Pitch);
+            player.teleport(world, lobby.x,lobby.y,lobby.z, lobby.Yaw, lobby.Pitch);
         } else if (warp == "arena") {
-            player.teleport(arena.x, arena.y, arena.z);
+            player.teleport(world, arena.x, arena.y, arena.z, arena.Yaw, arena.Pitch);
         } else if (warp == "spec") {
-            player.teleport(spectator.x, spectator.y, spectator.z);
+            player.teleport(world, spectator.x, spectator.y, spectator.z, spectator.Yaw, spectator.Pitch);
         } else if (warp == "exit") {
-            player.teleport(exit.x, exit.y, exit.z);
+            player.teleport(world, exit.x, exit.y, exit.z, exit.Yaw, exit.Pitch);
         }
 
     }
 
-    public void transportAllToLobby() {
+    public void transportAllFromLobby() {
         if (readyLobbyPlayers.size() == lobbyPlayers.size() && lobbyPlayers.size() != 0 ) {
             for (ServerPlayerEntity player : lobbyPlayers) {
                 player.sendMessage(new TranslatableText("mobarena.allplayersready"), false);
                 player.teleport(arena.x, arena.y,arena.z);
-                player.setYaw(arena.Yaw);
-                player.setPitch(arena.Pitch);
                 arenaPlayers.add(player);
             }
             lobbyPlayers.clear();
@@ -133,5 +129,15 @@ public class Arena {
         this.p2 = p2;
         this.isEnabled = isEnabled;
         this.dimensionName = dimensionName;
+        this.world = setWorld();
+    }
+
+    public ServerWorld setWorld(){
+        if (!(dimensionName == null) && !dimensionName.isEmpty()) {
+            world = MobArena.serverinstance.getWorld(RegistryKey.of(Registry.WORLD_KEY, new Identifier(dimensionName)));
+        } else {
+            world = MobArena.serverinstance.getWorld(RegistryKey.of(Registry.WORLD_KEY, new Identifier("minecraft:overworld")));
+        }
+        return world;
     }
 }
