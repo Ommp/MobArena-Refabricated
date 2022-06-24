@@ -3,6 +3,7 @@ package mobarena.database;
 import mobarena.Arena;
 import mobarena.ArenaPoint;
 import mobarena.Warp;
+import net.minecraft.util.math.Vec3i;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -288,6 +289,26 @@ public class Database {
             statement.setDouble(3, y);
             statement.setDouble(4, z);
             statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ArrayList<Vec3i> getMobSpawnPoints(String arena) {
+        String sql = "SELECT x,y,z FROM mobspawnpoints WHERE arena=? ";
+        PreparedStatement statement;
+        ArrayList<Vec3i> pointsList = new ArrayList<>();
+
+        try {
+            statement = con.prepareStatement(sql);
+            statement.setString(1, arena);
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                pointsList.add(new Vec3i(rs.getInt("x"), rs.getInt("y"), rs.getInt("z")));
+            }
+
+            return pointsList;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

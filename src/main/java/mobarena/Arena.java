@@ -1,12 +1,20 @@
 package mobarena;
 
+import net.minecraft.block.InfestedBlock;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.mob.SkeletonEntity;
+import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class Arena {
@@ -111,6 +119,7 @@ public class Arena {
                 player.sendMessage(new TranslatableText("mobarena.allplayersready"), false);
                 player.teleport(arena.x, arena.y,arena.z);
                 arenaPlayers.add(player);
+                spawnMob();
             }
             lobbyPlayers.clear();
             readyLobbyPlayers.clear();
@@ -130,6 +139,7 @@ public class Arena {
         this.isEnabled = isEnabled;
         this.dimensionName = dimensionName;
         this.world = setWorld();
+        this.mobSpawnPoints = setMobSpawnPoints();
     }
 
     public ServerWorld setWorld(){
@@ -139,5 +149,25 @@ public class Arena {
             world = MobArena.serverinstance.getWorld(RegistryKey.of(Registry.WORLD_KEY, new Identifier("minecraft:overworld")));
         }
         return world;
+    }
+
+    public ArrayList<Vec3i> mobSpawnPoints = new ArrayList<>();
+
+    public ArrayList<Vec3i> setMobSpawnPoints() {
+        ArrayList<Vec3i> pointsList;
+        pointsList = MobArena.database.getMobSpawnPoints(name);
+
+        //if mob spawn points table has no entries, set mob spawn points to be the same as the arena warp
+        if (pointsList.isEmpty()) {
+            pointsList.add(new Vec3i(arena.x, arena.y, arena.z));
+            return pointsList;
+        }
+        return pointsList;
+    }
+
+    public void spawnMob() {
+        SkeletonEntity skeletonEntity = (SkeletonEntity) EntityType.SKELETON.create(world);
+        skeletonEntity.teleport(mobSpawnPoints.get(0).getX(), mobSpawnPoints.get(0).getY(), mobSpawnPoints.get(0).getZ());
+        world.spawnEntity(skeletonEntity);
     }
 }
