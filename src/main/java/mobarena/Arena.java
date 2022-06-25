@@ -1,10 +1,8 @@
 package mobarena;
 
-import net.minecraft.block.InfestedBlock;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.SkeletonEntity;
-import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
@@ -16,6 +14,7 @@ import net.minecraft.util.registry.RegistryKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Random;
 
 public class Arena {
 
@@ -165,9 +164,21 @@ public class Arena {
         return pointsList;
     }
 
+    private int wave = 1;
+
+    ArrayList<LivingEntity> mobs = new ArrayList<>();
+
+
+    public void addMobs() {
+        SkeletonEntity skeleton = EntityType.SKELETON.create(world);
+        ZombieEntity zombie = EntityType.ZOMBIE.create(world);
+        mobs.add(skeleton);
+        mobs.add(zombie);
+    }
     public void spawnMob() {
-        SkeletonEntity skeletonEntity = (SkeletonEntity) EntityType.SKELETON.create(world);
-        skeletonEntity.teleport(mobSpawnPoints.get(0).getX(), mobSpawnPoints.get(0).getY(), mobSpawnPoints.get(0).getZ());
-        world.spawnEntity(skeletonEntity);
+        addMobs();
+        int randomEntity = new Random().nextInt(mobs.size());
+        world.spawnEntity(mobs.get(randomEntity));
+        mobs.get(randomEntity).teleport(mobSpawnPoints.get(0).getX(), mobSpawnPoints.get(0).getY(), mobSpawnPoints.get(0).getZ());
     }
 }
