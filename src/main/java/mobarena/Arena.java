@@ -118,7 +118,8 @@ public class Arena {
                 player.sendMessage(new TranslatableText("mobarena.allplayersready"), false);
                 player.teleport(arena.x, arena.y,arena.z);
                 arenaPlayers.add(player);
-                spawnMob();
+                addMobs();
+                startWave();
             }
             lobbyPlayers.clear();
             readyLobbyPlayers.clear();
@@ -165,6 +166,7 @@ public class Arena {
     }
 
     private int wave = 1;
+    private double waveMobs;
 
     ArrayList<LivingEntity> mobs = new ArrayList<>();
 
@@ -172,13 +174,24 @@ public class Arena {
     public void addMobs() {
         SkeletonEntity skeleton = EntityType.SKELETON.create(world);
         ZombieEntity zombie = EntityType.ZOMBIE.create(world);
+        SpiderEntity spider = EntityType.SPIDER.create(world);
         mobs.add(skeleton);
         mobs.add(zombie);
+        mobs.add(spider);
     }
     public void spawnMob() {
-        addMobs();
         int randomEntity = new Random().nextInt(mobs.size());
+        int randomSpawnPoint = new Random().nextInt(mobSpawnPoints.size());
         world.spawnEntity(mobs.get(randomEntity));
-        mobs.get(randomEntity).teleport(mobSpawnPoints.get(0).getX(), mobSpawnPoints.get(0).getY(), mobSpawnPoints.get(0).getZ());
+        mobs.get(randomEntity).teleport(mobSpawnPoints.get(randomSpawnPoint).getX(), mobSpawnPoints.get(randomSpawnPoint).getY(), mobSpawnPoints.get(randomSpawnPoint).getZ());
+    }
+
+    public void startWave() {
+        waveMobs = Math.round(wave * 1.2 + 3 );
+
+        for (int i = 0; i <= waveMobs; i++) {
+            spawnMob();
+        }
+        wave++;
     }
 }
