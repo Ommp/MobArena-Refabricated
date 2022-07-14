@@ -11,10 +11,10 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Arena {
 
@@ -45,6 +45,7 @@ public class Arena {
 
     public void startArena() {
         isRunning = true;
+        startWave();
     }
 
     public void stopArena() {
@@ -118,8 +119,8 @@ public class Arena {
                 player.sendMessage(new TranslatableText("mobarena.allplayersready"), false);
                 player.teleport(arena.x, arena.y,arena.z);
                 arenaPlayers.add(player);
-                addMobs();
                 startWave();
+                startScheduler();
             }
             lobbyPlayers.clear();
             readyLobbyPlayers.clear();
@@ -165,19 +166,25 @@ public class Arena {
         return pointsList;
     }
 
-    private int wave = 1;
+    private int currentWave = 0;
+    private int finalWave;
     private double waveMobs;
+
+    private final Timer timer = new Timer();
 
     ArrayList<LivingEntity> mobs = new ArrayList<>();
 
 
-    public void addMobs() {
-        SkeletonEntity skeleton = EntityType.SKELETON.create(world);
+    public void populateMobs() {
+        mobs.clear();
         ZombieEntity zombie = EntityType.ZOMBIE.create(world);
         SpiderEntity spider = EntityType.SPIDER.create(world);
-        mobs.add(skeleton);
+        PiglinBruteEntity piglinBrute = EntityType.PIGLIN_BRUTE.create(world);
+        HuskEntity husk = EntityType.HUSK.create(world);
+        mobs.add(piglinBrute);
         mobs.add(zombie);
         mobs.add(spider);
+        mobs.add(husk);
     }
     public void spawnMob() {
         int randomEntity = new Random().nextInt(mobs.size());
@@ -187,11 +194,23 @@ public class Arena {
     }
 
     public void startWave() {
-        waveMobs = Math.round(wave * 1.2 + 3 );
+        populateMobs();
+        currentWave++;
+        waveMobs = Math.round(currentWave * 1.2 + 3 );
 
         for (int i = 0; i <= waveMobs; i++) {
             spawnMob();
         }
-        wave++;
+    }
+
+    public void startScheduler() {
+        Runnable helloRunnable = new Runnable() {
+            public void run() {
+                    startWave();
+            }
+        };
+
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleAtFixedRate(helloRunnable, 0, 10, TimeUnit.SECONDS);
     }
 }
