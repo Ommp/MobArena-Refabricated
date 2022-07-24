@@ -16,7 +16,6 @@ public class Ready implements Command{
 
             String name = MobArena.arenaManager.getArenaFromPlayer(player);
             MobArena.arenaManager.arenas.get(name).addReadyLobbyPlayer(player);
-            MobArena.arenaManager.arenas.get(name).transportAllFromLobby();
             return 1;
     }
 

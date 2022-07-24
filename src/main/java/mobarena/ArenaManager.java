@@ -35,10 +35,16 @@ public class ArenaManager {
         activePlayers.put(player, arenaName);
     }
 
-    public void removeActivePlayer(ServerPlayerEntity player) {
-        String name = activePlayers.get(player);
+    public void removeActivePlayer(ServerPlayerEntity player, String arenaName) {
         activePlayers.remove(player);
-        arenas.get(name).removePlayerFromArena(player);
+        arenas.get(arenaName).removePlayerFromArena(player);
+        if (arenas.get(arenaName).getAnyArenaPlayerSize() == 0) {
+            clearArena(arenaName);
+        }
+    }
+
+    public void clearArena(String arenaName) {
+        arenas.remove(arenaName);
     }
 
     public String getArenaFromPlayer(ServerPlayerEntity player) {

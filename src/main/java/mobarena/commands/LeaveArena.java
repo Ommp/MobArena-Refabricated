@@ -14,11 +14,8 @@ public class LeaveArena implements Command{
         ServerCommandSource source = context.getSource();
         ServerPlayerEntity player = source.getPlayer();
 
-
         String name = MobArena.arenaManager.getArenaFromPlayer(player);
-        MobArena.arenaManager.arenas.get(name).transportPlayer(player, "exit");
-        MobArena.arenaManager.removeActivePlayer(player);
-
+        MobArena.arenaManager.arenas.get(name).leavePlayer(player);
         player.sendMessage(new TranslatableText("mobarena.leftarena"), false);
         return 1;
     }

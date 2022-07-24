@@ -10,7 +10,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
 
-public class JoinArena implements Command{
+public class SpectateArena implements Command{
     private int run(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         String name = StringArgumentType.getString(context, "name");
 
@@ -28,10 +28,12 @@ public class JoinArena implements Command{
                 player.sendMessage(new TranslatableText("mobarena.alreadyinanotherarena"), false);
                 return 0;
             }
-                MobArena.arenaManager.arenas.get(name).joinLobby(player);
-                player.sendMessage(new TranslatableText("mobarena.joinedarenalobby", name), false);
-                return 1;
-            }
+
+            MobArena.arenaManager.addActivePlayer(player, name);
+            MobArena.arenaManager.arenas.get(name).transportPlayer(player, "spec");
+            player.sendMessage(new TranslatableText("mobarena.joinedspec", name), false);
+            return 1;
+        }
 
         else {
             player.sendMessage(new TranslatableText("mobarena.arenanotfound", name), false);
@@ -41,7 +43,7 @@ public class JoinArena implements Command{
 
     public LiteralCommandNode<ServerCommandSource> getNode() {
         return CommandManager
-                .literal("join")
+                .literal("spec")
                 .then(
                         CommandManager.argument("name", StringArgumentType.greedyString()).executes(this::run)
                 )
