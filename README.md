@@ -2,5 +2,23 @@
 
 ## About
 
-An attempt at partly recreating the Spigot plugin MobArena in Fabric. The main purpose of this mod is to (at some point) have an arena where you can fight monsters, similar to but not necessarily exactly like MobArena. 
-It is currently not in a playable state as most features haven't been implemented yet.
+This mod allows players to fight against monsters that come in waves in an arena.
+Currently, the main game loop somewhat works meaning that you can create and join arenas and defeat monsters, but many important features are missing.
+
+### Features
+- [x] Create and set up arenas
+- [x] Join arenas
+- [x] Mob spawning and waves
+- [ ] Wave types (Swarm, Boss)
+- [ ] Classes (such as Archer and Warrior)
+- [ ] Scoreboard
+  - [ ] Command to check an arena's scoreboard
+  - [ ] Scoreboards on signs
+- [ ] Bosses
+- [ ] Support for modded mobs
+- [ ] Configuration
+  - [ ] Difficulty
+  - [ ] Classes
+  - [ ] Waves
+  - [ ] Allowing only certain mobs to spawn
+  - [ ] Support to enable or disable mods inside an arena
