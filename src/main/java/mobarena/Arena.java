@@ -9,14 +9,10 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 public class Arena {
 
     public String name;
-    public String dimensionName;
+    private String dimensionName;
     private ServerWorld world;
     private boolean isRunning, isProtected, inEditMode;
     public int isEnabled;
@@ -29,20 +25,19 @@ public class Arena {
 
     private final HashSet<ServerPlayerEntity> lobbyPlayers = new HashSet<ServerPlayerEntity>();
 
-    public Warp arena, lobby, exit, spectator;
+    private Warp arena, lobby, exit, spectator;
 
-    public int minPlayers;
-    public int maxPlayers;
+    private int minPlayers;
+    private int maxPlayers;
 
-    ArenaPoint p1, p2;
+    private ArenaPoint p1, p2;
 
     public Arena(String name) {
         this.name = name;
     }
 
-    ScheduledExecutorService executor;
-    Wave wave = new Wave();
-    Spawner spawner = new Spawner();
+    private Wave wave = new Wave();
+    public Spawner spawner;
 
     public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, ArenaPoint p1, ArenaPoint p2, int isEnabled, String dimensionName) {
         this.name = name;
@@ -58,6 +53,7 @@ public class Arena {
         this.dimensionName = dimensionName;
         this.world = setWorld();
         this.mobSpawnPoints = setMobSpawnPoints();
+        this.spawner = new Spawner(name, world);
     }
 
     public int getAnyArenaPlayerSize() {
@@ -90,27 +86,15 @@ public class Arena {
         }
         return pointsList;
     }
-
-    Runnable waveRunnable = () -> {
-        if (wave.isFinalWave()) {
-            stopArena();
-        } else {
-            wave.setWaveType(WaveType.DEFAULT);
-            wave.startWave();
-
-            spawner.addPotentialMobs();
-            spawner.prepareMobs(name, wave.getMobsToSpawn(), arena.x, arena.y, arena.z);
-        }
-    };
     public void startArena() {
         isRunning = true;
 
-        executor = Executors.newScheduledThreadPool(1);
-        executor.scheduleAtFixedRate(waveRunnable, 0, 10, TimeUnit.SECONDS);
+        wave.setWaveType(WaveType.DEFAULT);
+        wave.startWave();
+        spawner.startSpawner(wave.getMobsToSpawn());
     }
 
     public void stopArena() {
-        executor.shutdownNow();
         isRunning = false;
         cleanUpPlayers();
     }
@@ -200,4 +184,21 @@ public class Arena {
             readyLobbyPlayers.clear();
             startArena();
         }
+
+    public Vec3i getRandomSpawnPoint() {
+        int index = (int)(Math.random() * mobSpawnPoints.size());
+        return new Vec3i(mobSpawnPoints.get(index).getX(), mobSpawnPoints.get(index).getY(), mobSpawnPoints.get(index).getZ());
+    }
+
+    public void countDeadMobs() {
+        spawner.count();
+        System.out.println(spawner.getDeadMonsters());
+        System.out.println(wave.getMobsToSpawn());
+        if (spawner.getDeadMonsters() == wave.getMobsToSpawn()) {
+            System.out.println("started new wave");
+            wave.startWave();
+            spawner.startSpawner(wave.getMobsToSpawn());
+            spawner.resetDeadMonsters();
+        }
+    }
 }

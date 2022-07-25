@@ -3,26 +3,26 @@ package mobarena;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.*;
 import net.minecraft.server.world.ServerWorld;
-import org.apache.logging.log4j.Level;
+import net.minecraft.util.math.Vec3i;
 
 import java.util.*;
 
 public class Spawner {
-
     private ArrayList<EntityType> potentialMonsters = new ArrayList<>();
-    ArrayList<HostileEntity> monsters = new ArrayList<>();
+    private ArrayList<HostileEntity> monsters = new ArrayList<>();
+
+    private int deadMonsters;
+    private String arenaName;
     private ServerWorld world;
 
-    public void addPotentialMobs() {
+    private void prepareSpawner() {
         potentialMonsters.add(EntityType.ZOMBIE);
         potentialMonsters.add(EntityType.HUSK);
         potentialMonsters.add(EntityType.BLAZE);
         potentialMonsters.add(EntityType.SPIDER);
     }
 
-    public void prepareMobs(String arenaName, int mobsToSpawn, double x, double y, double z) {
-        world = MobArena.arenaManager.arenas.get(arenaName).getWorld();
-
+    public void startSpawner(int mobsToSpawn) {
         monsters.clear();
 
         for (int i = 0; i < mobsToSpawn; i++) {
@@ -39,24 +39,38 @@ public class Spawner {
             else if (potentialMonsters.get(index) == EntityType.BLAZE) {
                 monsters.add(new BlazeEntity(EntityType.BLAZE, world));
             }
-            MobArena.log(Level.INFO, String.valueOf(potentialMonsters.get(i)));
         }
+        spawnMobs();
+    }
 
-        MobArena.log(Level.INFO, String.valueOf(monsters.size()));
-
+    public void spawnMobs(){
         for (HostileEntity entity: monsters) {
-            MobArena.log(Level.INFO, String.valueOf(entity.getUuid()));
-            entity.updatePosition(x, y, z);
-
+            Vec3i spawnPoint = MobArena.arenaManager.arenas.get(arenaName).getRandomSpawnPoint();
+            MobArena.arenaManager.connectMobToArena(entity.getUuidAsString(), arenaName);
+            entity.updatePosition(spawnPoint.getX(), spawnPoint.getY(), spawnPoint.getZ());
             world.spawnEntity(entity);
         }
-
-
-        MobArena.log(Level.INFO, "finished wave.");
-
     }
 
     public ArrayList<HostileEntity> getMonsters() {
         return monsters;
+    }
+
+    public Spawner(String arenaName, ServerWorld world) {
+        this.arenaName = arenaName;
+        this.world = world;
+        prepareSpawner();
+    }
+
+    public void count() {
+        deadMonsters++;
+    }
+
+    public void resetDeadMonsters() {
+        deadMonsters = 0;
+    }
+
+    public int getDeadMonsters() {
+        return deadMonsters;
     }
 }

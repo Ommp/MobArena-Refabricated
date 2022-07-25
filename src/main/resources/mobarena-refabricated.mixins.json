@@ -1,0 +1,13 @@
+
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "mobarena.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "LivingEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

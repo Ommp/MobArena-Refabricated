@@ -10,6 +10,7 @@ public class ArenaManager {
     public HashMap<String, Arena> arenas = new HashMap<>();
     public HashMap<ServerPlayerEntity, String> activePlayers = new HashMap<>();
 
+    private HashMap<String, String> mobToArena = new HashMap<>();
     public void loadArena(String name) {
         if (!checkArenaExists(name)) {
             Arena arena = MobArena.database.getArenaByName(name);
@@ -65,5 +66,16 @@ public class ArenaManager {
             return true;
         }
         return false;
+    }
+
+    public void connectMobToArena(String UUID, String arenaName) {
+        mobToArena.put(UUID, arenaName);
+    }
+
+    public void tellArenaMobDeath(String UUID) {
+        if (mobToArena.containsKey(UUID)) {
+            String name = mobToArena.get(UUID);
+            arenas.get(mobToArena.get(UUID)).countDeadMobs();
+        }
     }
 }
