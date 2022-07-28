@@ -91,7 +91,9 @@ public class Arena {
 
         wave.setWaveType(WaveType.DEFAULT);
         wave.startWave();
-        spawner.startSpawner(wave.getMobsToSpawn());
+        spawner.addPotentialMonsters();
+        spawner.prepareSpawner(wave.getMobsToSpawn(), wave.getWaveType());
+        spawner.spawnMobs();
     }
 
     public void stopArena() {
@@ -192,13 +194,16 @@ public class Arena {
 
     public void countDeadMobs() {
         spawner.count();
-        System.out.println(spawner.getDeadMonsters());
-        System.out.println(wave.getMobsToSpawn());
         if (spawner.getDeadMonsters() == wave.getMobsToSpawn()) {
-            System.out.println("started new wave");
-            wave.startWave();
-            spawner.startSpawner(wave.getMobsToSpawn());
-            spawner.resetDeadMonsters();
+            startNextWave();
         }
+    }
+    public void startNextWave() {
+        wave.setRandomWaveType();
+        wave.startWave();
+        spawner.clearMonsters();
+        spawner.prepareSpawner(wave.getMobsToSpawn(), wave.getWaveType());
+        spawner.spawnMobs();
+        spawner.resetDeadMonsters();
     }
 }

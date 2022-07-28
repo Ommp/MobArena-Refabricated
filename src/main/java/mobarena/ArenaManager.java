@@ -44,6 +44,10 @@ public class ArenaManager {
         }
     }
 
+    public HashMap<ServerPlayerEntity, String> getActivePlayers() {
+        return activePlayers;
+    }
+
     public void clearArena(String arenaName) {
         arenas.remove(arenaName);
     }
@@ -78,4 +82,10 @@ public class ArenaManager {
             arenas.get(mobToArena.get(UUID)).countDeadMobs();
         }
     }
-}
+
+    public void tellArenaPlayerDeath(ServerPlayerEntity serverPlayerEntity){
+        if (activePlayers.containsKey(serverPlayerEntity)) {
+            arenas.get(activePlayers.get(serverPlayerEntity)).addDeadPlayer(serverPlayerEntity);
+            }
+        }
+    }

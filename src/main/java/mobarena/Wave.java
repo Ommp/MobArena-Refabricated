@@ -1,5 +1,7 @@
 package mobarena;
 
+import java.util.Random;
+
 public class Wave {
     private int currentWave = 0;
     private int finalWave = 10;
@@ -9,14 +11,16 @@ public class Wave {
 
     public void startWave() {
         nextWave();
-        mobsToSpawn = calculateMobsToSpawn();
+        calculateMobsToSpawn();
     }
 
-    private int calculateMobsToSpawn() {
+    private void calculateMobsToSpawn() {
         if (waveType == WaveType.SWARM) {
-            return (currentWave + 10);
-        } else {
-            return (currentWave + 3);
+            mobsToSpawn = currentWave + 10;
+        } else if (waveType == WaveType.DEFAULT) {
+            mobsToSpawn =  currentWave + 3;
+        } else if (waveType == WaveType.BOSS) {
+            mobsToSpawn = 1;
         }
     }
 
@@ -27,6 +31,17 @@ public class Wave {
     public void setWaveType(WaveType waveType) {
         this.waveType = waveType;
     }
+    public void setRandomWaveType() {
+        Random random = new Random();
+        int number = random.nextInt(100 - 1 + 1) + 1;
+        if (number <= 60) {
+            this.waveType = WaveType.DEFAULT;
+        } else if (number <= 85) {
+            this.waveType = WaveType.SWARM;
+        } else {
+            this.waveType = WaveType.BOSS;
+        }
+    }
 
     public int getMobsToSpawn() {
         return mobsToSpawn;
@@ -34,5 +49,13 @@ public class Wave {
 
     public boolean isFinalWave() {
         return finalWave == currentWave;
+    }
+
+    public int getCurrentWave() {
+        return currentWave;
+    }
+
+    public WaveType getWaveType() {
+        return waveType;
     }
 }
