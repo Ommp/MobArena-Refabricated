@@ -8,7 +8,9 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 public class Arena {
 
     public String name;
@@ -24,6 +26,10 @@ public class Arena {
     private final HashSet<ServerPlayerEntity> anyArenaPlayer = new HashSet<ServerPlayerEntity>();
 
     private final HashSet<ServerPlayerEntity> lobbyPlayers = new HashSet<ServerPlayerEntity>();
+
+
+
+    private final HashMap<String, ArenaClass> playerClasses = new HashMap<>();
 
     private Warp arena, lobby, exit, spectator;
 
@@ -107,9 +113,14 @@ public class Arena {
     }
 
     public void joinLobby(ServerPlayerEntity player) {
+        if(isInventoryEmpty(player)) {
         addLobbyPlayer(player);
         transportPlayer(player, "lobby");
         MobArena.arenaManager.addActivePlayer(player, name);
+        player.sendMessage(new TranslatableText("mobarena.joinedarenalobby", name), false);
+        } else {
+            player.sendMessage(new TranslatableText("mobarena.inventorynotempty"), false);
+        }
     }
 
     public void leavePlayer(ServerPlayerEntity player) {
@@ -205,5 +216,14 @@ public class Arena {
         spawner.prepareSpawner(wave.getMobsToSpawn(), wave.getWaveType());
         spawner.spawnMobs();
         spawner.resetDeadMonsters();
+    }
+
+    public void addPlayerClass(String playername, ArenaClass arenaClass) {
+        this.playerClasses.put(playername, arenaClass);
+    }
+
+    //use this until you decide to put resources into storing player inventory on disk
+    public boolean isInventoryEmpty(ServerPlayerEntity player) {
+        return player.getInventory().isEmpty();
     }
 }

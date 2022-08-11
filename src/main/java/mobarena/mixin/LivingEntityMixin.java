@@ -2,7 +2,6 @@ package mobarena.mixin;
 
 import mobarena.MobArena;
 import net.minecraft.entity.LivingEntity;
-
 import net.minecraft.entity.damage.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,5 +18,4 @@ public abstract class LivingEntityMixin{
         MobArena.arenaManager.tellArenaMobDeath(livingEntity.getUuidAsString());
         }
     }
-
 }

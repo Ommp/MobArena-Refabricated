@@ -1,11 +1,13 @@
 package mobarena;
 
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3i;
 
-import java.util.*;
+import java.util.ArrayList;
 
 public class Spawner {
     private ArrayList<EntityType> potentialMonsters = new ArrayList<>();
@@ -37,7 +39,14 @@ public class Spawner {
                 monsters.add(new BlazeEntity(EntityType.BLAZE, world));
             }
             if (waveType.equals(WaveType.BOSS)) {
-                monsters.get(i).setHealth(monsters.get(i).getMaxHealth() * 3);
+                monsters.get(i).addStatusEffect(new StatusEffectInstance(StatusEffects.HEALTH_BOOST, 1000000, 3));
+                monsters.get(i).addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 1000000, 2));
+                monsters.get(i).addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 1000000, 3));
+                monsters.get(i).addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 1000000, 2));
+            }
+            if (waveType.equals(WaveType.SWARM)) {
+                monsters.get(i).setHealth(monsters.get(i).getMaxHealth() / 2);
+                monsters.get(i).setMovementSpeed(monsters.get(i).getMovementSpeed() * 2);
             }
         }
     }

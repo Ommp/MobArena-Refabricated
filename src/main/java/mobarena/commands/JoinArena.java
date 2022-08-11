@@ -29,7 +29,6 @@ public class JoinArena implements Command{
                 return 0;
             }
                 MobArena.arenaManager.arenas.get(name).joinLobby(player);
-                player.sendMessage(new TranslatableText("mobarena.joinedarenalobby", name), false);
                 return 1;
             }
 

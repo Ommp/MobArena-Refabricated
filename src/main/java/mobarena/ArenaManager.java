@@ -10,11 +10,19 @@ public class ArenaManager {
     public HashMap<String, Arena> arenas = new HashMap<>();
     public HashMap<ServerPlayerEntity, String> activePlayers = new HashMap<>();
 
+    private HashMap<String, ArenaClass> classes = new HashMap<>();
     private HashMap<String, String> mobToArena = new HashMap<>();
     public void loadArena(String name) {
         if (!checkArenaExists(name)) {
             Arena arena = MobArena.database.getArenaByName(name);
             arenas.put(name, arena);
+        }
+    }
+
+    public void initClasses() {
+        ArrayList<ArenaClass> allClasses = MobArena.database.getClasses();
+        for (ArenaClass arenaClass: allClasses) {
+            classes.put(arenaClass.getName(), arenaClass);
         }
     }
 
@@ -56,15 +64,6 @@ public class ArenaManager {
         return activePlayers.get(player);
     }
 
-    //TODO add logic that checks if an arena contains all REQUIRED data to run
-    public void loadAllArenas() {
-        ArrayList<Arena> arenaArrayList = MobArena.database.getAllArenas();
-
-        for (Arena arena : arenaArrayList) {
-            arenas.put(arena.name, arena);
-        }
-    }
-
     public boolean checkArenaExists(String name) {
         if (arenas.containsKey(name)) {
             return true;
@@ -86,6 +85,15 @@ public class ArenaManager {
     public void tellArenaPlayerDeath(ServerPlayerEntity serverPlayerEntity){
         if (activePlayers.containsKey(serverPlayerEntity)) {
             arenas.get(activePlayers.get(serverPlayerEntity)).addDeadPlayer(serverPlayerEntity);
+            }
+        }
+
+    public void handleSignEvent(String text1, String text2, ServerPlayerEntity player) {
+        if (text1.equals("[arena]") && classes.containsKey(text2) && !activePlayers.isEmpty()) {
+            arenas.get(activePlayers.get(player)).addPlayerClass(player.getName().getString(), classes.get(text2));
+            }
+        else if (text1.equals("[arena]") && text2.equals("ready")) {
+            arenas.get(activePlayers.get(player)).addReadyLobbyPlayer(player);
             }
         }
     }
