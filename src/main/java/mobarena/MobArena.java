@@ -67,7 +67,8 @@ public class MobArena implements ModInitializer {
 				new SetP2(),
 				new SetWorld(),
 				new AddMobSpawn(),
-				new SpectateArena()
+				new SpectateArena(),
+				new CreateClass()
 		};
 
 		for (Command command : commands) {

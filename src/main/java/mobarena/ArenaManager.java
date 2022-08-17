@@ -33,11 +33,7 @@ public class ArenaManager {
 
     //used in case a player tries to join another arena while already being in one
     public boolean isPlayerActive(ServerPlayerEntity player) {
-        if (activePlayers.containsKey(player)) {
-            return true;
-        } else {
-            return false;
-        }
+        return activePlayers.containsKey(player);
     }
 
     public void addActivePlayer(ServerPlayerEntity player, String arenaName) {
@@ -65,10 +61,7 @@ public class ArenaManager {
     }
 
     public boolean checkArenaExists(String name) {
-        if (arenas.containsKey(name)) {
-            return true;
-        }
-        return false;
+        return arenas.containsKey(name);
     }
 
     public void connectMobToArena(String UUID, String arenaName) {
@@ -90,7 +83,7 @@ public class ArenaManager {
 
     public void handleSignEvent(String text1, String text2, ServerPlayerEntity player) {
         if (text1.equals("[arena]") && classes.containsKey(text2) && !activePlayers.isEmpty()) {
-            arenas.get(activePlayers.get(player)).addPlayerClass(player.getName().getString(), classes.get(text2));
+            arenas.get(activePlayers.get(player)).addPlayerClass(player, classes.get(text2));
             }
         else if (text1.equals("[arena]") && text2.equals("ready")) {
             arenas.get(activePlayers.get(player)).addReadyLobbyPlayer(player);

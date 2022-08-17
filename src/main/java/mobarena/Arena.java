@@ -1,5 +1,7 @@
 package mobarena;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
@@ -218,10 +220,17 @@ public class Arena {
         spawner.resetDeadMonsters();
     }
 
-    public void addPlayerClass(String playername, ArenaClass arenaClass) {
-        this.playerClasses.put(playername, arenaClass);
+    public void addPlayerClass(ServerPlayerEntity serverPlayerEntity, ArenaClass arenaClass) {
+        this.playerClasses.put(String.valueOf(serverPlayerEntity.getName()), arenaClass);
+        serverPlayerEntity.getInventory().clear();
+        addClassItems(serverPlayerEntity);
     }
 
+    public void addClassItems(ServerPlayerEntity serverPlayerEntity) {
+        String itemName = "iron_sword";
+        Item item = Registry.ITEM.get(Identifier.tryParse(itemName));
+        serverPlayerEntity.getInventory().insertStack(new ItemStack(item));
+    }
     //use this until you decide to put resources into storing player inventory on disk
     public boolean isInventoryEmpty(ServerPlayerEntity player) {
         return player.getInventory().isEmpty();

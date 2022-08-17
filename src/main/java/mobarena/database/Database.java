@@ -304,7 +304,7 @@ public class Database {
             statement = con.prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
             while (rs.next()){
-                arenaClass = new ArenaClass(rs.getString("name"), rs.getString("helmet"), rs.getString("chestplate"), rs.getString("leggings"), rs.getString("boots"));
+                arenaClass = new ArenaClass(rs.getString("classname"), rs.getString("helmet"), rs.getString("chestplate"), rs.getString("leggings"), rs.getString("boots"));
                 arenaClasses.add(arenaClass);
             }
         } catch (SQLException e){
