@@ -2,6 +2,7 @@ package mobarena;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
@@ -36,7 +37,6 @@ public class Spawner {
 //TODO fix skeletons and pillagers spawning without equipment
             NbtCompound nbtCompound = new NbtCompound();
             nbtCompound.putString("id", potentialMobs.get(index));
-//            Optional<EntityType<?>> optional = EntityType.fromNbt(nbtCompound);
             Entity entity = EntityType.loadEntityWithPassengers(nbtCompound, world, entity2 -> entity2);
             if (entity instanceof HostileEntity) {
                 monsters.add((HostileEntity) entity);
@@ -60,6 +60,7 @@ public class Spawner {
             Vec3i spawnPoint = MobArena.arenaManager.arenas.get(arenaName).getRandomSpawnPoint();
             MobArena.arenaManager.connectMobToArena(entity.getUuidAsString(), arenaName);
             entity.updatePosition(spawnPoint.getX(), spawnPoint.getY(), spawnPoint.getZ());
+            entity.initialize(world, world.getLocalDifficulty(entity.getBlockPos()), SpawnReason.SPAWNER, null, null);
             world.spawnEntity(entity);
         }
     }
