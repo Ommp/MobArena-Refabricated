@@ -18,7 +18,7 @@ public class JoinArena implements Command{
         ServerPlayerEntity player = source.getPlayer();
 
         MobArena.arenaManager.loadArena(name);
-        if (MobArena.arenaManager.checkArenaExists(name) == true) {
+        if (MobArena.arenaManager.checkArenaExists(name)) {
 
             if (MobArena.arenaManager.arenas.get(name).isPlayerInArena(player)) {
                 player.sendMessage(new TranslatableText("mobarena.alreadyjoined", name), false);

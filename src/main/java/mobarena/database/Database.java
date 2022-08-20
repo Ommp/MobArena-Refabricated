@@ -265,6 +265,21 @@ public class Database {
             throw new RuntimeException(e);
         }
     }
+    public boolean arenaExists(String name) {
+        String sql = "SELECT name FROM arenas where name=? ";
+        PreparedStatement statement;
+
+        try {
+            statement = con.prepareStatement(sql);
+            statement.setString(1, name);
+            ResultSet rs = statement.executeQuery();
+
+            return !rs.getString("name").isEmpty();
+        } catch (SQLException e) {
+            return false;
+        }
+
+    }
     public ArrayList<Arena> getAllArenas() {
         Arena arena;
         ArrayList<Arena> arenas = new ArrayList<Arena>();

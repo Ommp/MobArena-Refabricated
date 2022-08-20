@@ -13,7 +13,7 @@ public class ArenaManager {
     private HashMap<String, ArenaClass> classes = new HashMap<>();
     private HashMap<String, String> mobToArena = new HashMap<>();
     public void loadArena(String name) {
-        if (!checkArenaExists(name)) {
+        if (!arenas.containsKey(name)) {
             Arena arena = MobArena.database.getArenaByName(name);
             arenas.put(name, arena);
         }
@@ -61,7 +61,7 @@ public class ArenaManager {
     }
 
     public boolean checkArenaExists(String name) {
-        return arenas.containsKey(name);
+       return MobArena.database.arenaExists(name);
     }
 
     public void connectMobToArena(String UUID, String arenaName) {
