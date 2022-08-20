@@ -88,6 +88,18 @@ public class Database {
             throw new RuntimeException(e);
         }
     }
+    public void deleteArena(String name) {
+        String sql = "DELETE FROM arenas WHERE name=?";
+        PreparedStatement statement;
+
+        try {
+            statement = con.prepareStatement(sql);
+            statement.setString(1, name);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public void updateP1(String name, int x, int y, int z) {
         String sql = "UPDATE arenas SET p1_x=?, p1_y=?, p1_z=? WHERE name=?";
         PreparedStatement statement;
