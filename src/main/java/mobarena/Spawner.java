@@ -57,7 +57,7 @@ public class Spawner {
 
     public void spawnMobs(){
         for (MobEntity entity: monsters) {
-            Vec3i spawnPoint = MobArena.arenaManager.arenas.get(arenaName).getRandomSpawnPoint();
+            Vec3i spawnPoint = MobArena.arenaManager.arenas.get(arenaName).getSpawnPointNearPlayer();
             MobArena.arenaManager.connectMobToArena(entity.getUuidAsString(), arenaName);
             entity.updatePosition(spawnPoint.getX(), spawnPoint.getY(), spawnPoint.getZ());
             entity.initialize(world, world.getLocalDifficulty(entity.getBlockPos()), SpawnReason.SPAWNER, null, null);

@@ -6,11 +6,13 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 public class Arena {
@@ -21,7 +23,7 @@ public class Arena {
     private boolean isRunning, isProtected, inEditMode;
     public int isEnabled;
 
-    private final HashSet<ServerPlayerEntity> arenaPlayers = new HashSet<>();
+    private final ArrayList<ServerPlayerEntity> arenaPlayers = new ArrayList<>();
     private final HashSet<ServerPlayerEntity> specPlayers= new HashSet<>();
     private final HashSet<ServerPlayerEntity> deadPlayers= new HashSet<>();
     private final HashSet<ServerPlayerEntity> readyLobbyPlayers = new HashSet<>();
@@ -204,6 +206,17 @@ public class Arena {
         int index = (int)(Math.random() * mobSpawnPoints.size());
         return new Vec3i(mobSpawnPoints.get(index).getX(), mobSpawnPoints.get(index).getY(), mobSpawnPoints.get(index).getZ());
     }
+    //get a random player's pos and choose the closest spawn point to the player
+    public Vec3i getSpawnPointNearPlayer() {
+        int playerIndex = (int)(Math.random() * arenaPlayers.size());
+        BlockPos playerPos = arenaPlayers.get(playerIndex).getBlockPos();
+        ArrayList<Double> distances = new ArrayList<>();
+        for (int i = 0; i < mobSpawnPoints.size(); i++) {
+            distances.add(playerPos.getSquaredDistance(mobSpawnPoints.get(i)));
+        }
+       int spawnPointIndex = distances.indexOf(Collections.min(distances));
+       return mobSpawnPoints.get(spawnPointIndex);
+    }
 
     public void countDeadMobs() {
         spawner.count();
@@ -220,12 +233,15 @@ public class Arena {
         spawner.resetDeadMonsters();
     }
 
+    //save the player's class
     public void addPlayerClass(ServerPlayerEntity serverPlayerEntity, ArenaClass arenaClass) {
         this.playerClasses.put(String.valueOf(serverPlayerEntity.getName()), arenaClass);
+        //clear player's inventory in case they switch to another class to avoid duplicating
         serverPlayerEntity.getInventory().clear();
         addClassItems(serverPlayerEntity);
     }
 
+    //add the items to the player's inventory
     public void addClassItems(ServerPlayerEntity serverPlayerEntity) {
         String itemName = "iron_sword";
         Item item = Registry.ITEM.get(Identifier.tryParse(itemName));
