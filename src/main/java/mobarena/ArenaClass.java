@@ -1,20 +1,38 @@
 package mobarena;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class ArenaClass {
-    private String name, helmet, chest, legs, boots;
-    private ArrayList<String> items;
 
-    public ArenaClass(String name, String helmet, String chest, String legs, String boots) {
+    @SerializedName("class_name")
+    private String name;
+
+    @SerializedName("items")
+    private ArrayList<ArenaItem> items = new ArrayList<>();
+
+    public ArenaClass(String name, ArrayList<ArenaItem> items) {
         this.name = name;
-        this.helmet = helmet;
-        this.chest = chest;
-        this.legs = legs;
-        this.boots = boots;
+        this.items = items;
+    }
+
+    public ArenaClass() {
     }
 
     public String getName() {
         return name;
+    }
+
+    public ArrayList<ArenaItem> getItems() {
+        return items;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void addItems(ArenaItem item) {
+        this.items.add(item);
     }
 }

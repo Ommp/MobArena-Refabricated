@@ -1,7 +1,6 @@
 package mobarena.database;
 
 import mobarena.Arena;
-import mobarena.ArenaClass;
 import mobarena.ArenaPoint;
 import mobarena.Warp;
 import net.minecraft.util.math.Vec3i;
@@ -320,24 +319,6 @@ public class Database {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public ArrayList<ArenaClass> getClasses() {
-        ArenaClass arenaClass;
-        ArrayList<ArenaClass> arenaClasses = new ArrayList<>();
-        String sql = "SELECT * FROM classes";
-        PreparedStatement statement;
-        try {
-            statement = con.prepareStatement(sql);
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()){
-                arenaClass = new ArenaClass(rs.getString("classname"), rs.getString("helmet"), rs.getString("chestplate"), rs.getString("leggings"), rs.getString("boots"));
-                arenaClasses.add(arenaClass);
-            }
-        } catch (SQLException e){
-            throw new RuntimeException(e);
-        }
-        return arenaClasses;
     }
 
     public ArrayList<Vec3i> getMobSpawnPoints(String arena) {
