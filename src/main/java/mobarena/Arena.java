@@ -1,6 +1,5 @@
 package mobarena;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -234,19 +233,19 @@ public class Arena {
     }
 
     //save the player's class
-    public void addPlayerClass(ServerPlayerEntity serverPlayerEntity, ArenaClass arenaClass) {
-        this.playerClasses.put(String.valueOf(serverPlayerEntity.getName()), arenaClass);
+    public void addPlayerClass(ServerPlayerEntity player, ArenaClass arenaClass) {
+        this.playerClasses.put(String.valueOf(player.getName()), arenaClass);
         //clear player's inventory in case they switch to another class to avoid duplicating
-        serverPlayerEntity.getInventory().clear();
-        addClassItems(serverPlayerEntity);
+        player.getInventory().clear();
+
+        //add the items
+        for (int i = 0; i < player.getInventory().size(); i++) {
+            var name = arenaClass.getItems().get(i).name;
+            var item = Registry.ITEM.get(Identifier.tryParse(name));
+            player.getInventory().insertStack(new ItemStack(item, arenaClass.getItems().get(i).count));
+        }
     }
 
-    //add the items to the player's inventory
-    public void addClassItems(ServerPlayerEntity serverPlayerEntity) {
-        String itemName = "iron_sword";
-        Item item = Registry.ITEM.get(Identifier.tryParse(itemName));
-        serverPlayerEntity.getInventory().insertStack(new ItemStack(item));
-    }
     //use this until you decide to put resources into storing player inventory on disk
     public boolean isInventoryEmpty(ServerPlayerEntity player) {
         return player.getInventory().isEmpty();
