@@ -7,7 +7,7 @@ import mobarena.ArenaClass;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ArenaClassConfig {
 
@@ -15,23 +15,24 @@ public class ArenaClassConfig {
     private transient final Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
 
     @SerializedName("Classes")
-    private final ArrayList<ArenaClass> arenaClasses = new ArrayList<>();
+    private final HashMap<String, ArenaClass> arenaClasses = new HashMap<>();
 
     public void addClass(ArenaClass arenaClass){
-        arenaClasses.add(arenaClass);
+        arenaClasses.put(arenaClass.getName(), arenaClass);
     }
 
-    public ArenaClassConfig load() {
+    public void load() {
         if (!configFile.exists()) {
             save();
         }
-        FileReader json;
+        FileReader reader;
         try {
-            json = new FileReader(configFile);
+        reader = new FileReader(configFile);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        return gson.fromJson(json, ArenaClassConfig.class);
+        ArenaClassConfig config = gson.fromJson(reader, ArenaClassConfig.class);
+        arenaClasses.putAll(config.arenaClasses);
     }
     public void save() {
         try {
@@ -42,5 +43,9 @@ public class ArenaClassConfig {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public HashMap<String, ArenaClass> getArenaClasses() {
+        return arenaClasses;
     }
 }

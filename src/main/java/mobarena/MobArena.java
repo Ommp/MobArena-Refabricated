@@ -39,7 +39,7 @@ public class MobArena implements ModInitializer {
 			serverinstance = server.getOverworld().getServer();
 		});
 
-//		arenaManager.initClasses();
+		arenaManager.initClasses();
 	}
 
 	private static void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, boolean dedicated) {

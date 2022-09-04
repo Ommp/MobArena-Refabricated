@@ -6,8 +6,7 @@ import java.util.ArrayList;
 
 public class ArenaClass {
 
-    @SerializedName("class_name")
-    private String name;
+    private transient String name;
 
     @SerializedName("items")
     private ArrayList<ArenaItem> items = new ArrayList<>();

@@ -1,5 +1,6 @@
 package mobarena;
 
+import mobarena.config.ArenaClassConfig;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.HashMap;
@@ -18,12 +19,11 @@ public class ArenaManager {
         }
     }
 
-//    public void initClasses() {
-//            ArrayList<ArenaClass> allClasses = new ArrayList<>();
-//            for (ArenaClass arenaClass : allClasses) {
-//                classes.put(arenaClass.getName(), arenaClass);
-//            }
-//        }
+    public void initClasses() {
+            ArenaClassConfig config = new ArenaClassConfig();
+            config.load();
+            classes = config.getArenaClasses();
+        }
 
     public void reloadArena(String name) {
         arenas.remove(name);

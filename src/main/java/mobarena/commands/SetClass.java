@@ -6,6 +6,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import mobarena.ArenaClass;
 import mobarena.ArenaItem;
+import mobarena.MobArena;
 import mobarena.config.ArenaClassConfig;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.server.command.CommandManager;
@@ -22,14 +23,17 @@ public class SetClass implements Command {
 
 
         PlayerInventory inventory = player.getInventory();
-        ArenaClassConfig arenaClassConfig = new ArenaClassConfig();
         ArenaClass arenaClass = new ArenaClass();
         arenaClass.setName(name);
         for (int i = 0; i < inventory.size(); i++) {
             arenaClass.addItems(new ArenaItem(inventory.getStack(i).getItem().toString(), inventory.getStack(i).getCount()));
         }
-        arenaClassConfig.addClass(arenaClass);
-        arenaClassConfig.save();
+
+        ArenaClassConfig config = new ArenaClassConfig();
+        config.load();
+        config.addClass(arenaClass);
+        config.save();
+        MobArena.arenaManager.initClasses();
 
         return 1;
     }
