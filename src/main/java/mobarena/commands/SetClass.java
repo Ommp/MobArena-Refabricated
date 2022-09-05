@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.TranslatableText;
 
 public class SetClass implements Command {
 
@@ -34,6 +35,8 @@ public class SetClass implements Command {
         config.addClass(arenaClass);
         config.save();
         MobArena.arenaManager.initClasses();
+
+        player.sendMessage(new TranslatableText("mobarena.setclass", name), false);
 
         return 1;
     }

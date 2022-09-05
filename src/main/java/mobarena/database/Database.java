@@ -48,12 +48,6 @@ public class Database {
                     "isEnabled int DEFAULT 1," +
                     "dimension varchar," +
                     "PRIMARY KEY (name))";
-            String classesTable = "CREATE TABLE IF NOT EXISTS classes(" +
-                    "classname varchar UNIQUE," +
-                    "helmet varchar," +
-                    "chestplate varchar," +
-                    "leggings varchar," +
-                    "boots varchar)";
             String scoreboardTable = "CREATE TABLE IF NOT EXISTS scoreboard(" +
                     "player varchar UNIQUE," +
                     "score int," +
@@ -66,7 +60,7 @@ public class Database {
                     "FOREIGN KEY(arena) REFERENCES arenas(name) ON DELETE CASCADE)";
 
             Statement statement = con.createStatement();
-            String[] tables = new String[] {arenaTable, classesTable, scoreboardTable, mobSpawnpointsTable};
+            String[] tables = new String[] {arenaTable, scoreboardTable, mobSpawnpointsTable};
             for (String table : tables) {
                 statement.execute(table);
             }
@@ -206,35 +200,6 @@ public class Database {
             statement = con.prepareStatement(sql);
             statement.setString(1, dimension);
             statement.setString(2, arenaName);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void createClass(String className) {
-        String sql = "INSERT OR IGNORE INTO classes VALUES(?, ?, ?, ?, ?)";
-        PreparedStatement statement;
-
-        try {
-            statement = con.prepareStatement(sql);
-            statement.setString(1, className);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public void updateArmor(String className, String helmet, String chestplate, String leggings, String boots) {
-        String sql = "UPDATE classes SET helmet=?, chestplate=?, leggings=?, boots=? WHERE name=?";
-        PreparedStatement statement;
-
-        try {
-            statement = con.prepareStatement(sql);
-            statement.setString(1, helmet);
-            statement.setString(2, chestplate);
-            statement.setString(3, leggings);
-            statement.setString(4, boots);
-            statement.setString(5, className);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

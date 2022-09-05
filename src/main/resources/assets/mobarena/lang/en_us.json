@@ -16,7 +16,7 @@
   "mobarena.addedmobspawnpoint": "Successfully added mob spawn point.",
   "mobarena.joinedspec": "You are now spectating an arena.",
   "mobarena.inventorynotempty": "Store your inventory in a chest or clear it before joining an arena!",
-  "mobarena.createdclass": "Created a class with the name: %s",
   "mobarena.deletedarena": "Deleted arena with the name: %s",
-  "mobarena.selectedclass": "Selected class: %s"
+  "mobarena.selectedclass": "Selected class: %s",
+  "mobarena.setclass": "Created or updated class: %s"
 }
