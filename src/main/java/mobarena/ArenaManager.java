@@ -2,6 +2,7 @@ package mobarena;
 
 import mobarena.config.ArenaClassConfig;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.TranslatableText;
 
 import java.util.HashMap;
 
@@ -83,6 +84,7 @@ public class ArenaManager {
     public void handleSignEvent(String text1, String text2, ServerPlayerEntity player) {
         if (text1.equals("[arena]") && classes.containsKey(text2) && !activePlayers.isEmpty()) {
             arenas.get(activePlayers.get(player)).addPlayerClass(player, classes.get(text2));
+            player.sendMessage(new TranslatableText("mobarena.selectedclass", text2), false);
             }
         else if (text1.equals("[arena]") && text2.equals("ready")) {
             arenas.get(activePlayers.get(player)).addReadyLobbyPlayer(player);
