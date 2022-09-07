@@ -3,6 +3,7 @@ package mobarena;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import mobarena.commands.*;
+import mobarena.config.ArenaConfig;
 import mobarena.database.Database;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
@@ -20,6 +21,8 @@ public class MobArena implements ModInitializer {
 	public static Database database = new Database();
 
 	public static ArenaManager arenaManager = new ArenaManager();
+
+	public static ArenaConfig arenaConfig = new ArenaConfig();
 	public static MinecraftServer serverinstance;
 
 	public static void log(Level level, String message) {
@@ -40,6 +43,8 @@ public class MobArena implements ModInitializer {
 		});
 
 		arenaManager.initClasses();
+		arenaConfig.load();
+		arenaManager.addArenaNames();
 	}
 
 	private static void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, boolean dedicated) {

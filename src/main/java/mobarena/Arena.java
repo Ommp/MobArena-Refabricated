@@ -100,7 +100,6 @@ public class Arena {
 
         wave.setWaveType(WaveType.DEFAULT);
         wave.startWave();
-        spawner.addPotentialMonsters();
         spawner.prepareSpawner(wave.getMobsToSpawn(), wave.getWaveType());
         spawner.spawnMobs();
     }
@@ -249,5 +248,13 @@ public class Arena {
     //use this until you decide to put resources into storing player inventory on disk
     public boolean isInventoryEmpty(ServerPlayerEntity player) {
         return player.getInventory().isEmpty();
+    }
+
+    public void setCustomSpawnConfigValues(boolean usesCustomSpawns, ArrayList<String> monsters) {
+        if (usesCustomSpawns) {
+            spawner.setPotentialMobs(monsters);
+        } else {
+            spawner.addDefaultMobs();
+        }
     }
 }

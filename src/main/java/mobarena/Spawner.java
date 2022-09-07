@@ -21,14 +21,18 @@ public class Spawner {
     private String arenaName;
     private ServerWorld world;
 
-    public void addPotentialMonsters() {
+    public void addDefaultMobs() {
         potentialMobs.add("minecraft:zombie");
         potentialMobs.add("minecraft:husk");
-        potentialMobs.add("minecraft:blaze");
         potentialMobs.add("minecraft:spider");
         potentialMobs.add("minecraft:skeleton");
         potentialMobs.add("minecraft:pillager");
     }
+
+    public void setPotentialMobs(ArrayList<String> mobs) {
+        this.potentialMobs = mobs;
+    }
+
     public void prepareSpawner(int mobsToSpawn, WaveType waveType) {
         for (int i = 0; i < mobsToSpawn; i++) {
             int index = (int)(Math.random() * potentialMobs.size());

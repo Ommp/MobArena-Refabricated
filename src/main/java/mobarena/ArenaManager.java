@@ -4,18 +4,34 @@ import mobarena.config.ArenaClassConfig;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ArenaManager {
 
+    private final ArrayList<String> arenaNames = new ArrayList<>();
     public HashMap<String, Arena> arenas = new HashMap<>();
     public HashMap<ServerPlayerEntity, String> activePlayers = new HashMap<>();
 
     private HashMap<String, ArenaClass> classes = new HashMap<>();
     private HashMap<String, String> mobToArena = new HashMap<>();
+
+    public void addArenaNames() {
+        arenaNames.addAll(MobArena.database.getAllArenaNames());
+    }
+    public ArrayList<String> getArenaNames() {
+        return arenaNames;
+    }
     public void loadArena(String name) {
         if (!arenas.containsKey(name)) {
             Arena arena = MobArena.database.getArenaByName(name);
+
+            if (MobArena.arenaConfig.configExists(name)) {
+                arena.setCustomSpawnConfigValues(MobArena.arenaConfig.getArenaConfig(name).usesCustomSpawns(), MobArena.arenaConfig.getArenaConfig(name).getMonsters());
+            } else {
+                arena.setCustomSpawnConfigValues(false, null);
+            }
+
             arenas.put(name, arena);
         }
     }

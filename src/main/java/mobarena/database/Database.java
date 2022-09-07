@@ -270,6 +270,23 @@ public class Database {
         return arenas;
     }
 
+    public ArrayList<String> getAllArenaNames() {
+        ArrayList<String> names = new ArrayList<>();
+        String sql = "SELECT name FROM arenas";
+        PreparedStatement statement;
+
+        try {
+            statement = con.prepareStatement(sql);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                names.add(rs.getString("name"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return names;
+    }
+
     public void addMobSpawnPoint(String arena, double x, double y, double z) {
         String sql = "INSERT OR IGNORE INTO mobspawnpoints(arena, x, y, z) VALUES (?,?,?,?)";
         PreparedStatement statement;
