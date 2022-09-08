@@ -17,6 +17,7 @@ public class LeaveArena implements Command{
         String name = MobArena.arenaManager.getArenaFromPlayer(player);
         MobArena.arenaManager.arenas.get(name).leavePlayer(player);
         player.sendMessage(new TranslatableText("mobarena.leftarena"), false);
+        player.getInventory().clear();
         return 1;
     }
 

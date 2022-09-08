@@ -84,9 +84,8 @@ public class ArenaManager {
         mobToArena.put(UUID, arenaName);
     }
 
-    public void tellArenaMobDeath(String UUID) {
+    public void handleMobDeath(String UUID) {
         if (mobToArena.containsKey(UUID)) {
-            String name = mobToArena.get(UUID);
             arenas.get(mobToArena.get(UUID)).countDeadMobs();
         }
     }
@@ -106,4 +105,8 @@ public class ArenaManager {
             arenas.get(activePlayers.get(player)).addReadyLobbyPlayer(player);
             }
         }
+
+    public HashMap<String, String> getMobToArena() {
+        return mobToArena;
     }
+}
