@@ -22,23 +22,23 @@ public class Database {
                     "lobby_x double," +
                     "lobby_y double," +
                     "lobby_z double," +
-                    "lobby_yaw float," +
-                    "lobby_pitch float," +
+                    "lobby_yaw REAL," +
+                    "lobby_pitch REAL," +
                     "arena_x double," +
                     "arena_y double," +
                     "arena_z double," +
-                    "arena_yaw float," +
-                    "arena_pitch float," +
+                    "arena_yaw REAL," +
+                    "arena_pitch REAL," +
                     "spec_x double," +
                     "spec_y double," +
                     "spec_z double," +
-                    "spec_yaw float," +
-                    "spec_pitch float," +
+                    "spec_yaw REAL," +
+                    "spec_pitch REAL," +
                     "exit_x double," +
                     "exit_y double," +
                     "exit_z double," +
-                    "exit_yaw float," +
-                    "exit_pitch float," +
+                    "exit_yaw REAL," +
+                    "exit_pitch REAL," +
                     "p1_x int," +
                     "p1_y int," +
                     "p1_z int," +
@@ -216,7 +216,7 @@ public class Database {
             ResultSet rs = statement.executeQuery();
 
             return new Arena(rs.getString("name"), rs.getInt("minPlayers"),rs.getInt("maxPlayers"),
-                    new Warp(rs.getDouble("lobby_x"), rs.getDouble("lobby_y"),rs.getDouble("lobby_z"),rs.getFloat("lobby_yaw"), rs.getFloat("lobby_pitch")),
+                    new Warp(rs.getDouble("lobby_x"), rs.getDouble("lobby_y"),rs.getDouble("lobby_z"), rs.getFloat("lobby_yaw"), rs.getFloat("lobby_pitch")),
                     new Warp(rs.getDouble("arena_x"), rs.getDouble("arena_y"), rs.getDouble("arena_z"), rs.getFloat("arena_yaw"), rs.getFloat("arena_pitch")),
                     new Warp(rs.getDouble("spec_x"), rs.getDouble("spec_y"), rs.getDouble("spec_z"), rs.getFloat("spec_yaw"), rs.getFloat("spec_pitch")),
                     new Warp(rs.getDouble("exit_x"), rs.getDouble("exit_y"), rs.getDouble("exit_z"), rs.getFloat("exit_yaw"), rs.getFloat("exit_pitch")),

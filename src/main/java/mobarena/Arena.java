@@ -178,13 +178,13 @@ public class Arena {
 
     public void transportPlayer(ServerPlayerEntity player, String warp) {
         if (warp == "lobby") {
-            player.teleport(world, lobby.x,lobby.y,lobby.z, lobby.Yaw, lobby.Pitch);
+            player.teleport(world, lobby.x,lobby.y,lobby.z, lobby.yaw, lobby.pitch);
         } else if (warp == "arena") {
-            player.teleport(world, arena.x, arena.y, arena.z, arena.Yaw, arena.Pitch);
+            player.teleport(world, arena.x, arena.y, arena.z, arena.yaw, arena.pitch);
         } else if (warp == "spec") {
-            player.teleport(world, spectator.x, spectator.y, spectator.z, spectator.Yaw, spectator.Pitch);
+            player.teleport(world, spectator.x, spectator.y, spectator.z, spectator.yaw, spectator.pitch);
         } else if (warp == "exit") {
-            player.teleport(world, exit.x, exit.y, exit.z, exit.Yaw, exit.Pitch);
+            player.teleport(world, exit.x, exit.y, exit.z, exit.yaw, exit.pitch);
         }
 
     }
@@ -192,7 +192,7 @@ public class Arena {
     public void transportAllFromLobby() {
             for (ServerPlayerEntity player : lobbyPlayers) {
                 player.sendMessage(new TranslatableText("mobarena.allplayersready"), false);
-                player.teleport(arena.x, arena.y,arena.z);
+                transportPlayer(player, "arena");
                 arenaPlayers.add(player);
             }
             lobbyPlayers.clear();
