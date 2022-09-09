@@ -11,7 +11,7 @@ public class ArenaManager {
 
     private final ArrayList<String> arenaNames = new ArrayList<>();
     public HashMap<String, Arena> arenas = new HashMap<>();
-    public HashMap<ServerPlayerEntity, String> activePlayers = new HashMap<>();
+    private HashMap<ServerPlayerEntity, String> activePlayers = new HashMap<>();
 
     private HashMap<String, ArenaClass> classes = new HashMap<>();
     private HashMap<String, String> mobToArena = new HashMap<>();
@@ -77,7 +77,8 @@ public class ArenaManager {
     }
 
     public boolean checkArenaExists(String name) {
-       return MobArena.database.arenaExists(name);
+//       return MobArena.database.arenaExists(name);
+        return arenaNames.contains(name);
     }
 
     public void connectMobToArena(String UUID, String arenaName) {

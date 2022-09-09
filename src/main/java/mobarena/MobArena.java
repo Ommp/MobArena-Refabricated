@@ -7,6 +7,7 @@ import mobarena.config.ArenaConfig;
 import mobarena.database.Database;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
@@ -45,6 +46,16 @@ public class MobArena implements ModInitializer {
 		arenaManager.initClasses();
 		arenaConfig.load();
 		arenaManager.addArenaNames();
+
+		ServerPlayerEvents.ALLOW_DEATH.register(((player, source, amount) -> {
+			if (MobArena.arenaManager.isPlayerActive(player)) {
+				player.setHealth(20);
+				String name = MobArena.arenaManager.getArenaFromPlayer(player);
+				MobArena.arenaManager.arenas.get(name).addDeadPlayer(player);
+				return false;
+			}
+			return true;
+		}));
 	}
 
 	private static void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, boolean dedicated) {

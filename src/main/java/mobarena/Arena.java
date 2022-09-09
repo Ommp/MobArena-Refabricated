@@ -9,11 +9,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.GameMode;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+
 public class Arena {
 
     public String name;
@@ -107,6 +109,7 @@ public class Arena {
     public void stopArena() {
         isRunning = false;
         cleanUpPlayers();
+        spawner.clearMonsters();
     }
 
     public void addLobbyPlayer(ServerPlayerEntity player) {
@@ -118,6 +121,8 @@ public class Arena {
         if(isInventoryEmpty(player)) {
         addLobbyPlayer(player);
         transportPlayer(player, "lobby");
+        player.changeGameMode(GameMode.ADVENTURE);
+        restoreVitals(player);
         MobArena.arenaManager.addActivePlayer(player, name);
         player.sendMessage(new TranslatableText("mobarena.joinedarenalobby", name), false);
         } else {
@@ -125,10 +130,17 @@ public class Arena {
         }
     }
 
+    public void restoreVitals(ServerPlayerEntity player) {
+        player.setHealth(20);
+        player.getHungerManager().setFoodLevel(20);
+    }
+
     public void leavePlayer(ServerPlayerEntity player) {
+        player.changeGameMode(GameMode.SURVIVAL);
         transportPlayer(player, "exit");
         removePlayerFromArena(player);
         MobArena.arenaManager.removeActivePlayer(player, name);
+        restoreVitals(player);
     }
 
     public boolean isPlayerInArena(ServerPlayerEntity player) {
@@ -145,17 +157,32 @@ public class Arena {
         }
     }
 
-    public void addArenaPlayer(ServerPlayerEntity player) {
-        readyLobbyPlayers.remove(player);
-        arenaPlayers.add(player);
-    }
-
     public void addSpectatorPlayer(ServerPlayerEntity player) {
         specPlayers.add(player);
     }
 
     public void addDeadPlayer(ServerPlayerEntity player) {
         deadPlayers.add(player);
+        arenaPlayers.remove(player);
+        transportPlayer(player, "spec");
+        addSpectatorPlayer(player);
+        restoreVitals(player);
+
+        deadEqualsAny(player);
+    }
+
+    public void deadEqualsAny(ServerPlayerEntity player) {
+        if (deadPlayers.size() == anyArenaPlayer.size()) {
+            for (ServerPlayerEntity p : anyArenaPlayer) {
+                transportPlayer(p, "exit");
+                player.getInventory().clear();
+                removePlayerFromArena(player);
+                MobArena.arenaManager.removeActivePlayer(player, name);
+                player.changeGameMode(GameMode.SURVIVAL);
+                restoreVitals(player);
+            }
+            stopArena();
+        }
     }
 
     public void removePlayerFromArena(ServerPlayerEntity player) {
@@ -166,6 +193,10 @@ public class Arena {
         readyLobbyPlayers.remove(player);
         specPlayers.remove(player);
         deadPlayers.remove(player);
+
+        if (anyArenaPlayer.isEmpty()) {
+            stopArena();
+        }
     }
 
     public void cleanUpPlayers(){
@@ -174,6 +205,7 @@ public class Arena {
         arenaPlayers.clear();
         specPlayers.clear();
         deadPlayers.clear();
+        anyArenaPlayer.clear();
     }
 
     public void transportPlayer(ServerPlayerEntity player, String warp) {

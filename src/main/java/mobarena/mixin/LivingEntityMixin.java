@@ -10,17 +10,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin{
+    LivingEntity livingEntity = (LivingEntity) (Object) this;
 
     @Inject(method = "onDeath", at = @At("HEAD"))
     private void injected(DamageSource source, CallbackInfo ci) {
-        LivingEntity livingEntity = (LivingEntity) (Object) this;
         if (!livingEntity.getWorld().isClient) {
         MobArena.arenaManager.handleMobDeath(livingEntity.getUuidAsString());
         }
     }
     @Inject(method = "drop", at = @At("HEAD"), cancellable = true)
     private void disableDrop(DamageSource source, CallbackInfo ci) {
-        LivingEntity livingEntity = (LivingEntity) (Object) this;
         //cancel dropping items if the mob belongs to an arena
         if (MobArena.arenaManager.getMobToArena().containsKey(livingEntity.getUuidAsString())) {
             ci.cancel();

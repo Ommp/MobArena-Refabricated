@@ -2,6 +2,7 @@ package mobarena;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -91,6 +92,9 @@ public class Spawner {
     }
 
     public void clearMonsters() {
+        for (LivingEntity entity : monsters) {
+            entity.remove(Entity.RemovalReason.DISCARDED);
+        }
         monsters.clear();
     }
 }
