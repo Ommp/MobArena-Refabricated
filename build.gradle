@@ -32,7 +32,8 @@ dependencies {
 //	modImplementation 'com.h2database:h2:2.1.214'
 
 	// https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
-	modImplementation "org.xerial:sqlite-jdbc:3.36.0.3"
+	include "org.xerial:sqlite-jdbc:3.36.0.3"
+	modImplementation"org.xerial:sqlite-jdbc:3.36.0.3"
 
 	// https://mvnrepository.com/artifact/org.hsqldb/hsqldb
 //	modImplementation 'org.hsqldb:hsqldb:2.6.1'

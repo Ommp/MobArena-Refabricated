@@ -5,6 +5,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import mobarena.MobArena;
+import mobarena.commands.suggestions.NameSuggestionProvider;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -27,6 +28,10 @@ public class JoinArena implements Command{
                 player.sendMessage(new TranslatableText("mobarena.alreadyinanotherarena"), false);
                 return 0;
             }
+            if (MobArena.arenaManager.arenas.get(name).isRunning()) {
+                player.sendMessage(new TranslatableText("mobarena.arenaalreadyrunning"), false);
+                return 0;
+            }
                 MobArena.arenaManager.arenas.get(name).joinLobby(player);
                 return 1;
             }
@@ -41,7 +46,7 @@ public class JoinArena implements Command{
         return CommandManager
                 .literal("join")
                 .then(
-                        CommandManager.argument("name", StringArgumentType.greedyString()).executes(this::run)
+                        CommandManager.argument("name", StringArgumentType.greedyString()).executes(this::run).suggests(new NameSuggestionProvider())
                 )
                 .build();
     }

@@ -80,10 +80,6 @@ public class Arena {
         return world;
     }
 
-    public ServerWorld getWorld() {
-        return world;
-    }
-
     public ArrayList<Vec3i> mobSpawnPoints = new ArrayList<>();
 
     public ArrayList<Vec3i> setMobSpawnPoints() {
@@ -108,8 +104,12 @@ public class Arena {
 
     public void stopArena() {
         isRunning = false;
-        cleanUpPlayers();
         spawner.clearMonsters();
+        MobArena.arenaManager.clearArena(name);
+    }
+
+    public boolean isRunning() {
+        return isRunning;
     }
 
     public void addLobbyPlayer(ServerPlayerEntity player) {
@@ -119,12 +119,12 @@ public class Arena {
 
     public void joinLobby(ServerPlayerEntity player) {
         if(isInventoryEmpty(player)) {
-        addLobbyPlayer(player);
-        transportPlayer(player, "lobby");
-        player.changeGameMode(GameMode.ADVENTURE);
-        restoreVitals(player);
-        MobArena.arenaManager.addActivePlayer(player, name);
-        player.sendMessage(new TranslatableText("mobarena.joinedarenalobby", name), false);
+            addLobbyPlayer(player);
+            transportPlayer(player, "lobby");
+            player.changeGameMode(GameMode.ADVENTURE);
+            restoreVitals(player);
+            MobArena.arenaManager.addActivePlayer(player, name);
+            player.sendMessage(new TranslatableText("mobarena.joinedarenalobby", name), false);
         } else {
             player.sendMessage(new TranslatableText("mobarena.inventorynotempty"), false);
         }
@@ -139,7 +139,7 @@ public class Arena {
         player.changeGameMode(GameMode.SURVIVAL);
         transportPlayer(player, "exit");
         removePlayerFromArena(player);
-        MobArena.arenaManager.removeActivePlayer(player, name);
+        MobArena.arenaManager.removeActivePlayer(player);
         restoreVitals(player);
     }
 
@@ -162,27 +162,38 @@ public class Arena {
     }
 
     public void addDeadPlayer(ServerPlayerEntity player) {
-        deadPlayers.add(player);
-        arenaPlayers.remove(player);
-        transportPlayer(player, "spec");
-        addSpectatorPlayer(player);
-        restoreVitals(player);
+            deadPlayers.add(player);
+        if (deadPlayers.size() < anyArenaPlayer.size()) {
+            addSpectatorPlayer(player);
+            arenaPlayers.remove(player);
+            transportPlayer(player, "spec");
+            restoreVitals(player);
 
-        deadEqualsAny(player);
-    }
-
-    public void deadEqualsAny(ServerPlayerEntity player) {
-        if (deadPlayers.size() == anyArenaPlayer.size()) {
-            for (ServerPlayerEntity p : anyArenaPlayer) {
-                transportPlayer(p, "exit");
-                player.getInventory().clear();
-                removePlayerFromArena(player);
-                MobArena.arenaManager.removeActivePlayer(player, name);
-                player.changeGameMode(GameMode.SURVIVAL);
-                restoreVitals(player);
-            }
+        } else if (deadPlayers.size() == anyArenaPlayer.size()) {
+            exitAllPlayers();
             stopArena();
         }
+    }
+
+    //"revive" a "dead" spectator player if another player successfully finishes the wave in the same arena
+    public void reviveDead() {
+        for (ServerPlayerEntity p: deadPlayers) {
+            transportPlayer(p, "arena");
+            deadPlayers.remove(p);
+            arenaPlayers.add(p);
+        }
+    }
+
+    //teleport all players to exit and restore various stats
+    public void exitAllPlayers() {
+        for (ServerPlayerEntity p : anyArenaPlayer) {
+            restoreVitals(p);
+            transportPlayer(p, "exit");
+            p.getInventory().clear();
+            p.changeGameMode(GameMode.SURVIVAL);
+            MobArena.arenaManager.removeActivePlayer(p);
+        }
+        cleanUpPlayers();
     }
 
     public void removePlayerFromArena(ServerPlayerEntity player) {

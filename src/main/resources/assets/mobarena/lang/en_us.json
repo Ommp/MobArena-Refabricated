@@ -18,5 +18,6 @@
   "mobarena.inventorynotempty": "Store your inventory in a chest or clear it before joining an arena!",
   "mobarena.deletedarena": "Deleted arena with the name: %s",
   "mobarena.selectedclass": "Selected class: %s",
-  "mobarena.setclass": "Created or updated class: %s"
+  "mobarena.setclass": "Created or updated class: %s",
+  "mobarena.arenaalreadyrunning": "This arena is already running!"
 }

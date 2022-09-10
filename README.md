@@ -20,5 +20,5 @@ Currently, the main game loop somewhat works meaning that you can create and joi
   - [ ] Difficulty
   - [x] Classes
   - [ ] Waves
-  - [ ] Allowing only certain mobs to spawn
-  - [ ] Support to enable or disable mods inside an arena
+  - [x] Allowing only certain mobs to spawn
+  - [ ] Enable or disable specific mods inside an arena

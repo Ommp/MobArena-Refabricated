@@ -56,12 +56,8 @@ public class ArenaManager {
         activePlayers.put(player, arenaName);
     }
 
-    public void removeActivePlayer(ServerPlayerEntity player, String arenaName) {
+    public void removeActivePlayer(ServerPlayerEntity player) {
         activePlayers.remove(player);
-        arenas.get(arenaName).removePlayerFromArena(player);
-        if (arenas.get(arenaName).getAnyArenaPlayerSize() == 0) {
-            clearArena(arenaName);
-        }
     }
 
     public HashMap<ServerPlayerEntity, String> getActivePlayers() {
@@ -77,7 +73,6 @@ public class ArenaManager {
     }
 
     public boolean checkArenaExists(String name) {
-//       return MobArena.database.arenaExists(name);
         return arenaNames.contains(name);
     }
 

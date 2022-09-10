@@ -9,12 +9,15 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.File;
 
 public class MobArena implements ModInitializer {
     public static final String MOD_ID = "mobarena";
@@ -35,6 +38,7 @@ public class MobArena implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Initialised MobArena Mod for Minecraft v1.18.2");
 
+		new File(FabricLoader.getInstance().getConfigDir().toString()+ "/mobarena").mkdirs();
 		database.connectToDB();
 
 		CommandRegistrationCallback.EVENT.register(MobArena::registerCommands);
@@ -49,7 +53,6 @@ public class MobArena implements ModInitializer {
 
 		ServerPlayerEvents.ALLOW_DEATH.register(((player, source, amount) -> {
 			if (MobArena.arenaManager.isPlayerActive(player)) {
-				player.setHealth(20);
 				String name = MobArena.arenaManager.getArenaFromPlayer(player);
 				MobArena.arenaManager.arenas.get(name).addDeadPlayer(player);
 				return false;
