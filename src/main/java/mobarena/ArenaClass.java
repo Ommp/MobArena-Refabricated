@@ -26,6 +26,9 @@ public class ArenaClass {
     public ArrayList<ArenaItem> getItems() {
         return items;
     }
+    public ArenaItem getItem(int index) {
+        return items.get(index);
+    }
 
     public void setName(String name) {
         this.name = name;

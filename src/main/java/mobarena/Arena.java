@@ -180,6 +180,7 @@ public class Arena {
         for (ServerPlayerEntity p: deadPlayers) {
             transportPlayer(p, "arena");
             deadPlayers.remove(p);
+            specPlayers.remove(p);
             arenaPlayers.add(p);
         }
     }
@@ -266,6 +267,7 @@ public class Arena {
         }
     }
     public void startNextWave() {
+        reviveDead();
         wave.setRandomWaveType();
         wave.startWave();
         spawner.clearMonsters();
@@ -284,7 +286,15 @@ public class Arena {
         for (int i = 0; i < player.getInventory().size(); i++) {
             var name = arenaClass.getItems().get(i).name;
             var item = Registry.ITEM.get(Identifier.tryParse(name));
-            player.getInventory().insertStack(new ItemStack(item, arenaClass.getItems().get(i).count));
+            var itemStack = new ItemStack(item, arenaClass.getItems().get(i).count);
+
+            //if a configured item contains enchantments, add them
+            if (arenaClass.getItem(i).containsEnchantments()) {
+                for (var entry : arenaClass.getItem(i).getEnchantments().entrySet()) {
+                    itemStack.addEnchantment(Registry.ENCHANTMENT.get(Identifier.tryParse(entry.getKey())), entry.getValue());
+                }
+            }
+            player.getInventory().insertStack(itemStack);
         }
     }
 

@@ -13,6 +13,10 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.registry.Registry;
+
+import java.util.HashMap;
+import java.util.Objects;
 
 public class SetClass implements Command {
 
@@ -27,7 +31,23 @@ public class SetClass implements Command {
         ArenaClass arenaClass = new ArenaClass();
         arenaClass.setName(name);
         for (int i = 0; i < inventory.size(); i++) {
-            arenaClass.addItems(new ArenaItem(inventory.getStack(i).getItem().toString(), inventory.getStack(i).getCount()));
+            if (!Objects.equals(Registry.ITEM.getId(inventory.getStack(i).getItem()).toString(), "minecraft:air")) {
+                    HashMap<String, Integer> enchantments = new HashMap<>();
+
+                //for every enchantment an item has, add the enchantment to the arraylist
+                for (int j = 0; j < inventory.getStack(i).getEnchantments().size(); j++) {
+
+                    String enchantmentName = inventory.getStack(i).getEnchantments().getCompound(j).getString("id");
+                    int level = inventory.getStack(i).getEnchantments().getCompound(j).getInt("lvl");
+                    enchantments.put(enchantmentName, level);
+                }
+
+                if (enchantments.isEmpty()) {
+                    arenaClass.addItems(new ArenaItem(Registry.ITEM.getId(inventory.getStack(i).getItem()).toString(), inventory.getStack(i).getCount()));
+                } else {
+                    arenaClass.addItems(new ArenaItem(Registry.ITEM.getId(inventory.getStack(i).getItem()).toString(), inventory.getStack(i).getCount(), enchantments));
+                }
+            }
         }
 
         ArenaClassConfig config = new ArenaClassConfig();

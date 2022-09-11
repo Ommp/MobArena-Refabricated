@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class ArenaClassConfig {
 
     private transient final File configFile = new File(FabricLoader.getInstance().getConfigDir().toString()+ "/mobarena/classes.json");
-    private transient final Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
+    private transient final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @SerializedName("Classes")
     private final HashMap<String, ArenaClass> arenaClasses = new HashMap<>();
