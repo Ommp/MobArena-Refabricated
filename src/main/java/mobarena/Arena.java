@@ -1,6 +1,8 @@
 package mobarena;
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
@@ -283,18 +285,16 @@ public class Arena {
         player.getInventory().clear();
 
         //add the items
-        for (int i = 0; i < player.getInventory().size(); i++) {
-            var name = arenaClass.getItems().get(i).name;
-            var item = Registry.ITEM.get(Identifier.tryParse(name));
-            var itemStack = new ItemStack(item, arenaClass.getItems().get(i).count);
+        for (int i = 0; i < arenaClass.getItems().size(); i++) {
+            var data = arenaClass.getItem(i).getData();
+            ItemStack itemStack;
+            try {
+                itemStack = ItemStack.fromNbt(StringNbtReader.parse(data));
+            } catch (CommandSyntaxException e) {
+                throw new RuntimeException(e);
+            }
             var slot = arenaClass.getItems().get(i).getSlot();
 
-            //if a configured item contains enchantments, add them
-            if (arenaClass.getItem(i).containsEnchantments()) {
-                for (var entry : arenaClass.getItem(i).getEnchantments().entrySet()) {
-                    itemStack.addEnchantment(Registry.ENCHANTMENT.get(Identifier.tryParse(entry.getKey())), entry.getValue());
-                }
-            }
             player.getInventory().insertStack(slot,itemStack);
         }
     }
