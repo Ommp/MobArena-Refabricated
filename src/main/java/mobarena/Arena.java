@@ -287,6 +287,7 @@ public class Arena {
             var name = arenaClass.getItems().get(i).name;
             var item = Registry.ITEM.get(Identifier.tryParse(name));
             var itemStack = new ItemStack(item, arenaClass.getItems().get(i).count);
+            var slot = arenaClass.getItems().get(i).getSlot();
 
             //if a configured item contains enchantments, add them
             if (arenaClass.getItem(i).containsEnchantments()) {
@@ -294,7 +295,7 @@ public class Arena {
                     itemStack.addEnchantment(Registry.ENCHANTMENT.get(Identifier.tryParse(entry.getKey())), entry.getValue());
                 }
             }
-            player.getInventory().insertStack(itemStack);
+            player.getInventory().insertStack(slot,itemStack);
         }
     }
 

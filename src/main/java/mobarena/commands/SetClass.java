@@ -43,9 +43,9 @@ public class SetClass implements Command {
                 }
 
                 if (enchantments.isEmpty()) {
-                    arenaClass.addItems(new ArenaItem(Registry.ITEM.getId(inventory.getStack(i).getItem()).toString(), inventory.getStack(i).getCount()));
+                    arenaClass.addItems(new ArenaItem(Registry.ITEM.getId(inventory.getStack(i).getItem()).toString(), inventory.getStack(i).getCount(), i));
                 } else {
-                    arenaClass.addItems(new ArenaItem(Registry.ITEM.getId(inventory.getStack(i).getItem()).toString(), inventory.getStack(i).getCount(), enchantments));
+                    arenaClass.addItems(new ArenaItem(Registry.ITEM.getId(inventory.getStack(i).getItem()).toString(), inventory.getStack(i).getCount(), i, enchantments));
                 }
             }
         }
