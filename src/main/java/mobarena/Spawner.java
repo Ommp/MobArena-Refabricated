@@ -26,6 +26,7 @@ public class Spawner {
         potentialMobs.add("minecraft:zombie");
         potentialMobs.add("minecraft:husk");
         potentialMobs.add("minecraft:spider");
+        potentialMobs.add("minecraft:cave_spider");
         potentialMobs.add("minecraft:skeleton");
         potentialMobs.add("minecraft:pillager");
     }
@@ -39,7 +40,6 @@ public class Spawner {
             int index = (int)(Math.random() * potentialMobs.size());
 
 
-//TODO fix skeletons and pillagers spawning without equipment
             NbtCompound nbtCompound = new NbtCompound();
             nbtCompound.putString("id", potentialMobs.get(index));
             Entity entity = EntityType.loadEntityWithPassengers(nbtCompound, world, entity2 -> entity2);
@@ -48,14 +48,12 @@ public class Spawner {
             }
 
             if (waveType.equals(WaveType.BOSS)) {
-                monsters.get(i).addStatusEffect(new StatusEffectInstance(StatusEffects.HEALTH_BOOST, 1000000, 3));
-                monsters.get(i).addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 1000000, 2));
                 monsters.get(i).addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 1000000, 3));
                 monsters.get(i).addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 1000000, 2));
             }
             if (waveType.equals(WaveType.SWARM)) {
                 monsters.get(i).setHealth(monsters.get(i).getMaxHealth() / 2);
-                monsters.get(i).setMovementSpeed(monsters.get(i).getMovementSpeed() * 2);
+                monsters.get(i).addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 1000000, 2));
             }
         }
     }
