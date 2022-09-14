@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import mobarena.ArenaManager;
 import mobarena.MobArena;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -20,6 +21,7 @@ public class DeleteArena implements Command {
 
 
             MobArena.database.deleteArena(name);
+            ArenaManager.addArenaNames();
             player.sendMessage(new TranslatableText("mobarena.deletedarena", name), false);
             return 0;
     }

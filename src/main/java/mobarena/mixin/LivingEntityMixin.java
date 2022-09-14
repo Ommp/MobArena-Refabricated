@@ -1,6 +1,6 @@
 package mobarena.mixin;
 
-import mobarena.MobArena;
+import mobarena.ArenaManager;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,13 +15,13 @@ public abstract class LivingEntityMixin{
     @Inject(method = "onDeath", at = @At("HEAD"))
     private void injected(DamageSource source, CallbackInfo ci) {
         if (!livingEntity.getWorld().isClient) {
-        MobArena.arenaManager.handleMobDeath(livingEntity.getUuidAsString());
+        ArenaManager.handleMobDeath(livingEntity.getUuidAsString());
         }
     }
     @Inject(method = "drop", at = @At("HEAD"), cancellable = true)
     private void disableDrop(DamageSource source, CallbackInfo ci) {
         //cancel dropping items if the mob belongs to an arena
-        if (MobArena.arenaManager.getMobToArena().containsKey(livingEntity.getUuidAsString())) {
+        if (ArenaManager.getMobToArena().containsKey(livingEntity.getUuidAsString())) {
             ci.cancel();
         }
     }

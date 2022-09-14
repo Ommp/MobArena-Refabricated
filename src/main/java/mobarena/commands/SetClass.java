@@ -6,7 +6,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import mobarena.ArenaClass;
 import mobarena.ArenaItem;
-import mobarena.MobArena;
+import mobarena.ArenaManager;
 import mobarena.config.ArenaClassConfig;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -42,7 +42,7 @@ public class SetClass implements Command {
         config.load();
         config.addClass(arenaClass);
         config.save();
-        MobArena.arenaManager.initClasses();
+        ArenaManager.initClasses();
 
         player.sendMessage(new TranslatableText("mobarena.setclass", name), false);
 

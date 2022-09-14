@@ -4,7 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import mobarena.MobArena;
+import mobarena.ArenaManager;
 import mobarena.commands.suggestions.NameSuggestionProvider;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -17,22 +17,22 @@ public class JoinArena implements Command{
 
         ServerCommandSource source = context.getSource();
         ServerPlayerEntity player = source.getPlayer();
-        if (MobArena.arenaManager.checkArenaExists(name)) {
+        if (ArenaManager.checkArenaExists(name)) {
 
-            MobArena.arenaManager.loadArena(name);
-            if (MobArena.arenaManager.arenas.get(name).isPlayerInArena(player)) {
+            ArenaManager.loadArena(name);
+            if (ArenaManager.arenas.get(name).isPlayerInArena(player)) {
                 player.sendMessage(new TranslatableText("mobarena.alreadyjoined", name), false);
                 return 0;
             }
-            if(MobArena.arenaManager.isPlayerActive(player)) {
+            if(ArenaManager.isPlayerActive(player)) {
                 player.sendMessage(new TranslatableText("mobarena.alreadyinanotherarena"), false);
                 return 0;
             }
-            if (MobArena.arenaManager.arenas.get(name).isRunning()) {
+            if (ArenaManager.arenas.get(name).isRunning()) {
                 player.sendMessage(new TranslatableText("mobarena.arenaalreadyrunning"), false);
                 return 0;
             }
-                MobArena.arenaManager.arenas.get(name).joinLobby(player);
+                ArenaManager.arenas.get(name).joinLobby(player);
                 return 1;
             }
 

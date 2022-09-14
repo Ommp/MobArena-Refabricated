@@ -3,7 +3,7 @@ package mobarena.commands;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import mobarena.MobArena;
+import mobarena.ArenaManager;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -14,8 +14,8 @@ public class LeaveArena implements Command{
         ServerCommandSource source = context.getSource();
         ServerPlayerEntity player = source.getPlayer();
 
-        String name = MobArena.arenaManager.getArenaFromPlayer(player);
-        MobArena.arenaManager.arenas.get(name).leavePlayer(player);
+        String name = ArenaManager.getArenaFromPlayer(player);
+        ArenaManager.arenas.get(name).leavePlayer(player);
         player.sendMessage(new TranslatableText("mobarena.leftarena"), false);
         player.getInventory().clear();
         return 1;

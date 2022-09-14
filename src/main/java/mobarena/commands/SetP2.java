@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import mobarena.ArenaManager;
 import mobarena.MobArena;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -20,7 +21,7 @@ public class SetP2 implements Command{
 
         MobArena.database.updateP2(name, player.getBlockX(), player.getBlockY(), player.getBlockZ());
         player.sendMessage(new TranslatableText("mobarena.updatedpos"), false);
-        MobArena.arenaManager.reloadArena(name);
+        ArenaManager.reloadArena(name);
         return 1;
     }
 

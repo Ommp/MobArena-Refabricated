@@ -9,20 +9,28 @@ import java.util.HashMap;
 
 public class ArenaManager {
 
-    private final ArrayList<String> arenaNames = new ArrayList<>();
-    public HashMap<String, Arena> arenas = new HashMap<>();
-    private HashMap<ServerPlayerEntity, String> activePlayers = new HashMap<>();
+    private static final ArrayList<String> arenaNames = new ArrayList<>();
+    public static HashMap<String, Arena> arenas = new HashMap<>();
+    private static final HashMap<ServerPlayerEntity, String> activePlayers = new HashMap<>();
 
-    private HashMap<String, ArenaClass> classes = new HashMap<>();
-    private HashMap<String, String> mobToArena = new HashMap<>();
+    private static HashMap<String, ArenaClass> classes = new HashMap<>();
+    private static final HashMap<String, String> mobToArena = new HashMap<>();
 
-    public void addArenaNames() {
+    public static void addArenaNames() {
+        if (!arenaNames.isEmpty()) {
+            arenaNames.clear();
+        }
         arenaNames.addAll(MobArena.database.getAllArenaNames());
     }
-    public ArrayList<String> getArenaNames() {
+    public static ArrayList<String> getArenaNames() {
         return arenaNames;
     }
-    public void loadArena(String name) {
+
+    public static Arena getArena(String name) {
+        return arenas.get(name);
+    }
+
+    public static void loadArena(String name) {
         if (!arenas.containsKey(name)) {
             Arena arena = MobArena.database.getArenaByName(name);
 
@@ -36,63 +44,57 @@ public class ArenaManager {
         }
     }
 
-    public void initClasses() {
+    public static void initClasses() {
             ArenaClassConfig config = new ArenaClassConfig();
             config.load();
             classes = config.getArenaClasses();
         }
 
-    public void reloadArena(String name) {
+    public static void reloadArena(String name) {
         arenas.remove(name);
         loadArena(name);
     }
 
     //used in case a player tries to join another arena while already being in one
-    public boolean isPlayerActive(ServerPlayerEntity player) {
+    public static boolean isPlayerActive(ServerPlayerEntity player) {
         return activePlayers.containsKey(player);
     }
 
-    public void addActivePlayer(ServerPlayerEntity player, String arenaName) {
+    public static void addActivePlayer(ServerPlayerEntity player, String arenaName) {
         activePlayers.put(player, arenaName);
     }
 
-    public void removeActivePlayer(ServerPlayerEntity player) {
+    public static void removeActivePlayer(ServerPlayerEntity player) {
         activePlayers.remove(player);
     }
 
-    public HashMap<ServerPlayerEntity, String> getActivePlayers() {
+    public static HashMap<ServerPlayerEntity, String> getActivePlayers() {
         return activePlayers;
     }
 
-    public void clearArena(String arenaName) {
+    public static void clearArena(String arenaName) {
         arenas.remove(arenaName);
     }
 
-    public String getArenaFromPlayer(ServerPlayerEntity player) {
+    public static String getArenaFromPlayer(ServerPlayerEntity player) {
         return activePlayers.get(player);
     }
 
-    public boolean checkArenaExists(String name) {
+    public static boolean checkArenaExists(String name) {
         return arenaNames.contains(name);
     }
 
-    public void connectMobToArena(String UUID, String arenaName) {
+    public static void connectMobToArena(String UUID, String arenaName) {
         mobToArena.put(UUID, arenaName);
     }
 
-    public void handleMobDeath(String UUID) {
+    public static void handleMobDeath(String UUID) {
         if (mobToArena.containsKey(UUID)) {
             arenas.get(mobToArena.get(UUID)).countDeadMobs();
         }
     }
 
-    public void tellArenaPlayerDeath(ServerPlayerEntity serverPlayerEntity){
-        if (activePlayers.containsKey(serverPlayerEntity)) {
-            arenas.get(activePlayers.get(serverPlayerEntity)).addDeadPlayer(serverPlayerEntity);
-            }
-        }
-
-    public void handleSignEvent(String text1, String text2, ServerPlayerEntity player) {
+    public static void handleSignEvent(String text1, String text2, ServerPlayerEntity player) {
         if (text1.equals("[arena]") && classes.containsKey(text2) && !activePlayers.isEmpty()) {
             arenas.get(activePlayers.get(player)).addPlayerClass(player, classes.get(text2));
             player.sendMessage(new TranslatableText("mobarena.selectedclass", text2), false);
@@ -102,7 +104,7 @@ public class ArenaManager {
             }
         }
 
-    public HashMap<String, String> getMobToArena() {
+    public static HashMap<String, String> getMobToArena() {
         return mobToArena;
     }
 }

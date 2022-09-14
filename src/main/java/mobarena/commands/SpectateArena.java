@@ -4,7 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import mobarena.MobArena;
+import mobarena.ArenaManager;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -17,20 +17,20 @@ public class SpectateArena implements Command{
         ServerCommandSource source = context.getSource();
         ServerPlayerEntity player = source.getPlayer();
 
-        MobArena.arenaManager.loadArena(name);
-        if (MobArena.arenaManager.checkArenaExists(name) == true) {
+        ArenaManager.loadArena(name);
+        if (ArenaManager.checkArenaExists(name)) {
 
-            if (MobArena.arenaManager.arenas.get(name).isPlayerInArena(player)) {
+            if (ArenaManager.arenas.get(name).isPlayerInArena(player)) {
                 player.sendMessage(new TranslatableText("mobarena.alreadyjoined", name), false);
                 return 0;
             }
-            if(MobArena.arenaManager.isPlayerActive(player)) {
+            if(ArenaManager.isPlayerActive(player)) {
                 player.sendMessage(new TranslatableText("mobarena.alreadyinanotherarena"), false);
                 return 0;
             }
 
-            MobArena.arenaManager.addActivePlayer(player, name);
-            MobArena.arenaManager.arenas.get(name).transportPlayer(player, "spec");
+            ArenaManager.addActivePlayer(player, name);
+            ArenaManager.arenas.get(name).transportPlayer(player, "spec");
             player.sendMessage(new TranslatableText("mobarena.joinedspec", name), false);
             return 1;
         }

@@ -5,7 +5,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import mobarena.MobArena;
+import mobarena.ArenaManager;
 import net.minecraft.server.command.ServerCommandSource;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class NameSuggestionProvider implements SuggestionProvider<ServerCommandS
     }
 
     private ArrayList<String> getNames() {
-        return MobArena.arenaManager.getArenaNames();
+        return ArenaManager.getArenaNames();
     };
 
 }

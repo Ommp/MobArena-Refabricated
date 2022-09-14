@@ -35,7 +35,7 @@ public class Spawner {
         this.potentialMobs = mobs;
     }
 
-    public void prepareSpawner(int mobsToSpawn, WaveType waveType) {
+    public void addEntitiesToSpawn(int mobsToSpawn, WaveType waveType) {
         for (int i = 0; i < mobsToSpawn; i++) {
             int index = (int)(Math.random() * potentialMobs.size());
 
@@ -60,8 +60,8 @@ public class Spawner {
 
     public void spawnMobs(){
         for (MobEntity entity: monsters) {
-            Vec3i spawnPoint = MobArena.arenaManager.arenas.get(arenaName).getSpawnPointNearPlayer();
-            MobArena.arenaManager.connectMobToArena(entity.getUuidAsString(), arenaName);
+            Vec3i spawnPoint = ArenaManager.getArena(arenaName).getSpawnPointNearPlayer();
+            ArenaManager.connectMobToArena(entity.getUuidAsString(), arenaName);
             entity.updatePosition(spawnPoint.getX(), spawnPoint.getY(), spawnPoint.getZ());
             entity.initialize(world, world.getLocalDifficulty(entity.getBlockPos()), SpawnReason.SPAWNER, null, null);
             world.spawnEntity(entity);

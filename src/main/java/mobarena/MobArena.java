@@ -24,8 +24,6 @@ public class MobArena implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 	public static Database database = new Database();
 
-	public static ArenaManager arenaManager = new ArenaManager();
-
 	public static ArenaConfig arenaConfig = new ArenaConfig();
 	public static MinecraftServer serverinstance;
 
@@ -47,14 +45,14 @@ public class MobArena implements ModInitializer {
 			serverinstance = server.getOverworld().getServer();
 		});
 
-		arenaManager.initClasses();
+		ArenaManager.initClasses();
 		arenaConfig.load();
-		arenaManager.addArenaNames();
+		ArenaManager.addArenaNames();
 
 		ServerPlayerEvents.ALLOW_DEATH.register(((player, source, amount) -> {
-			if (MobArena.arenaManager.isPlayerActive(player)) {
-				String name = MobArena.arenaManager.getArenaFromPlayer(player);
-				MobArena.arenaManager.arenas.get(name).addDeadPlayer(player);
+			if (ArenaManager.isPlayerActive(player)) {
+				String name = ArenaManager.getArenaFromPlayer(player);
+				ArenaManager.arenas.get(name).addDeadPlayer(player);
 				return false;
 			}
 			return true;

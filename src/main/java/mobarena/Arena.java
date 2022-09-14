@@ -100,14 +100,14 @@ public class Arena {
 
         wave.setWaveType(WaveType.DEFAULT);
         wave.startWave();
-        spawner.prepareSpawner(wave.getMobsToSpawn(), wave.getWaveType());
+        spawner.addEntitiesToSpawn(wave.getMobsToSpawn(), wave.getWaveType());
         spawner.spawnMobs();
     }
 
     public void stopArena() {
         isRunning = false;
         spawner.clearMonsters();
-        MobArena.arenaManager.clearArena(name);
+        ArenaManager.clearArena(name);
     }
 
     public boolean isRunning() {
@@ -125,7 +125,7 @@ public class Arena {
             transportPlayer(player, "lobby");
             player.changeGameMode(GameMode.ADVENTURE);
             restoreVitals(player);
-            MobArena.arenaManager.addActivePlayer(player, name);
+            ArenaManager.addActivePlayer(player, name);
             player.sendMessage(new TranslatableText("mobarena.joinedarenalobby", name), false);
         } else {
             player.sendMessage(new TranslatableText("mobarena.inventorynotempty"), false);
@@ -141,15 +141,12 @@ public class Arena {
         player.changeGameMode(GameMode.SURVIVAL);
         transportPlayer(player, "exit");
         removePlayerFromArena(player);
-        MobArena.arenaManager.removeActivePlayer(player);
+        ArenaManager.removeActivePlayer(player);
         restoreVitals(player);
     }
 
     public boolean isPlayerInArena(ServerPlayerEntity player) {
-        if (anyArenaPlayer.contains(player)) {
-            return true;
-        }
-        return false;
+        return anyArenaPlayer.contains(player);
     }
 
     public void addReadyLobbyPlayer(ServerPlayerEntity player) {
@@ -194,7 +191,7 @@ public class Arena {
             transportPlayer(p, "exit");
             p.getInventory().clear();
             p.changeGameMode(GameMode.SURVIVAL);
-            MobArena.arenaManager.removeActivePlayer(p);
+            ArenaManager.removeActivePlayer(p);
         }
         cleanUpPlayers();
     }
@@ -255,11 +252,11 @@ public class Arena {
         int playerIndex = (int)(Math.random() * arenaPlayers.size());
         BlockPos playerPos = arenaPlayers.get(playerIndex).getBlockPos();
         ArrayList<Double> distances = new ArrayList<>();
-        for (int i = 0; i < mobSpawnPoints.size(); i++) {
-            distances.add(playerPos.getSquaredDistance(mobSpawnPoints.get(i)));
+        for (Vec3i mobSpawnPoint : mobSpawnPoints) {
+            distances.add(playerPos.getSquaredDistance(mobSpawnPoint));
         }
-       int spawnPointIndex = distances.indexOf(Collections.min(distances));
-       return mobSpawnPoints.get(spawnPointIndex);
+        int spawnPointIndex = distances.indexOf(Collections.min(distances));
+        return mobSpawnPoints.get(spawnPointIndex);
     }
 
     public void countDeadMobs() {
@@ -273,7 +270,7 @@ public class Arena {
         wave.setRandomWaveType();
         wave.startWave();
         spawner.clearMonsters();
-        spawner.prepareSpawner(wave.getMobsToSpawn(), wave.getWaveType());
+        spawner.addEntitiesToSpawn(wave.getMobsToSpawn(), wave.getWaveType());
         spawner.spawnMobs();
         spawner.resetDeadMonsters();
     }

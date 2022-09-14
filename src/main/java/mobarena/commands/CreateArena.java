@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import mobarena.ArenaManager;
 import mobarena.MobArena;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -18,12 +19,13 @@ public class CreateArena implements Command {
         ServerCommandSource source = context.getSource();
         ServerPlayerEntity player = source.getPlayer();
 
-        if (MobArena.arenaManager.checkArenaExists(name) == true) {
+        if (ArenaManager.checkArenaExists(name)) {
             player.sendMessage(new TranslatableText("mobarena.arenaexists", name), false);
             return 0;
         }
         else {
             MobArena.database.addArena(name);
+            ArenaManager.addArenaNames();
             player.sendMessage(new TranslatableText("mobarena.createdarena", name), false);
         }
 

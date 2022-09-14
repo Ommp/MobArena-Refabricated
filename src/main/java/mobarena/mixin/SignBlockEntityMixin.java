@@ -1,6 +1,6 @@
 package mobarena.mixin;
 
-import mobarena.MobArena;
+import mobarena.ArenaManager;
 import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -24,7 +24,7 @@ public abstract class SignBlockEntityMixin {
     public void useOnBlock(ServerPlayerEntity player, CallbackInfoReturnable<Boolean> cir) {
         String text1 = this.getTextOnRow(0, false).getString();
         String text2 = this.getTextOnRow(1, false).getString();
-        MobArena.arenaManager.handleSignEvent(text1, text2, player);
+        ArenaManager.handleSignEvent(text1, text2, player);
     }
 
 }
