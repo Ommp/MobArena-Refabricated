@@ -5,6 +5,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import mobarena.ArenaManager;
+import mobarena.commands.suggestions.NameSuggestionProvider;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -45,7 +46,7 @@ public class SpectateArena implements Command{
         return CommandManager
                 .literal("spec")
                 .then(
-                        CommandManager.argument("name", StringArgumentType.greedyString()).executes(this::run)
+                        CommandManager.argument("name", StringArgumentType.greedyString()).executes(this::run).suggests(new NameSuggestionProvider())
                 )
                 .build();
     }

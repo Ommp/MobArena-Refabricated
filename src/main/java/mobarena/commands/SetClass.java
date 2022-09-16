@@ -52,6 +52,7 @@ public class SetClass implements Command {
     public LiteralCommandNode<ServerCommandSource> getNode() {
         return CommandManager
                 .literal("setclass")
+                .requires(source -> source.hasPermissionLevel(2))
                 .then(
                         CommandManager.argument("name", StringArgumentType.greedyString()).executes(this::run)
                 )
