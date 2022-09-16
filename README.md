@@ -2,23 +2,22 @@
 
 ## About
 
-This mod allows players to fight against monsters that come in waves in an arena.
-Currently, the main game loop somewhat works meaning that you can create and join arenas and defeat monsters, but many important features are missing. See below for the currently implemented features.
+This mod for Fabric allows players to fight against monsters in an arena.
+Currently, most of the core features have been implemented so that it's playable, but many features have not been implemented yet. See below for a quick summary about the current status.
 
 ### Features
-- [x] Create and set up arenas
-- [x] Join arenas
-- [x] Mob spawning and waves
+- [x] Arena creation
+- [x] Fight mobs in arenas
 - [x] Wave types like swarms (WIP)
-- [x] Classes (WIP)
+- [x] Classes (with support for modded items and enchantments)
 - [ ] Scoreboard
   - [ ] Command to check an arena's scoreboard
   - [ ] Scoreboards on signs
 - [x] Bosses (WIP)
-- [ ] Support for modded mobs
+- [x] Support for modded mobs
+- [ ] Reward system
 - [ ] Configuration
   - [ ] Difficulty
   - [x] Classes
   - [ ] Waves
   - [x] Allowing only certain mobs to spawn
-  - [ ] Enable or disable specific mods inside an arena

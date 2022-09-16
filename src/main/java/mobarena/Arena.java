@@ -121,6 +121,7 @@ public class Arena {
 
     public void joinLobby(ServerPlayerEntity player) {
         if(isInventoryEmpty(player)) {
+            player.clearStatusEffects();
             addLobbyPlayer(player);
             transportPlayer(player, "lobby");
             player.changeGameMode(GameMode.ADVENTURE);
@@ -143,6 +144,7 @@ public class Arena {
         removePlayerFromArena(player);
         ArenaManager.removeActivePlayer(player);
         restoreVitals(player);
+        player.clearStatusEffects();
     }
 
     public boolean isPlayerInArena(ServerPlayerEntity player) {
@@ -187,6 +189,7 @@ public class Arena {
     //teleport all players to exit and restore various stats
     public void exitAllPlayers() {
         for (ServerPlayerEntity p : anyArenaPlayer) {
+            p.clearStatusEffects();
             restoreVitals(p);
             transportPlayer(p, "exit");
             p.getInventory().clear();

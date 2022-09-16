@@ -29,11 +29,12 @@ dependencies {
 
 	//Decide on a database implementation
 	// https://mvnrepository.com/artifact/com.h2database/h2
-//	modImplementation 'com.h2database:h2:2.1.214'
+	modImplementation 'com.h2database:h2:2.1.214'
+	include 'com.h2database:h2:2.1.214'
 
 	// https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
-	include "org.xerial:sqlite-jdbc:3.36.0.3"
-	modImplementation"org.xerial:sqlite-jdbc:3.36.0.3"
+//	include "org.xerial:sqlite-jdbc:3.36.0.3"
+//	modImplementation"org.xerial:sqlite-jdbc:3.36.0.3"
 
 	// https://mvnrepository.com/artifact/org.hsqldb/hsqldb
 //	modImplementation 'org.hsqldb:hsqldb:2.6.1'

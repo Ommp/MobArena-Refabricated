@@ -12,7 +12,7 @@ public class Database {
     public Connection con;
     public void connectToDB() {
         try {
-            con = DriverManager.getConnection("jdbc:sqlite:./config/mobarena/mobarena", "sa", "");
+            con = DriverManager.getConnection("jdbc:h2:./config/mobarena/mobarena;DATABASE_TO_UPPER=false;", "sa", "");
 
             //create the main sql tables if they don't exist
             String arenaTable = "CREATE TABLE IF NOT EXISTS arenas(" +
@@ -70,7 +70,7 @@ public class Database {
         }
     }
     public void addArena(String name) {
-        String sql = "INSERT OR IGNORE INTO arenas(name) VALUES(?)";
+        String sql = "INSERT INTO arenas(name) VALUES(?)";
         PreparedStatement statement;
 
         try {
@@ -214,6 +214,7 @@ public class Database {
             statement = con.prepareStatement(sql);
             statement.setString(1, name);
             ResultSet rs = statement.executeQuery();
+            rs.next();
 
             return new Arena(rs.getString("name"), rs.getInt("minPlayers"),rs.getInt("maxPlayers"),
                     new Warp(rs.getDouble("lobby_x"), rs.getDouble("lobby_y"),rs.getDouble("lobby_z"), rs.getFloat("lobby_yaw"), rs.getFloat("lobby_pitch")),
@@ -288,7 +289,7 @@ public class Database {
     }
 
     public void addMobSpawnPoint(String arena, double x, double y, double z) {
-        String sql = "INSERT OR IGNORE INTO mobspawnpoints(arena, x, y, z) VALUES (?,?,?,?)";
+        String sql = "INSERT INTO mobspawnpoints(arena, x, y, z) VALUES (?,?,?,?)";
         PreparedStatement statement;
 
         try {

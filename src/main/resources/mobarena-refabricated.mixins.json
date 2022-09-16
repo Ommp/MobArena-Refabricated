@@ -5,6 +5,7 @@
   "package": "mobarena.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "CreeperEntityMixin",
     "LivingEntityMixin",
     "MobEntityMixin",
     "SignBlockEntityMixin"
