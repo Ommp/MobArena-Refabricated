@@ -1,11 +1,17 @@
 package mobarena;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import mobarena.database.PlayerInventoryModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.StringNbtReader;
+import net.minecraft.network.packet.s2c.play.TitleFadeS2CPacket;
+import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
@@ -17,6 +23,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Arena {
 
@@ -120,17 +129,13 @@ public class Arena {
     }
 
     public void joinLobby(ServerPlayerEntity player) {
-        if(isInventoryEmpty(player)) {
             player.clearStatusEffects();
             addLobbyPlayer(player);
             transportPlayer(player, "lobby");
             player.changeGameMode(GameMode.ADVENTURE);
             restoreVitals(player);
             ArenaManager.addActivePlayer(player, name);
-            player.sendMessage(new TranslatableText("mobarena.joinedarenalobby", name), false);
-        } else {
-            player.sendMessage(new TranslatableText("mobarena.inventorynotempty"), false);
-        }
+            player.sendMessage(new TranslatableText("mobarena.joinedarenalobby", name), true);
     }
 
     public void restoreVitals(ServerPlayerEntity player) {
@@ -145,6 +150,27 @@ public class Arena {
         ArenaManager.removeActivePlayer(player);
         restoreVitals(player);
         player.clearStatusEffects();
+        retrieveItems(player);
+    }
+
+        //retrieve the items that the player had before entering
+    public void retrieveItems(ServerPlayerEntity p) {
+        p.getInventory().clear();
+        var inventory = MobArena.database.getPlayerItems(p.getUuidAsString());
+
+        for (PlayerInventoryModel playerInventoryModel : inventory) {
+            var data = playerInventoryModel.itemStackNbt();
+            ItemStack itemStack;
+            try {
+                itemStack = ItemStack.fromNbt(StringNbtReader.parse(data));
+            } catch (CommandSyntaxException e) {
+                throw new RuntimeException(e);
+            }
+            var slot = playerInventoryModel.slot();
+
+            p.getInventory().insertStack(slot, itemStack);
+        }
+        MobArena.database.deletePlayer(p.getUuidAsString());
     }
 
     public boolean isPlayerInArena(ServerPlayerEntity player) {
@@ -195,6 +221,7 @@ public class Arena {
             p.getInventory().clear();
             p.changeGameMode(GameMode.SURVIVAL);
             ArenaManager.removeActivePlayer(p);
+            retrieveItems(p);
         }
         cleanUpPlayers();
     }
@@ -237,7 +264,7 @@ public class Arena {
 
     public void transportAllFromLobby() {
             for (ServerPlayerEntity player : lobbyPlayers) {
-                player.sendMessage(new TranslatableText("mobarena.allplayersready"), false);
+                player.sendMessage(new TranslatableText("mobarena.allplayersready"), true);
                 transportPlayer(player, "arena");
                 arenaPlayers.add(player);
             }
@@ -272,10 +299,24 @@ public class Arena {
         reviveDead();
         wave.setRandomWaveType();
         wave.startWave();
-        spawner.clearMonsters();
-        spawner.addEntitiesToSpawn(wave.getMobsToSpawn(), wave.getWaveType());
-        spawner.spawnMobs();
-        spawner.resetDeadMonsters();
+        Text waveText = Text.of("Wave: " + wave.getCurrentWave()).getWithStyle(Style.EMPTY.withFormatting(Formatting.GREEN)).get(0);
+
+        for (ServerPlayerEntity p: anyArenaPlayer) {
+            var titleS2CPacket = new TitleS2CPacket(waveText);
+            p.networkHandler.sendPacket(titleS2CPacket);
+            p.networkHandler.sendPacket(new TitleFadeS2CPacket(10, 30, 10));
+        }
+
+        final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.schedule(new Runnable() {
+            @Override
+            public void run() {
+                spawner.clearMonsters();
+                spawner.addEntitiesToSpawn(wave.getMobsToSpawn(), wave.getWaveType());
+                spawner.spawnMobs();
+                spawner.resetDeadMonsters();
+            }
+        }, 4, TimeUnit.SECONDS);
     }
 
     //save the player's class

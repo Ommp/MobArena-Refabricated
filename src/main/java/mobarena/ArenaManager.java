@@ -31,6 +31,7 @@ public class ArenaManager {
     }
 
     public static void loadArena(String name) {
+        MobArena.arenaConfig.load();
         if (!arenas.containsKey(name)) {
             Arena arena = MobArena.database.getArenaByName(name);
 

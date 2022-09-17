@@ -58,9 +58,17 @@ public class Database {
                     "y double," +
                     "z double," +
                     "FOREIGN KEY(arena) REFERENCES arenas(name) ON DELETE CASCADE)";
+            String playerTable = "CREATE TABLE IF NOT EXISTS players(" +
+                    "uuid varchar," +
+                    "PRIMARY KEY (uuid))";
+            String playerItemStacksTable = "CREATE TABLE IF NOT EXISTS playeritemstacks(" +
+                    "player varchar," +
+                    "itemstack varchar," +
+                    "slot int," +
+                    "FOREIGN KEY(player) REFERENCES players(uuid) ON DELETE CASCADE)";
 
             Statement statement = con.createStatement();
-            String[] tables = new String[] {arenaTable, scoreboardTable, mobSpawnpointsTable};
+            String[] tables = new String[] {arenaTable, scoreboardTable, mobSpawnpointsTable, playerTable, playerItemStacksTable};
             for (String table : tables) {
                 statement.execute(table);
             }
@@ -69,6 +77,62 @@ public class Database {
             throw new RuntimeException(e);
         }
     }
+    public void addPlayer(String uuid) {
+        try {
+            PreparedStatement statement = con.prepareStatement("INSERT INTO players(uuid) VALUES(?)");
+            statement.setString(1, uuid);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void addPlayerInventoryItemStack(String uuid, String itemStackNbt, int slot) {
+        PreparedStatement statement = null;
+        try {
+            statement = con.prepareStatement("INSERT INTO playeritemstacks(player, itemstack, slot) VALUES(?,?,?)");
+            statement.setString(1, uuid);
+            statement.setString(2, itemStackNbt);
+            statement.setInt(3, slot);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void deletePlayer(String UUID) {
+        String sql = "DELETE FROM players WHERE uuid=?";
+        PreparedStatement statement;
+
+        try {
+            statement = con.prepareStatement(sql);
+            statement.setString(1, UUID);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ArrayList<PlayerInventoryModel> getPlayerItems(String uuid) {
+        String sql = "SELECT * FROM playeritemstacks where player=? ";
+        PreparedStatement statement;
+        PlayerInventoryModel model;
+        ArrayList<PlayerInventoryModel> inventory = new ArrayList<>();
+
+        try {
+            statement = con.prepareStatement(sql);
+            statement.setString(1, uuid);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()){
+                model = new PlayerInventoryModel(rs.getString("player"), rs.getString("itemstack"), rs.getInt("slot"));
+                inventory.add(model);
+            }
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return inventory;
+    }
+
     public void addArena(String name) {
         String sql = "INSERT INTO arenas(name) VALUES(?)";
         PreparedStatement statement;

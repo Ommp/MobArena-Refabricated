@@ -5,11 +5,17 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import mobarena.ArenaManager;
+import mobarena.MobArena;
 import mobarena.commands.suggestions.NameSuggestionProvider;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.registry.Registry;
+
+import java.util.Objects;
 
 public class JoinArena implements Command{
     private int run(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -21,19 +27,31 @@ public class JoinArena implements Command{
 
             ArenaManager.loadArena(name);
             if (ArenaManager.arenas.get(name).isPlayerInArena(player)) {
-                player.sendMessage(new TranslatableText("mobarena.alreadyjoined", name), false);
+                player.sendMessage(new TranslatableText("mobarena.alreadyjoined", name), true);
                 return 0;
             }
             if(ArenaManager.isPlayerActive(player)) {
-                player.sendMessage(new TranslatableText("mobarena.alreadyinanotherarena"), false);
+                player.sendMessage(new TranslatableText("mobarena.alreadyinanotherarena"), true);
                 return 0;
             }
             if (ArenaManager.arenas.get(name).isRunning()) {
-                player.sendMessage(new TranslatableText("mobarena.arenaalreadyrunning"), false);
+                player.sendMessage(new TranslatableText("mobarena.arenaalreadyrunning"), true);
                 return 0;
             }
-                ArenaManager.arenas.get(name).joinLobby(player);
-                return 1;
+            var UUID = player.getUuidAsString();
+            var inventory = player.getInventory();
+            MobArena.database.addPlayer(UUID);
+
+            for (int i = 0; i < inventory.size(); i++) {
+                if (!Objects.equals(Registry.ITEM.getId(inventory.getStack(i).getItem()).toString(), "minecraft:air")) {
+
+                    var stackEncoded = ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, inventory.getStack(i)).get().orThrow().toString();
+                    MobArena.database.addPlayerInventoryItemStack(UUID, stackEncoded, i);
+                }
+            }
+            inventory.clear();
+            ArenaManager.arenas.get(name).joinLobby(player);
+            return 1;
             }
 
         else {

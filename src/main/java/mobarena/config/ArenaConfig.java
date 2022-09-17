@@ -39,6 +39,9 @@ public class ArenaConfig {
             throw new RuntimeException(e);
         }
         ArenaConfig config = gson.fromJson(reader, ArenaConfig.class);
+        if (!arenas.isEmpty()) {
+            arenas.clear();
+        }
         arenas.putAll(config.arenas);
     }
 
