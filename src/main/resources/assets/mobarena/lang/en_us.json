@@ -19,5 +19,6 @@
   "mobarena.deletedarena": "Deleted arena with the name: %s",
   "mobarena.selectedclass": "Selected class: %s",
   "mobarena.setclass": "Created or updated class: %s",
-  "mobarena.arenaalreadyrunning": "This arena is already running!"
+  "mobarena.arenaalreadyrunning": "This arena is already running!",
+  "mobarena.countdown": "Players will be transported to arena automatically in: %s seconds"
 }

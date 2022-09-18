@@ -47,6 +47,8 @@ public class Database {
                     "p2_z int," +
                     "isEnabled int DEFAULT 1," +
                     "dimension varchar," +
+                    "countdown INT DEFAULT 60," +
+                    "forceclass BOOLEAN DEFAULT FALSE," +
                     "PRIMARY KEY (name))";
             String scoreboardTable = "CREATE TABLE IF NOT EXISTS scoreboard(" +
                     "player varchar UNIQUE," +
@@ -68,15 +70,41 @@ public class Database {
                     "FOREIGN KEY(player) REFERENCES players(uuid) ON DELETE CASCADE)";
 
             Statement statement = con.createStatement();
-            String[] tables = new String[] {arenaTable, scoreboardTable, mobSpawnpointsTable, playerTable, playerItemStacksTable};
-            for (String table : tables) {
+            String[] statements = new String[] {arenaTable, scoreboardTable, mobSpawnpointsTable, playerTable, playerItemStacksTable};
+            for (String table : statements) {
                 statement.execute(table);
             }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        addMissingColumns();
     }
+
+    //add columns if they're missing to avoid needing to delete database to add them
+    public void addMissingColumns() {
+        try {
+            DatabaseMetaData md = con.getMetaData();
+            ResultSet rs = md.getColumns(null, null, "arenas", "countdown");
+            Statement statement = con.createStatement();
+                //if countdown doesn't exist
+            if (!rs.next()) {
+                String addCountdownColumn = "ALTER TABLE arenas ADD countdown INT DEFAULT 60";
+                statement.execute(addCountdownColumn);
+            }
+
+            rs = md.getColumns(null, null, "arenas", "forceclass");
+            if (!rs.next()) {
+                String addforceClassColumn = "ALTER TABLE arenas ADD forceclass BOOLEAN DEFAULT FALSE";
+                statement.execute(addforceClassColumn);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void addPlayer(String uuid) {
         try {
             PreparedStatement statement = con.prepareStatement("INSERT INTO players(uuid) VALUES(?)");
@@ -288,7 +316,9 @@ public class Database {
                     new ArenaPoint(rs.getInt("p1_x"), rs.getInt("p1_y"), rs.getInt("p1_z")),
                     new ArenaPoint(rs.getInt("p2_x"), rs.getInt("p2_y"), rs.getInt("p2_z")),
                     rs.getInt("isEnabled"),
-                    rs.getString("dimension"));
+                    rs.getString("dimension"),
+                    rs.getInt("countdown"),
+                    rs.getBoolean("forceclass"));
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -308,31 +338,6 @@ public class Database {
             return false;
         }
 
-    }
-    public ArrayList<Arena> getAllArenas() {
-        Arena arena;
-        ArrayList<Arena> arenas = new ArrayList<Arena>();
-        String sql = "SELECT * FROM arenas";
-        PreparedStatement statement;
-        try {
-            statement = con.prepareStatement(sql);
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()){
-                arena = new Arena(rs.getString("name"), rs.getInt("minPlayers"),rs.getInt("maxPlayers"),
-                        new Warp(rs.getDouble("lobby_x"), rs.getDouble("lobby_y"),rs.getDouble("lobby_z"),rs.getFloat("lobby_yaw"), rs.getFloat("lobby_pitch")),
-                        new Warp(rs.getDouble("arena_x"), rs.getDouble("arena_y"), rs.getDouble("arena_z"), rs.getFloat("arena_yaw"), rs.getFloat("arena_pitch")),
-                        new Warp(rs.getDouble("spec_x"), rs.getDouble("spec_y"), rs.getDouble("spec_z"), rs.getFloat("spec_yaw"), rs.getFloat("spec_pitch")),
-                        new Warp(rs.getDouble("exit_x"), rs.getDouble("exit_y"), rs.getDouble("exit_z"), rs.getFloat("exit_yaw"), rs.getFloat("exit_pitch")),
-                        new ArenaPoint(rs.getInt("p1_x"), rs.getInt("p1_y"), rs.getInt("p1_z")),
-                        new ArenaPoint(rs.getInt("p2_x"), rs.getInt("p2_y"), rs.getInt("p2_z")),
-                        rs.getInt("isEnabled"),
-                        rs.getString("dimension"));
-                arenas.add(arena);
-            }
-        } catch (SQLException e){
-            throw new RuntimeException(e);
-        }
-        return arenas;
     }
 
     public ArrayList<String> getAllArenaNames() {

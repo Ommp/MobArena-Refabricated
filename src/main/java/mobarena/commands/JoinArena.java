@@ -5,17 +5,12 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import mobarena.ArenaManager;
-import mobarena.MobArena;
+import mobarena.PlayerManager;
 import mobarena.commands.suggestions.NameSuggestionProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.registry.Registry;
-
-import java.util.Objects;
 
 public class JoinArena implements Command{
     private int run(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -38,18 +33,8 @@ public class JoinArena implements Command{
                 player.sendMessage(new TranslatableText("mobarena.arenaalreadyrunning"), true);
                 return 0;
             }
-            var UUID = player.getUuidAsString();
-            var inventory = player.getInventory();
-            MobArena.database.addPlayer(UUID);
 
-            for (int i = 0; i < inventory.size(); i++) {
-                if (!Objects.equals(Registry.ITEM.getId(inventory.getStack(i).getItem()).toString(), "minecraft:air")) {
-
-                    var stackEncoded = ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, inventory.getStack(i)).get().orThrow().toString();
-                    MobArena.database.addPlayerInventoryItemStack(UUID, stackEncoded, i);
-                }
-            }
-            inventory.clear();
+            PlayerManager.savePlayerInventory(player);
             ArenaManager.arenas.get(name).joinLobby(player);
             return 1;
             }

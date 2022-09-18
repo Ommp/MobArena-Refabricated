@@ -1,7 +1,6 @@
 package mobarena;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import mobarena.database.PlayerInventoryModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.network.packet.s2c.play.TitleFadeS2CPacket;
@@ -39,9 +38,9 @@ public class Arena {
     private final HashSet<ServerPlayerEntity> specPlayers= new HashSet<>();
     private final HashSet<ServerPlayerEntity> deadPlayers= new HashSet<>();
     private final HashSet<ServerPlayerEntity> readyLobbyPlayers = new HashSet<>();
-    private final HashSet<ServerPlayerEntity> anyArenaPlayer = new HashSet<ServerPlayerEntity>();
+    private final HashSet<ServerPlayerEntity> anyArenaPlayer = new HashSet<>();
 
-    private final HashSet<ServerPlayerEntity> lobbyPlayers = new HashSet<ServerPlayerEntity>();
+    private final HashSet<ServerPlayerEntity> lobbyPlayers = new HashSet<>();
 
 
 
@@ -61,7 +60,12 @@ public class Arena {
     private Wave wave = new Wave();
     public Spawner spawner;
 
-    public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, ArenaPoint p1, ArenaPoint p2, int isEnabled, String dimensionName) {
+    private int lobbyCountdown;
+    private boolean LobbyCountingDown = false;
+
+    private boolean forceClass;
+
+    public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, ArenaPoint p1, ArenaPoint p2, int isEnabled, String dimensionName, int lobbyCountdown, boolean forceClass) {
         this.name = name;
         this.minPlayers = minPlayers;
         this.maxPlayers = maxPlayers;
@@ -73,6 +77,8 @@ public class Arena {
         this.p2 = p2;
         this.isEnabled = isEnabled;
         this.dimensionName = dimensionName;
+        this.lobbyCountdown = lobbyCountdown;
+        this.forceClass = forceClass;
         this.world = setWorld();
         this.mobSpawnPoints = setMobSpawnPoints();
         this.spawner = new Spawner(name, world);
@@ -128,19 +134,37 @@ public class Arena {
         anyArenaPlayer.add(player);
     }
 
+    public boolean hasMinPlayers() {
+        return lobbyPlayers.size() >= minPlayers;
+    }
+
+    public boolean hasLessThanMaxPlayers() {
+        return lobbyPlayers.size() < maxPlayers;
+    }
+
+    public void countdownLobby() {
+        if (!LobbyCountingDown && hasMinPlayers() && (lobbyPlayers.size() > 1)) {
+            LobbyCountingDown = true;
+            for (ServerPlayerEntity p: anyArenaPlayer) {
+                p.sendMessage(new TranslatableText("mobarena.countdown", lobbyCountdown), false);
+            }
+            final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+            executorService.schedule(this::transportAllFromLobby, lobbyCountdown, TimeUnit.SECONDS);
+        }
+    }
+
     public void joinLobby(ServerPlayerEntity player) {
+        if (hasLessThanMaxPlayers()) {
             player.clearStatusEffects();
             addLobbyPlayer(player);
             transportPlayer(player, "lobby");
             player.changeGameMode(GameMode.ADVENTURE);
-            restoreVitals(player);
+            PlayerManager.restoreVitals(player);
             ArenaManager.addActivePlayer(player, name);
             player.sendMessage(new TranslatableText("mobarena.joinedarenalobby", name), true);
-    }
-
-    public void restoreVitals(ServerPlayerEntity player) {
-        player.setHealth(20);
-        player.getHungerManager().setFoodLevel(20);
+        } else {
+            player.sendMessage(new TranslatableText("mobarena.maxplayersinlobby"), false);
+        }
     }
 
     public void leavePlayer(ServerPlayerEntity player) {
@@ -148,29 +172,8 @@ public class Arena {
         transportPlayer(player, "exit");
         removePlayerFromArena(player);
         ArenaManager.removeActivePlayer(player);
-        restoreVitals(player);
-        player.clearStatusEffects();
-        retrieveItems(player);
-    }
-
-        //retrieve the items that the player had before entering
-    public void retrieveItems(ServerPlayerEntity p) {
-        p.getInventory().clear();
-        var inventory = MobArena.database.getPlayerItems(p.getUuidAsString());
-
-        for (PlayerInventoryModel playerInventoryModel : inventory) {
-            var data = playerInventoryModel.itemStackNbt();
-            ItemStack itemStack;
-            try {
-                itemStack = ItemStack.fromNbt(StringNbtReader.parse(data));
-            } catch (CommandSyntaxException e) {
-                throw new RuntimeException(e);
-            }
-            var slot = playerInventoryModel.slot();
-
-            p.getInventory().insertStack(slot, itemStack);
-        }
-        MobArena.database.deletePlayer(p.getUuidAsString());
+        PlayerManager.restoreVitals(player);
+        PlayerManager.retrieveItems(player);
     }
 
     public boolean isPlayerInArena(ServerPlayerEntity player) {
@@ -179,9 +182,8 @@ public class Arena {
 
     public void addReadyLobbyPlayer(ServerPlayerEntity player) {
         readyLobbyPlayers.add(player);
-        if (readyLobbyPlayers.size() == lobbyPlayers.size()) {
-            transportAllFromLobby();
-        }
+        transportAllFromLobby();
+        countdownLobby();
     }
 
     public void addSpectatorPlayer(ServerPlayerEntity player) {
@@ -194,7 +196,7 @@ public class Arena {
             addSpectatorPlayer(player);
             arenaPlayers.remove(player);
             transportPlayer(player, "spec");
-            restoreVitals(player);
+            PlayerManager.restoreVitals(player);
 
         } else if (deadPlayers.size() == anyArenaPlayer.size()) {
             exitAllPlayers();
@@ -216,12 +218,12 @@ public class Arena {
     public void exitAllPlayers() {
         for (ServerPlayerEntity p : anyArenaPlayer) {
             p.clearStatusEffects();
-            restoreVitals(p);
+            PlayerManager.restoreVitals(p);
             transportPlayer(p, "exit");
             p.getInventory().clear();
             p.changeGameMode(GameMode.SURVIVAL);
             ArenaManager.removeActivePlayer(p);
-            retrieveItems(p);
+            PlayerManager.retrieveItems(p);
         }
         cleanUpPlayers();
     }
@@ -263,6 +265,7 @@ public class Arena {
     }
 
     public void transportAllFromLobby() {
+        if (hasMinPlayers() && !lobbyPlayers.isEmpty() && readyLobbyPlayers.size() == lobbyPlayers.size()) {
             for (ServerPlayerEntity player : lobbyPlayers) {
                 player.sendMessage(new TranslatableText("mobarena.allplayersready"), true);
                 transportPlayer(player, "arena");
@@ -272,6 +275,7 @@ public class Arena {
             readyLobbyPlayers.clear();
             startArena();
         }
+    }
 
     public Vec3i getRandomSpawnPoint() {
         int index = (int)(Math.random() * mobSpawnPoints.size());
@@ -338,11 +342,6 @@ public class Arena {
 
             player.getInventory().insertStack(slot,itemStack);
         }
-    }
-
-    //use this until you decide to put resources into storing player inventory on disk
-    public boolean isInventoryEmpty(ServerPlayerEntity player) {
-        return player.getInventory().isEmpty();
     }
 
     public void setCustomSpawnConfigValues(boolean usesCustomSpawns, ArrayList<String> monsters) {
