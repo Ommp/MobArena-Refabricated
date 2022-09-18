@@ -47,7 +47,7 @@ public class Database {
                     "p2_z int," +
                     "isEnabled int DEFAULT 1," +
                     "dimension varchar," +
-                    "countdown INT DEFAULT 60," +
+                    "countdown INT DEFAULT 10," +
                     "forceclass BOOLEAN DEFAULT FALSE," +
                     "PRIMARY KEY (name))";
             String scoreboardTable = "CREATE TABLE IF NOT EXISTS scoreboard(" +
@@ -90,7 +90,7 @@ public class Database {
             Statement statement = con.createStatement();
                 //if countdown doesn't exist
             if (!rs.next()) {
-                String addCountdownColumn = "ALTER TABLE arenas ADD countdown INT DEFAULT 60";
+                String addCountdownColumn = "ALTER TABLE arenas ADD countdown INT DEFAULT 10";
                 statement.execute(addCountdownColumn);
             }
 

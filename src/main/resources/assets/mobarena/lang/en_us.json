@@ -20,5 +20,5 @@
   "mobarena.selectedclass": "Selected class: %s",
   "mobarena.setclass": "Created or updated class: %s",
   "mobarena.arenaalreadyrunning": "This arena is already running!",
-  "mobarena.countdown": "Players will be transported to arena automatically in: %s seconds"
+  "mobarena.countdown": "Arena will start in: %s seconds"
 }

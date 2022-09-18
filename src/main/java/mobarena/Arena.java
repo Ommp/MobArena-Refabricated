@@ -60,12 +60,12 @@ public class Arena {
     private Wave wave = new Wave();
     public Spawner spawner;
 
-    private int lobbyCountdown;
-    private boolean LobbyCountingDown = false;
+    private int arenaStartCountdown;
+    private boolean arenaCountingDown = false;
 
     private boolean forceClass;
 
-    public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, ArenaPoint p1, ArenaPoint p2, int isEnabled, String dimensionName, int lobbyCountdown, boolean forceClass) {
+    public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, ArenaPoint p1, ArenaPoint p2, int isEnabled, String dimensionName, int arenaStartCountdown, boolean forceClass) {
         this.name = name;
         this.minPlayers = minPlayers;
         this.maxPlayers = maxPlayers;
@@ -77,7 +77,7 @@ public class Arena {
         this.p2 = p2;
         this.isEnabled = isEnabled;
         this.dimensionName = dimensionName;
-        this.lobbyCountdown = lobbyCountdown;
+        this.arenaStartCountdown = arenaStartCountdown;
         this.forceClass = forceClass;
         this.world = setWorld();
         this.mobSpawnPoints = setMobSpawnPoints();
@@ -111,12 +111,17 @@ public class Arena {
         return pointsList;
     }
     public void startArena() {
-        isRunning = true;
+        if (lobbyPlayers.isEmpty()) {
+            isRunning = true;
 
-        wave.setWaveType(WaveType.DEFAULT);
-        wave.startWave();
-        spawner.addEntitiesToSpawn(wave.getMobsToSpawn(), wave.getWaveType());
-        spawner.spawnMobs();
+            wave.setWaveType(WaveType.DEFAULT);
+            wave.startWave();
+            spawner.addEntitiesToSpawn(wave.getMobsToSpawn(), wave.getWaveType());
+            spawner.spawnMobs();
+        } else {
+            arenaCountingDown = false;
+            countdownArenaStart();
+        }
     }
 
     public void stopArena() {
@@ -135,21 +140,21 @@ public class Arena {
     }
 
     public boolean hasMinPlayers() {
-        return lobbyPlayers.size() >= minPlayers;
+        return lobbyPlayers.size() + arenaPlayers.size() >= minPlayers;
     }
 
     public boolean hasLessThanMaxPlayers() {
         return lobbyPlayers.size() < maxPlayers;
     }
 
-    public void countdownLobby() {
-        if (!LobbyCountingDown && hasMinPlayers() && (lobbyPlayers.size() > 1)) {
-            LobbyCountingDown = true;
+    public void countdownArenaStart() {
+        if (!arenaCountingDown && (arenaPlayers.size() + lobbyPlayers.size() + readyLobbyPlayers.size() > 0)) {
+            arenaCountingDown = true;
             for (ServerPlayerEntity p: anyArenaPlayer) {
-                p.sendMessage(new TranslatableText("mobarena.countdown", lobbyCountdown), false);
+                p.sendMessage(new TranslatableText("mobarena.countdown", arenaStartCountdown), false);
             }
             final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-            executorService.schedule(this::transportAllFromLobby, lobbyCountdown, TimeUnit.SECONDS);
+            executorService.schedule(this::startArena, arenaStartCountdown, TimeUnit.SECONDS);
         }
     }
 
@@ -183,7 +188,6 @@ public class Arena {
     public void addReadyLobbyPlayer(ServerPlayerEntity player) {
         readyLobbyPlayers.add(player);
         transportAllFromLobby();
-        countdownLobby();
     }
 
     public void addSpectatorPlayer(ServerPlayerEntity player) {
@@ -265,7 +269,7 @@ public class Arena {
     }
 
     public void transportAllFromLobby() {
-        if (hasMinPlayers() && !lobbyPlayers.isEmpty() && readyLobbyPlayers.size() == lobbyPlayers.size()) {
+        if (hasMinPlayers() && readyLobbyPlayers.size() == lobbyPlayers.size()) {
             for (ServerPlayerEntity player : lobbyPlayers) {
                 player.sendMessage(new TranslatableText("mobarena.allplayersready"), true);
                 transportPlayer(player, "arena");
@@ -273,7 +277,7 @@ public class Arena {
             }
             lobbyPlayers.clear();
             readyLobbyPlayers.clear();
-            startArena();
+            countdownArenaStart();
         }
     }
 
