@@ -20,5 +20,8 @@
   "mobarena.selectedclass": "Selected class: %s",
   "mobarena.setclass": "Created or updated class: %s",
   "mobarena.arenaalreadyrunning": "This arena is already running!",
-  "mobarena.countdown": "Arena will start in: %s seconds"
+  "mobarena.countdown": "Arena will start in: %s seconds",
+  "mobarena.maxplayersinarena": "Max simultaneous player count for this arena has been reached!",
+  "mobarena.updatedmax": "Updated max players allowed.",
+  "mobarena.updatedmin": "Updated min players needed."
 }

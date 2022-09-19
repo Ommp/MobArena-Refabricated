@@ -6,7 +6,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 
 public class Spawner {
     private ArrayList<String> potentialMobs = new ArrayList<>();
-    private ArrayList<HostileEntity> monsters = new ArrayList<>();
+    private ArrayList<MobEntity> monsters = new ArrayList<>();
 
     private int deadMonsters;
     private String arenaName;
@@ -43,8 +42,8 @@ public class Spawner {
             NbtCompound nbtCompound = new NbtCompound();
             nbtCompound.putString("id", potentialMobs.get(index));
             Entity entity = EntityType.loadEntityWithPassengers(nbtCompound, world, entity2 -> entity2);
-            if (entity instanceof HostileEntity) {
-                monsters.add((HostileEntity) entity);
+            if (entity instanceof MobEntity) {
+                monsters.add((MobEntity) entity);
             }
 
             if (waveType.equals(WaveType.BOSS)) {
@@ -68,7 +67,7 @@ public class Spawner {
         }
     }
 
-    public ArrayList<HostileEntity> getMonsters() {
+    public ArrayList<MobEntity> getMonsters() {
         return monsters;
     }
 

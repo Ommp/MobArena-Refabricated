@@ -324,21 +324,6 @@ public class Database {
             throw new RuntimeException(e);
         }
     }
-    public boolean arenaExists(String name) {
-        String sql = "SELECT name FROM arenas where name=? ";
-        PreparedStatement statement;
-
-        try {
-            statement = con.prepareStatement(sql);
-            statement.setString(1, name);
-            ResultSet rs = statement.executeQuery();
-
-            return !rs.getString("name").isEmpty();
-        } catch (SQLException e) {
-            return false;
-        }
-
-    }
 
     public ArrayList<String> getAllArenaNames() {
         ArrayList<String> names = new ArrayList<>();
@@ -388,6 +373,45 @@ public class Database {
             }
 
             return pointsList;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setMinPlayers(int min, String arena) {
+        String sql = "UPDATE arenas SET minPlayers=? WHERE name=?";
+        PreparedStatement statement = null;
+        try {
+            statement = con.prepareStatement(sql);
+            statement.setInt(1, min);
+            statement.setString(2, arena);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setMaxPlayers(int max, String arena) {
+        String sql = "UPDATE arenas SET maxPlayers=? WHERE name=?";
+        PreparedStatement statement = null;
+        try {
+            statement = con.prepareStatement(sql);
+            statement.setInt(1, max);
+            statement.setString(2, arena);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setCountdown(int seconds, String arena) {
+        String sql = "UPDATE arenas SET countdown=? WHERE name=?";
+        PreparedStatement statement = null;
+        try {
+            statement = con.prepareStatement(sql);
+            statement.setInt(1, seconds);
+            statement.setString(2, arena);
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

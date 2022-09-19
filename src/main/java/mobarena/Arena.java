@@ -168,7 +168,8 @@ public class Arena {
             ArenaManager.addActivePlayer(player, name);
             player.sendMessage(new TranslatableText("mobarena.joinedarenalobby", name), true);
         } else {
-            player.sendMessage(new TranslatableText("mobarena.maxplayersinlobby"), false);
+            player.sendMessage(new TranslatableText("mobarena.maxplayersinarena"), false);
+            PlayerManager.retrieveItems(player);
         }
     }
 
