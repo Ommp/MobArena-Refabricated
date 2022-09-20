@@ -160,6 +160,18 @@ public class SetCommand implements Command{
         return 1;
     }
 
+    private int setCountdown(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        int num = IntegerArgumentType.getInteger(context, "number");
+        String name = StringArgumentType.getString(context, "name");
+
+        ServerCommandSource source = context.getSource();
+        ServerPlayerEntity player = source.getPlayer();
+
+        MobArena.database.setCountdown(num, name);
+        player.sendMessage(new TranslatableText("mobarena.updatedcountdown", num), false);
+        return 1;
+    }
+
 
     @Override
     public LiteralCommandNode<ServerCommandSource> getNode() {
@@ -206,6 +218,11 @@ public class SetCommand implements Command{
                 .then(CommandManager.literal("world").requires(source -> source.hasPermissionLevel(2))
                 .then(CommandManager.argument("name", StringArgumentType.greedyString()).suggests(new NameSuggestionProvider())
                 .executes(this::setWorld)))
+
+                .then(CommandManager.literal("countdown").requires(source -> source.hasPermissionLevel(2))
+                .then(CommandManager.argument("number", IntegerArgumentType.integer())
+                .then(CommandManager.argument("name", StringArgumentType.greedyString()).suggests(new NameSuggestionProvider())
+                .executes(this::setCountdown))))
 
                 .build();
     }
