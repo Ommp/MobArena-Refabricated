@@ -74,19 +74,11 @@ public class MobArena implements ModInitializer {
 		Command[] commands = new Command[] {
 				new CreateArena(),
 				new JoinArena(),
-				new SetLobby(),
-				new SetArena(),
 				new LeaveArena(),
-				new SetExit(),
-				new SetSpec(),
 				new Ready(),
-				new SetP1(),
-				new SetP2(),
-				new SetWorld(),
 				new AddMobSpawn(),
 				new SpectateArena(),
 				new DeleteArena(),
-				new SetClass(),
 				new SetCommand()
 		};
 

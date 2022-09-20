@@ -46,7 +46,7 @@ public class SpectateArena implements Command{
 
     public LiteralCommandNode<ServerCommandSource> getNode() {
         return CommandManager
-                .literal("spec")
+                .literal("spectate")
                 .then(
                         CommandManager.argument("name", StringArgumentType.greedyString()).executes(this::run).suggests(new NameSuggestionProvider())
                 )
