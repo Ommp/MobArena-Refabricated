@@ -79,7 +79,8 @@ public class MobArena implements ModInitializer {
 				new AddMobSpawn(),
 				new SpectateArena(),
 				new DeleteArena(),
-				new SetCommand()
+				new SetCommand(),
+				new RestoreItems()
 		};
 
 		for (Command command : commands) {

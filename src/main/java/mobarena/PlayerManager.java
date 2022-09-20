@@ -24,10 +24,8 @@ public class PlayerManager {
                 MobArena.database.addPlayerInventoryItemStack(UUID, stackEncoded, i);
             }
         }
-        inventory.clear();
     }
     public static void retrieveItems(ServerPlayerEntity p) {
-        p.getInventory().clear();
         var inventory = MobArena.database.getPlayerItems(p.getUuidAsString());
 
         for (PlayerInventoryModel playerInventoryModel : inventory) {
@@ -43,6 +41,12 @@ public class PlayerManager {
             p.getInventory().insertStack(slot, itemStack);
         }
         MobArena.database.deletePlayer(p.getUuidAsString());
+    }
+
+    public static void clearInventory(ServerPlayerEntity p) {
+        for (int i = 0; i < p.getInventory().size(); i++) {
+            p.getInventory().getStack(i).setCount(0);
+        }
     }
 
     public static void restoreVitals(ServerPlayerEntity p) {

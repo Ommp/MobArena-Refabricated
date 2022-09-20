@@ -32,6 +32,7 @@ public class SpectateArena implements Command{
             }
 
             PlayerManager.savePlayerInventory(player);
+            PlayerManager.clearInventory(player);
             ArenaManager.addActivePlayer(player, name);
             ArenaManager.arenas.get(name).transportPlayer(player, "spec");
             player.sendMessage(new TranslatableText("mobarena.joinedspec", name), false);

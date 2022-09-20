@@ -160,7 +160,9 @@ public class Arena {
 
     public void joinLobby(ServerPlayerEntity player) {
         if (hasLessThanMaxPlayers()) {
-            player.clearStatusEffects();
+            PlayerManager.savePlayerInventory(player);
+            PlayerManager.clearInventory(player);
+
             addLobbyPlayer(player);
             transportPlayer(player, "lobby");
             player.changeGameMode(GameMode.ADVENTURE);
@@ -169,7 +171,6 @@ public class Arena {
             player.sendMessage(new TranslatableText("mobarena.joinedarenalobby", name), true);
         } else {
             player.sendMessage(new TranslatableText("mobarena.maxplayersinarena"), false);
-            PlayerManager.retrieveItems(player);
         }
     }
 
@@ -178,7 +179,9 @@ public class Arena {
         transportPlayer(player, "exit");
         removePlayerFromArena(player);
         ArenaManager.removeActivePlayer(player);
+
         PlayerManager.restoreVitals(player);
+        PlayerManager.clearInventory(player);
         PlayerManager.retrieveItems(player);
     }
 
@@ -225,9 +228,10 @@ public class Arena {
             p.clearStatusEffects();
             PlayerManager.restoreVitals(p);
             transportPlayer(p, "exit");
-            p.getInventory().clear();
             p.changeGameMode(GameMode.SURVIVAL);
             ArenaManager.removeActivePlayer(p);
+
+            PlayerManager.clearInventory(p);
             PlayerManager.retrieveItems(p);
         }
         cleanUpPlayers();

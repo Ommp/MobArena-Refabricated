@@ -5,7 +5,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import mobarena.ArenaManager;
-import mobarena.PlayerManager;
 import mobarena.commands.suggestions.NameSuggestionProvider;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -34,7 +33,6 @@ public class JoinArena implements Command{
                 return 0;
             }
 
-            PlayerManager.savePlayerInventory(player);
             ArenaManager.arenas.get(name).joinLobby(player);
             return 1;
             }

@@ -416,4 +416,19 @@ public class Database {
             throw new RuntimeException(e);
         }
     }
+
+    public boolean playerInventoryRowExists(String playeruuid) {
+        try {
+            PreparedStatement statement = con.prepareStatement("SELECT player FROM playeritemstacks where player=? ");
+            statement.setString(1, playeruuid);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
 }
