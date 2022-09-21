@@ -68,9 +68,10 @@ public class Database {
                     "itemstack varchar," +
                     "slot int," +
                     "FOREIGN KEY(player) REFERENCES players(uuid) ON DELETE CASCADE)";
+            String rewardsTable = "CREATE TABLE IF NOT EXISTS rewards(arena varchar, itemstack varchar, wave int, chance int DEFAULT 100, FOREIGN KEY(arena) REFERENCES arenas(name) ON DELETE CASCADE)" ;
 
             Statement statement = con.createStatement();
-            String[] statements = new String[] {arenaTable, scoreboardTable, mobSpawnpointsTable, playerTable, playerItemStacksTable};
+            String[] statements = new String[] {arenaTable, scoreboardTable, mobSpawnpointsTable, playerTable, playerItemStacksTable, rewardsTable};
             for (String table : statements) {
                 statement.execute(table);
             }
@@ -80,6 +81,37 @@ public class Database {
         }
 
         addMissingColumns();
+    }
+
+    public ArrayList<RewardModel> getRewardItemStacks(String arenaName) {
+        String sql = "SELECT * FROM rewards where arena=? ";
+        try {
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, arenaName);
+            ResultSet rs = statement.executeQuery();
+            ArrayList<RewardModel> rewardsList = new ArrayList<>();
+
+            while (rs.next()) {
+                RewardModel reward = new RewardModel(rs.getString("itemstack"), rs.getInt("wave"), rs.getInt("chance"));
+                rewardsList.add(reward);
+            }
+            return rewardsList;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void createReward(String nbt, int wave, String arena) {
+        try {
+            PreparedStatement statement = con.prepareStatement("INSERT INTO rewards(arena, itemstack, wave) VALUES (?,?,?)");
+            statement.setString(1, arena);
+            statement.setString(2, nbt);
+            statement.setInt(3, wave);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     //add columns if they're missing to avoid needing to delete database to add them

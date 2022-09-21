@@ -65,6 +65,8 @@ public class Arena {
 
     private boolean forceClass;
 
+    private final RewardManager rewardManager = new RewardManager();
+
     public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, ArenaPoint p1, ArenaPoint p2, int isEnabled, String dimensionName, int arenaStartCountdown, boolean forceClass) {
         this.name = name;
         this.minPlayers = minPlayers;
@@ -113,6 +115,11 @@ public class Arena {
     public void startArena() {
         if (lobbyPlayers.isEmpty()) {
             isRunning = true;
+            rewardManager.setRewards(name);
+            for (ServerPlayerEntity p : arenaPlayers) {
+                rewardManager.addPlayer(p);
+            }
+
 
             wave.setWaveType(WaveType.DEFAULT);
             wave.startWave();
@@ -175,14 +182,18 @@ public class Arena {
     }
 
     public void leavePlayer(ServerPlayerEntity p) {
+        PlayerManager.restoreVitals(p);
+        PlayerManager.clearInventory(p);
+        PlayerManager.retrieveItems(p);
+        if (arenaPlayers.contains(p) || deadPlayers.contains(p)) {
+            rewardManager.grantRewards(p);
+        }
         PlayerManager.restoreGameMode(p);
         transportPlayer(p, "exit");
         removePlayerFromArena(p);
         ArenaManager.removeActivePlayer(p);
 
-        PlayerManager.restoreVitals(p);
-        PlayerManager.clearInventory(p);
-        PlayerManager.retrieveItems(p);
+
     }
 
     public boolean isPlayerInArena(ServerPlayerEntity player) {
@@ -225,14 +236,20 @@ public class Arena {
     //teleport all players to exit and restore various stats
     public void exitAllPlayers() {
         for (ServerPlayerEntity p : anyArenaPlayer) {
-            p.clearStatusEffects();
-            PlayerManager.restoreVitals(p);
-            transportPlayer(p, "exit");
-            PlayerManager.restoreGameMode(p);
-            ArenaManager.removeActivePlayer(p);
+
 
             PlayerManager.clearInventory(p);
             PlayerManager.retrieveItems(p);
+            PlayerManager.restoreVitals(p);
+            PlayerManager.restoreGameMode(p);
+
+            for (ServerPlayerEntity player: deadPlayers) {
+                rewardManager.grantRewards(player);
+            }
+
+            transportPlayer(p, "exit");
+            ArenaManager.removeActivePlayer(p);
+
         }
         cleanUpPlayers();
     }
@@ -309,6 +326,9 @@ public class Arena {
         }
     }
     public void startNextWave() {
+        for (ServerPlayerEntity p: arenaPlayers) {
+            rewardManager.incrementPlayerWave(p);
+        }
         reviveDead();
         wave.setRandomWaveType();
         wave.startWave();

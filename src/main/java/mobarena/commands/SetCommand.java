@@ -22,7 +22,7 @@ import net.minecraft.util.registry.Registry;
 
 import java.util.Objects;
 
-public class SetCommand implements Command{
+public class SetCommand implements Command {
 
     private int setMinPlayers(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         int number = IntegerArgumentType.getInteger(context, "number");

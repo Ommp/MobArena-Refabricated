@@ -80,7 +80,8 @@ public class MobArena implements ModInitializer {
 				new SpectateArena(),
 				new DeleteArena(),
 				new SetCommand(),
-				new RestoreItems()
+				new RestoreItems(),
+				new RewardCommands()
 		};
 
 		for (Command command : commands) {
