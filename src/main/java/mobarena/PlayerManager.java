@@ -7,10 +7,14 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.GameMode;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 public class PlayerManager {
+
+    private static final HashMap<ServerPlayerEntity, GameMode> gamemodes = new HashMap<>();
 
     public static void savePlayerInventory(ServerPlayerEntity p) {
         var UUID = p.getUuidAsString();
@@ -53,5 +57,15 @@ public class PlayerManager {
         p.setHealth(p.defaultMaxHealth);
         p.getHungerManager().setFoodLevel(20);
         p.clearStatusEffects();
+    }
+
+    public static void restoreGameMode(ServerPlayerEntity p) {
+        p.changeGameMode(gamemodes.get(p));
+        gamemodes.remove(p);
+    }
+
+    public static void setGameMode(ServerPlayerEntity p, GameMode gameMode) {
+        gamemodes.put(p, p.interactionManager.getGameMode());
+        p.changeGameMode(gameMode);
     }
 }

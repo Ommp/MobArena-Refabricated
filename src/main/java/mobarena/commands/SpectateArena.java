@@ -11,36 +11,39 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.world.GameMode;
 
 public class SpectateArena implements Command{
     private int run(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         String name = StringArgumentType.getString(context, "name");
 
         ServerCommandSource source = context.getSource();
-        ServerPlayerEntity player = source.getPlayer();
+        ServerPlayerEntity p = source.getPlayer();
 
         ArenaManager.loadArena(name);
         if (ArenaManager.checkArenaExists(name)) {
 
-            if (ArenaManager.arenas.get(name).isPlayerInArena(player)) {
-                player.sendMessage(new TranslatableText("mobarena.alreadyjoined", name), false);
+            if (ArenaManager.arenas.get(name).isPlayerInArena(p)) {
+                p.sendMessage(new TranslatableText("mobarena.alreadyjoined", name), false);
                 return 0;
             }
-            if(ArenaManager.isPlayerActive(player)) {
-                player.sendMessage(new TranslatableText("mobarena.alreadyinanotherarena"), false);
+            if(ArenaManager.isPlayerActive(p)) {
+                p.sendMessage(new TranslatableText("mobarena.alreadyinanotherarena"), false);
                 return 0;
             }
 
-            PlayerManager.savePlayerInventory(player);
-            PlayerManager.clearInventory(player);
-            ArenaManager.addActivePlayer(player, name);
-            ArenaManager.arenas.get(name).transportPlayer(player, "spec");
-            player.sendMessage(new TranslatableText("mobarena.joinedspec", name), false);
+            PlayerManager.savePlayerInventory(p);
+            PlayerManager.clearInventory(p);
+            PlayerManager.setGameMode(p, GameMode.SPECTATOR);
+            ArenaManager.addActivePlayer(p, name);
+            ArenaManager.arenas.get(name).transportPlayer(p, "spec");
+            ArenaManager.arenas.get(name).addSpectatorPlayer(p);
+            p.sendMessage(new TranslatableText("mobarena.joinedspec", name), false);
             return 1;
         }
 
         else {
-            player.sendMessage(new TranslatableText("mobarena.arenanotfound", name), false);
+            p.sendMessage(new TranslatableText("mobarena.arenanotfound", name), false);
             return 0;
         }
     }

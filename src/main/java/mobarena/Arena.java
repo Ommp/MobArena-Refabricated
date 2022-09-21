@@ -158,31 +158,31 @@ public class Arena {
         }
     }
 
-    public void joinLobby(ServerPlayerEntity player) {
+    public void joinLobby(ServerPlayerEntity p) {
         if (hasLessThanMaxPlayers()) {
-            PlayerManager.savePlayerInventory(player);
-            PlayerManager.clearInventory(player);
+            PlayerManager.savePlayerInventory(p);
+            PlayerManager.clearInventory(p);
+            PlayerManager.setGameMode(p, GameMode.ADVENTURE);
 
-            addLobbyPlayer(player);
-            transportPlayer(player, "lobby");
-            player.changeGameMode(GameMode.ADVENTURE);
-            PlayerManager.restoreVitals(player);
-            ArenaManager.addActivePlayer(player, name);
-            player.sendMessage(new TranslatableText("mobarena.joinedarenalobby", name), true);
+            addLobbyPlayer(p);
+            transportPlayer(p, "lobby");
+            PlayerManager.restoreVitals(p);
+            ArenaManager.addActivePlayer(p, name);
+            p.sendMessage(new TranslatableText("mobarena.joinedarenalobby", name), true);
         } else {
-            player.sendMessage(new TranslatableText("mobarena.maxplayersinarena"), false);
+            p.sendMessage(new TranslatableText("mobarena.maxplayersinarena"), false);
         }
     }
 
-    public void leavePlayer(ServerPlayerEntity player) {
-        player.changeGameMode(GameMode.SURVIVAL);
-        transportPlayer(player, "exit");
-        removePlayerFromArena(player);
-        ArenaManager.removeActivePlayer(player);
+    public void leavePlayer(ServerPlayerEntity p) {
+        PlayerManager.restoreGameMode(p);
+        transportPlayer(p, "exit");
+        removePlayerFromArena(p);
+        ArenaManager.removeActivePlayer(p);
 
-        PlayerManager.restoreVitals(player);
-        PlayerManager.clearInventory(player);
-        PlayerManager.retrieveItems(player);
+        PlayerManager.restoreVitals(p);
+        PlayerManager.clearInventory(p);
+        PlayerManager.retrieveItems(p);
     }
 
     public boolean isPlayerInArena(ServerPlayerEntity player) {
@@ -228,7 +228,7 @@ public class Arena {
             p.clearStatusEffects();
             PlayerManager.restoreVitals(p);
             transportPlayer(p, "exit");
-            p.changeGameMode(GameMode.SURVIVAL);
+            PlayerManager.restoreGameMode(p);
             ArenaManager.removeActivePlayer(p);
 
             PlayerManager.clearInventory(p);
