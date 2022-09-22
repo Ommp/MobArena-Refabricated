@@ -29,6 +29,17 @@ public class RewardCommands implements Command {
         return 1;
     }
 
+    private int deleteWaveRewards(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        int wave = IntegerArgumentType.getInteger(context, "wave");
+        String name = StringArgumentType.getString(context, "arena");
+
+        var player = context.getSource().getPlayer();
+
+        MobArena.database.deleteWaveRewards(wave, name);
+        player.sendMessage(new TranslatableText("mobarena.deletedwaverewards", wave), false);
+        return 1;
+    }
+
 
     @Override
     public LiteralCommandNode<ServerCommandSource> getNode() {
@@ -38,6 +49,12 @@ public class RewardCommands implements Command {
                 .then(CommandManager.argument("wave", IntegerArgumentType.integer())
                 .then(CommandManager.argument("arena", StringArgumentType.greedyString()).suggests(new NameSuggestionProvider())
                 .executes(this::addReward))))
+
+                .then(CommandManager.literal("wave").requires(source -> source.hasPermissionLevel(2))
+                .then(CommandManager.literal("delete")
+                .then(CommandManager.argument("wave", IntegerArgumentType.integer())
+                .then(CommandManager.argument("arena", StringArgumentType.greedyString()).suggests(new NameSuggestionProvider())
+                .executes(this::deleteWaveRewards)))))
 
                 .build();
     }

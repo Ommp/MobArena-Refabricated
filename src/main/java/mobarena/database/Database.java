@@ -114,6 +114,17 @@ public class Database {
         }
     }
 
+    public void deleteWaveRewards(int wave, String arenaName) {
+        try {
+            PreparedStatement statement = con.prepareStatement("DELETE FROM rewards WHERE wave=? AND arena=?");
+            statement.setInt(1, wave);
+            statement.setString(2, arenaName);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     //add columns if they're missing to avoid needing to delete database to add them
     public void addMissingColumns() {
         try {
