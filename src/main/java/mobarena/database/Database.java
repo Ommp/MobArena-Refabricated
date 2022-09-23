@@ -1,8 +1,8 @@
 package mobarena.database;
 
 import mobarena.Arena;
-import mobarena.ArenaPoint;
 import mobarena.Warp;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
 import java.sql.*;
@@ -356,8 +356,8 @@ public class Database {
                     new Warp(rs.getDouble("arena_x"), rs.getDouble("arena_y"), rs.getDouble("arena_z"), rs.getFloat("arena_yaw"), rs.getFloat("arena_pitch")),
                     new Warp(rs.getDouble("spec_x"), rs.getDouble("spec_y"), rs.getDouble("spec_z"), rs.getFloat("spec_yaw"), rs.getFloat("spec_pitch")),
                     new Warp(rs.getDouble("exit_x"), rs.getDouble("exit_y"), rs.getDouble("exit_z"), rs.getFloat("exit_yaw"), rs.getFloat("exit_pitch")),
-                    new ArenaPoint(rs.getInt("p1_x"), rs.getInt("p1_y"), rs.getInt("p1_z")),
-                    new ArenaPoint(rs.getInt("p2_x"), rs.getInt("p2_y"), rs.getInt("p2_z")),
+                    new BlockPos(rs.getInt("p1_x"), rs.getInt("p1_y"), rs.getInt("p1_z")),
+                    new BlockPos(rs.getInt("p2_x"), rs.getInt("p2_y"), rs.getInt("p2_z")),
                     rs.getInt("isEnabled"),
                     rs.getString("dimension"),
                     rs.getInt("countdown"),

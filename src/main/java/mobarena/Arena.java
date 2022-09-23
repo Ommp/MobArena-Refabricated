@@ -51,7 +51,7 @@ public class Arena {
     private int minPlayers;
     private int maxPlayers;
 
-    private ArenaPoint p1, p2;
+    private Region arenaRegion;
 
     public Arena(String name) {
         this.name = name;
@@ -67,7 +67,7 @@ public class Arena {
 
     private final RewardManager rewardManager = new RewardManager();
 
-    public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, ArenaPoint p1, ArenaPoint p2, int isEnabled, String dimensionName, int arenaStartCountdown, boolean forceClass) {
+    public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, BlockPos p1, BlockPos p2, int isEnabled, String dimensionName, int arenaStartCountdown, boolean forceClass) {
         this.name = name;
         this.minPlayers = minPlayers;
         this.maxPlayers = maxPlayers;
@@ -75,8 +75,7 @@ public class Arena {
         this.arena = arena;
         this.spectator = spectator;
         this.exit = exit;
-        this.p1 = p1;
-        this.p2 = p2;
+        this.arenaRegion = new Region(p1, p2);
         this.isEnabled = isEnabled;
         this.dimensionName = dimensionName;
         this.arenaStartCountdown = arenaStartCountdown;
