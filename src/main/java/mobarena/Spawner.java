@@ -8,10 +8,13 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3i;
 
 import java.util.ArrayList;
+
+import static mobarena.MobArena.team;
 
 public class Spawner {
     private ArrayList<String> potentialMobs = new ArrayList<>();
@@ -59,11 +62,13 @@ public class Spawner {
 
     public void spawnMobs(){
         for (MobEntity entity: monsters) {
-            Vec3i spawnPoint = ArenaManager.getArena(arenaName).getSpawnPointNearPlayer();
+            ServerPlayerEntity p = ArenaManager.getArena(arenaName).getRandomArenaPlayer();
+            Vec3i spawnPoint = ArenaManager.getArena(arenaName).getSpawnPointNearPlayer(p);
             ArenaManager.connectMobToArena(entity.getUuidAsString(), arenaName);
             entity.updatePosition(spawnPoint.getX(), spawnPoint.getY(), spawnPoint.getZ());
             entity.initialize(world, world.getLocalDifficulty(entity.getBlockPos()), SpawnReason.SPAWNER, null, null);
             world.spawnEntity(entity);
+            world.getScoreboard().addPlayerToTeam(entity.getUuidAsString(), team);
         }
     }
 

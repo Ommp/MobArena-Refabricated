@@ -105,7 +105,11 @@ public class ArenaManager {
             }
         }
 
-    public static HashMap<String, String> getMobToArena() {
+    public static HashMap<String, String> getMobFromAnyArena() {
         return mobToArena;
+    }
+
+    public static String getArenaFromMob(String UUID) {
+        return mobToArena.get(UUID);
     }
 }

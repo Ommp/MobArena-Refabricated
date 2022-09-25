@@ -10,6 +10,8 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.scoreboard.AbstractTeam;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -27,6 +29,8 @@ public class MobArena implements ModInitializer {
 	public static ArenaConfig arenaConfig = new ArenaConfig();
 	public static MinecraftServer serverinstance;
 
+	public static Team team;
+
 	public static void log(Level level, String message) {
 		final String logPrefix = "[MobArena]: ";
 		LOGGER.log(level, logPrefix.concat(message));
@@ -43,6 +47,10 @@ public class MobArena implements ModInitializer {
 
 		ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
 			serverinstance = server.getOverworld().getServer();
+			server.getScoreboard().addTeam("mobarena");
+			team = new Team(server.getScoreboard(), "mobarena");
+			team.setFriendlyFireAllowed(false);
+			team.setCollisionRule(AbstractTeam.CollisionRule.PUSH_OTHER_TEAMS);
 		});
 
 		ArenaManager.initClasses();

@@ -21,7 +21,7 @@ public abstract class LivingEntityMixin{
     @Inject(method = "drop", at = @At("HEAD"), cancellable = true)
     private void disableDrop(DamageSource source, CallbackInfo ci) {
         //cancel dropping items if the mob belongs to an arena
-        if (ArenaManager.getMobToArena().containsKey(livingEntity.getUuidAsString())) {
+        if (ArenaManager.getMobFromAnyArena().containsKey(livingEntity.getUuidAsString())) {
             ci.cancel();
         }
     }

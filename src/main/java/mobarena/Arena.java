@@ -307,9 +307,13 @@ public class Arena {
         return new Vec3i(mobSpawnPoints.get(index).getX(), mobSpawnPoints.get(index).getY(), mobSpawnPoints.get(index).getZ());
     }
     //get a random player's pos and choose the closest spawn point to the player
-    public Vec3i getSpawnPointNearPlayer() {
+    public ServerPlayerEntity getRandomArenaPlayer() {
         int playerIndex = (int)(Math.random() * arenaPlayers.size());
-        BlockPos playerPos = arenaPlayers.get(playerIndex).getBlockPos();
+        return arenaPlayers.get(playerIndex);
+    }
+
+    public Vec3i getSpawnPointNearPlayer(ServerPlayerEntity p) {
+        BlockPos playerPos = p.getBlockPos();
         ArrayList<Double> distances = new ArrayList<>();
         for (Vec3i mobSpawnPoint : mobSpawnPoints) {
             distances.add(playerPos.getSquaredDistance(mobSpawnPoint));
@@ -348,7 +352,7 @@ public class Arena {
                 spawner.spawnMobs();
                 spawner.resetDeadMonsters();
             }
-        }, 4, TimeUnit.SECONDS);
+        }, 5, TimeUnit.SECONDS);
     }
 
     //save the player's class

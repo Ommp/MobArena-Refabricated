@@ -13,7 +13,7 @@ public abstract class MobEntityMixin {
     @Inject(method = "isAffectedByDaylight", at = @At("RETURN"), cancellable = true)
     private void disableAffectedByDaylight(CallbackInfoReturnable<Boolean> cir) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (ArenaManager.getMobToArena().containsKey(entity.getUuidAsString())) {
+        if (ArenaManager.getMobFromAnyArena().containsKey(entity.getUuidAsString())) {
             cir.setReturnValue(false);
         }
     }
