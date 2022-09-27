@@ -69,7 +69,8 @@ public class Spawner {
             entity.initialize(world, world.getLocalDifficulty(entity.getBlockPos()), SpawnReason.SPAWNER, null, null);
             world.spawnEntity(entity);
             world.getScoreboard().addPlayerToTeam(entity.getUuidAsString(), team);
-            entity.setTarget(p);
+            var closestPlayer = ArenaManager.getArena(arenaName).getClosestPlayer(entity);
+            entity.setTarget(closestPlayer);
         }
     }
 

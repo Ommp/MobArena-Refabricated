@@ -1,6 +1,7 @@
 package mobarena;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.network.packet.s2c.play.TitleFadeS2CPacket;
@@ -66,6 +67,8 @@ public class Arena {
     private boolean forceClass;
 
     private final RewardManager rewardManager = new RewardManager();
+
+    final ScheduledExecutorService waveService = Executors.newSingleThreadScheduledExecutor();
 
     public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, BlockPos p1, BlockPos p2, int isEnabled, String dimensionName, int arenaStartCountdown, boolean forceClass) {
         this.name = name;
@@ -134,6 +137,7 @@ public class Arena {
         isRunning = false;
         spawner.clearMonsters();
         ArenaManager.clearArena(name);
+        waveService.shutdownNow();
     }
 
     public boolean isRunning() {
@@ -157,7 +161,7 @@ public class Arena {
         if (!arenaCountingDown && (arenaPlayers.size() + lobbyPlayers.size() + readyLobbyPlayers.size() > 0)) {
             arenaCountingDown = true;
             for (ServerPlayerEntity p: anyArenaPlayer) {
-                p.sendMessage(new TranslatableText("mobarena.countdown", arenaStartCountdown), false);
+                p.sendMessage(new TranslatableText("mobarena.countdown", arenaStartCountdown), true);
             }
             final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
             executorService.schedule(this::startArena, arenaStartCountdown, TimeUnit.SECONDS);
@@ -181,14 +185,14 @@ public class Arena {
     }
 
     public void leavePlayer(ServerPlayerEntity p) {
-        PlayerManager.restoreVitals(p);
         PlayerManager.clearInventory(p);
+        PlayerManager.restoreVitals(p);
+        PlayerManager.restoreGameMode(p);
+        transportPlayer(p, "exit");
         PlayerManager.retrieveItems(p);
         if (arenaPlayers.contains(p) || deadPlayers.contains(p)) {
             rewardManager.grantRewards(p);
         }
-        PlayerManager.restoreGameMode(p);
-        transportPlayer(p, "exit");
         removePlayerFromArena(p);
         ArenaManager.removeActivePlayer(p);
 
@@ -235,22 +239,21 @@ public class Arena {
     //teleport all players to exit and restore various stats
     public void exitAllPlayers() {
         for (ServerPlayerEntity p : anyArenaPlayer) {
-
-
             PlayerManager.clearInventory(p);
-            PlayerManager.retrieveItems(p);
-            PlayerManager.restoreVitals(p);
-            PlayerManager.restoreGameMode(p);
-
-            for (ServerPlayerEntity player: deadPlayers) {
-                rewardManager.grantRewards(player);
-            }
-
             transportPlayer(p, "exit");
-            ArenaManager.removeActivePlayer(p);
+            PlayerManager.restoreGameMode(p);
+            PlayerManager.restoreVitals(p);
 
         }
-        cleanUpPlayers();
+                for (ServerPlayerEntity p : anyArenaPlayer) {
+
+                    PlayerManager.retrieveItems(p);
+                    ArenaManager.removeActivePlayer(p);
+                    for (ServerPlayerEntity player : deadPlayers) {
+                        rewardManager.grantRewards(player);
+                    }
+                }
+                cleanUpPlayers();
     }
 
     public void removePlayerFromArena(ServerPlayerEntity player) {
@@ -322,6 +325,16 @@ public class Arena {
         return mobSpawnPoints.get(spawnPointIndex);
     }
 
+    public ServerPlayerEntity getClosestPlayer(Entity e) {
+
+        ArrayList<Double> distancesToPlayers = new ArrayList<>();
+        for (ServerPlayerEntity p : arenaPlayers) {
+            distancesToPlayers.add(e.squaredDistanceTo(p));
+        }
+        int playerIndex = distancesToPlayers.indexOf(Collections.min(distancesToPlayers));
+        return arenaPlayers.get(playerIndex);
+    }
+
     public void countDeadMobs() {
         spawner.count();
         if (spawner.getDeadMonsters() == wave.getMobsToSpawn()) {
@@ -343,16 +356,14 @@ public class Arena {
             p.networkHandler.sendPacket(new TitleFadeS2CPacket(10, 30, 10));
         }
 
-        final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.schedule(new Runnable() {
-            @Override
-            public void run() {
-                spawner.clearMonsters();
-                spawner.addEntitiesToSpawn(wave.getMobsToSpawn(), wave.getWaveType());
-                spawner.spawnMobs();
-                spawner.resetDeadMonsters();
-            }
+
+        waveService.schedule(() -> {
+            spawner.clearMonsters();
+            spawner.addEntitiesToSpawn(wave.getMobsToSpawn(), wave.getWaveType());
+            spawner.spawnMobs();
+            spawner.resetDeadMonsters();
         }, 5, TimeUnit.SECONDS);
+
     }
 
     //save the player's class
