@@ -77,8 +77,9 @@ public class ArenaManager {
         arenas.remove(arenaName);
     }
 
-    public static String getArenaFromPlayer(ServerPlayerEntity player) {
-        return activePlayers.get(player);
+    public static Arena getArenaFromPlayer(ServerPlayerEntity player) {
+        var arenaName = activePlayers.get(player);
+        return arenas.get(arenaName);
     }
 
     public static boolean checkArenaExists(String name) {
@@ -100,9 +101,20 @@ public class ArenaManager {
             arenas.get(activePlayers.get(player)).addPlayerClass(player, classes.get(text2));
             player.sendMessage(new TranslatableText("mobarena.selectedclass", text2), false);
             }
+
         else if (text1.equals("[arena]") && text2.equals("ready")) {
-            arenas.get(activePlayers.get(player)).addReadyLobbyPlayer(player);
+            if (getArenaFromPlayer(player).forceClass()) {
+                if (!getArenaFromPlayer(player).playerHasClass(player.getUuidAsString())) {
+                    player.sendMessage(new TranslatableText("mobarena.selectaclass"), false);
+                }
+                else {
+                    getArenaFromPlayer(player).addReadyLobbyPlayer(player);
+                }
             }
+            if (!getArenaFromPlayer(player).forceClass()){
+                getArenaFromPlayer(player).addReadyLobbyPlayer(player);
+            }
+         }
         }
 
     public static HashMap<String, String> getMobFromAnyArena() {

@@ -27,5 +27,7 @@
   "mobarena.updatedcountdown": "Set arena start countdown to: %s seconds.",
   "mobarena.addedreward": "Reward added.",
   "mobarena.deletedwaverewards": "All rewards for every %s waves deleted.",
-  "mobarena.showreward": "Item: %s, wave: %s"
+  "mobarena.showreward": "Item: %s, wave: %s",
+  "mobarena.updatedforceclass": "Set force class value to %s for arena %s.",
+  "mobarena.selectaclass": "You need to select a class first!"
 }

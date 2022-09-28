@@ -460,6 +460,19 @@ public class Database {
         }
     }
 
+    public void setForceClass(boolean value, String arena) {
+        String sql = "UPDATE arenas SET forceclass=? WHERE name=?";
+        PreparedStatement statement = null;
+        try {
+            statement = con.prepareStatement(sql);
+            statement.setBoolean(1, value);
+            statement.setString(2, arena);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public boolean playerInventoryRowExists(String playeruuid) {
         try {
             PreparedStatement statement = con.prepareStatement("SELECT player FROM playeritemstacks where player=? ");

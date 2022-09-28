@@ -122,14 +122,12 @@ public class Arena {
                 rewardManager.addPlayer(p);
             }
 
-
             wave.setWaveType(WaveType.DEFAULT);
             wave.startWave();
             spawner.addEntitiesToSpawn(wave.getMobsToSpawn(), wave.getWaveType());
             spawner.spawnMobs();
         } else {
             arenaCountingDown = false;
-            countdownArenaStart();
         }
     }
 
@@ -158,7 +156,7 @@ public class Arena {
     }
 
     public void countdownArenaStart() {
-        if (!arenaCountingDown && (arenaPlayers.size() + lobbyPlayers.size() + readyLobbyPlayers.size() > 0)) {
+        if (!arenaCountingDown && (arenaPlayers.size() + lobbyPlayers.size() + readyLobbyPlayers.size() >= minPlayers)) {
             arenaCountingDown = true;
             for (ServerPlayerEntity p: anyArenaPlayer) {
                 p.sendMessage(new TranslatableText("mobarena.countdown", arenaStartCountdown), true);
@@ -196,7 +194,10 @@ public class Arena {
         removePlayerFromArena(p);
         ArenaManager.removeActivePlayer(p);
 
-
+        if (deadPlayers.size() == anyArenaPlayer.size()) {
+            exitAllPlayers();
+            stopArena();
+        }
     }
 
     public boolean isPlayerInArena(ServerPlayerEntity player) {
@@ -215,7 +216,6 @@ public class Arena {
     public void addDeadPlayer(ServerPlayerEntity player) {
             deadPlayers.add(player);
         if (deadPlayers.size() < anyArenaPlayer.size()) {
-            addSpectatorPlayer(player);
             arenaPlayers.remove(player);
             transportPlayer(player, "spec");
             PlayerManager.restoreVitals(player);
@@ -231,7 +231,6 @@ public class Arena {
         for (ServerPlayerEntity p: deadPlayers) {
             transportPlayer(p, "arena");
             deadPlayers.remove(p);
-            specPlayers.remove(p);
             arenaPlayers.add(p);
         }
     }
@@ -245,14 +244,29 @@ public class Arena {
             PlayerManager.restoreVitals(p);
 
         }
-                for (ServerPlayerEntity p : anyArenaPlayer) {
+        for (ServerPlayerEntity p : anyArenaPlayer) {
 
-                    PlayerManager.retrieveItems(p);
-                    ArenaManager.removeActivePlayer(p);
-                    for (ServerPlayerEntity player : deadPlayers) {
-                        rewardManager.grantRewards(player);
-                    }
-                }
+            PlayerManager.retrieveItems(p);
+            ArenaManager.removeActivePlayer(p);
+            for (ServerPlayerEntity player : deadPlayers) {
+                rewardManager.grantRewards(player);
+            }
+        }
+
+
+
+        for (ServerPlayerEntity p : specPlayers) {
+            PlayerManager.clearInventory(p);
+            transportPlayer(p, "exit");
+            PlayerManager.restoreGameMode(p);
+            PlayerManager.restoreVitals(p);
+
+        }
+        for (ServerPlayerEntity p : specPlayers) {
+
+            PlayerManager.retrieveItems(p);
+            ArenaManager.removeActivePlayer(p);
+        }
                 cleanUpPlayers();
     }
 
@@ -368,7 +382,7 @@ public class Arena {
 
     //save the player's class
     public void addPlayerClass(ServerPlayerEntity player, ArenaClass arenaClass) {
-        this.playerClasses.put(String.valueOf(player.getName()), arenaClass);
+        this.playerClasses.put(player.getUuidAsString(), arenaClass);
         //clear player's inventory in case they switch to another class to avoid duplicating
         player.getInventory().clear();
 
@@ -393,5 +407,13 @@ public class Arena {
         } else {
             spawner.addDefaultMobs();
         }
+    }
+
+    public boolean forceClass() {
+        return forceClass;
+    }
+
+    public boolean playerHasClass(String uuid) {
+        return playerClasses.containsKey(uuid);
     }
 }

@@ -10,6 +10,7 @@ import mobarena.ArenaItem;
 import mobarena.ArenaManager;
 import mobarena.MobArena;
 import mobarena.commands.suggestions.NameSuggestionProvider;
+import mobarena.commands.suggestions.forceClassSuggestionProvider;
 import mobarena.config.ArenaClassConfig;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -172,6 +173,24 @@ public class SetCommand implements Command {
         return 1;
     }
 
+    private int setForceClass(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        var number = IntegerArgumentType.getInteger(context, "number");
+        var name = StringArgumentType.getString(context, "name");
+
+        ServerCommandSource source = context.getSource();
+        ServerPlayerEntity player = source.getPlayer();
+
+        if (number < 1 ) {
+            MobArena.database.setForceClass(false, name);
+            player.sendMessage(new TranslatableText("mobarena.updatedforceclass", "false", name), false);
+        } else {
+            MobArena.database.setForceClass(true, name);
+            player.sendMessage(new TranslatableText("mobarena.updatedforceclass", "true", name), false);
+        }
+
+        return 1;
+    }
+
 
     @Override
     public LiteralCommandNode<ServerCommandSource> getNode() {
@@ -223,6 +242,11 @@ public class SetCommand implements Command {
                 .then(CommandManager.argument("number", IntegerArgumentType.integer())
                 .then(CommandManager.argument("name", StringArgumentType.greedyString()).suggests(new NameSuggestionProvider())
                 .executes(this::setCountdown))))
+
+                .then(CommandManager.literal("forceclass").requires(source -> source.hasPermissionLevel(2))
+                .then(CommandManager.argument("number", IntegerArgumentType.integer()).suggests(new forceClassSuggestionProvider())
+                .then(CommandManager.argument("name", StringArgumentType.greedyString()).suggests(new NameSuggestionProvider())
+                .executes(this::setForceClass))))
 
                 .build();
     }

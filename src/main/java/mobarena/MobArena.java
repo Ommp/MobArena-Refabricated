@@ -59,8 +59,7 @@ public class MobArena implements ModInitializer {
 
 		ServerPlayerEvents.ALLOW_DEATH.register(((player, source, amount) -> {
 			if (ArenaManager.isPlayerActive(player)) {
-				String name = ArenaManager.getArenaFromPlayer(player);
-				ArenaManager.arenas.get(name).addDeadPlayer(player);
+				ArenaManager.getArenaFromPlayer(player).addDeadPlayer(player);
 				return false;
 			}
 			return true;
