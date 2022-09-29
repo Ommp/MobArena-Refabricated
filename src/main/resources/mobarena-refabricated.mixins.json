@@ -8,6 +8,7 @@
     "CreeperEntityMixin",
     "LivingEntityMixin",
     "MobEntityMixin",
+    "ServerPlayerEntityMixin",
     "SignBlockEntityMixin",
     "SpiderEntityMixin"
   ],

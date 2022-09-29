@@ -183,6 +183,7 @@ public class Arena {
     }
 
     public void leavePlayer(ServerPlayerEntity p) {
+        lobbyPlayers.remove(p);
         PlayerManager.clearInventory(p);
         PlayerManager.restoreVitals(p);
         PlayerManager.restoreGameMode(p);
@@ -415,5 +416,9 @@ public class Arena {
 
     public boolean playerHasClass(String uuid) {
         return playerClasses.containsKey(uuid);
+    }
+
+    public boolean getLobbyPlayer(ServerPlayerEntity p) {
+        return lobbyPlayers.contains(p);
     }
 }
