@@ -1,6 +1,8 @@
 package mobarena;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import mobarena.Wave.WaveManager;
+import mobarena.Wave.WaveType;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.StringNbtReader;
@@ -58,7 +60,7 @@ public class Arena {
         this.name = name;
     }
 
-    private Wave wave = new Wave();
+    private WaveManager waveManager = new WaveManager();
     public Spawner spawner;
 
     private int arenaStartCountdown;
@@ -122,9 +124,9 @@ public class Arena {
                 rewardManager.addPlayer(p);
             }
 
-            wave.setWaveType(WaveType.DEFAULT);
-            wave.startWave();
-            spawner.addEntitiesToSpawn(wave.getMobsToSpawn(), wave.getWaveType());
+            waveManager.setWaveType(WaveType.DEFAULT);
+            waveManager.incrementWave();
+            spawner.addEntitiesToSpawn(waveManager.getMobAmount(arenaPlayers.size()), waveManager.getWaveType());
             spawner.spawnMobs();
         } else {
             arenaCountingDown = false;
@@ -352,7 +354,7 @@ public class Arena {
 
     public void countDeadMobs() {
         spawner.count();
-        if (spawner.getDeadMonsters() == wave.getMobsToSpawn()) {
+        if (spawner.getDeadMonsters() == waveManager.getMobAmount(arenaPlayers.size())) {
             startNextWave();
         }
     }
@@ -361,9 +363,9 @@ public class Arena {
             rewardManager.incrementPlayerWave(p);
         }
         reviveDead();
-        wave.setRandomWaveType();
-        wave.startWave();
-        Text waveText = Text.of("Wave: " + wave.getCurrentWave()).getWithStyle(Style.EMPTY.withFormatting(Formatting.GREEN)).get(0);
+        waveManager.setRandomWaveType();
+        waveManager.incrementWave();
+        Text waveText = Text.of("Wave: " + waveManager.getCurrentWave()).getWithStyle(Style.EMPTY.withFormatting(Formatting.GREEN)).get(0);
 
         for (ServerPlayerEntity p: anyArenaPlayer) {
             var titleS2CPacket = new TitleS2CPacket(waveText);
@@ -374,7 +376,7 @@ public class Arena {
 
         waveService.schedule(() -> {
             spawner.clearMonsters();
-            spawner.addEntitiesToSpawn(wave.getMobsToSpawn(), wave.getWaveType());
+            spawner.addEntitiesToSpawn(waveManager.getMobAmount(arenaPlayers.size()), waveManager.getWaveType());
             spawner.spawnMobs();
             spawner.resetDeadMonsters();
         }, 5, TimeUnit.SECONDS);

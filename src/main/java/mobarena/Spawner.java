@@ -1,5 +1,6 @@
 package mobarena;
 
+import mobarena.Wave.WaveType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
