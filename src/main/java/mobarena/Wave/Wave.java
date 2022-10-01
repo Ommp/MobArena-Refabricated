@@ -2,6 +2,10 @@ package mobarena.Wave;
 
 public class Wave {
 
+    public int wave;
+    public int frequency;
+    public int priority;
+
     WaveType type;
 
     int calculateMobs(int wave, int playerCount, WaveType type) {

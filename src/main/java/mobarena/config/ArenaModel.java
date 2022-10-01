@@ -24,4 +24,16 @@ public class ArenaModel {
     public ArrayList<String> getMonsters() {
         return monsters;
     }
+
+    public ArrayList<SingleWave> getSingleWaves() {
+        return singleWaves;
+    }
+
+    public ArrayList<RecurrentWave> getRecurrentWaves() {
+        return recurrentWaves;
+    }
+
+    public int getFinalWave() {
+        return finalWave;
+    }
 }

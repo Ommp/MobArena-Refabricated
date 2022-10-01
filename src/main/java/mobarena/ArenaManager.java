@@ -36,9 +36,7 @@ public class ArenaManager {
             Arena arena = MobArena.database.getArenaByName(name);
 
             if (MobArena.arenaConfig.configExists(name)) {
-                arena.setCustomSpawnConfigValues(MobArena.arenaConfig.getArenaConfig(name).usesCustomSpawns(), MobArena.arenaConfig.getArenaConfig(name).getMonsters());
-            } else {
-                arena.setCustomSpawnConfigValues(false, null);
+                arena.initConfig(MobArena.arenaConfig.getArenaConfig(name));
             }
 
             arenas.put(name, arena);

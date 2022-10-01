@@ -13,5 +13,29 @@ public class RecurrentWave {
     private WaveType type;
 
     private final HashMap<String, Integer> monsters = new HashMap<>();
+    private boolean fixed = false;
 
+    public int getWave() {
+        return wave;
+    }
+
+    public int getFrequency() {
+        return frequency;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public WaveType getType() {
+        return type;
+    }
+
+    public HashMap<String, Integer> getMonsters() {
+        return monsters;
+    }
+
+    public boolean isFixed() {
+        return fixed;
+    }
 }

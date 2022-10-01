@@ -3,6 +3,7 @@ package mobarena;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import mobarena.Wave.WaveManager;
 import mobarena.Wave.WaveType;
+import mobarena.config.ArenaModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.StringNbtReader;
@@ -68,6 +69,8 @@ public class Arena {
 
     private boolean forceClass;
 
+    public ArenaModel config = new ArenaModel();
+
     private final RewardManager rewardManager = new RewardManager();
 
     final ScheduledExecutorService waveService = Executors.newSingleThreadScheduledExecutor();
@@ -89,11 +92,6 @@ public class Arena {
         this.mobSpawnPoints = setMobSpawnPoints();
         this.spawner = new Spawner(name, world);
     }
-
-    public int getAnyArenaPlayerSize() {
-        return anyArenaPlayer.size();
-    }
-
     public ServerWorld setWorld(){
         if (!(dimensionName == null) && !dimensionName.isEmpty()) {
             world = MobArena.serverinstance.getWorld(RegistryKey.of(Registry.WORLD_KEY, new Identifier(dimensionName)));
@@ -116,6 +114,15 @@ public class Arena {
         }
         return pointsList;
     }
+    public void loadPotentialMobs() {
+        if (spawner.getPotentialMobs().isEmpty()) {
+            if (config.usesCustomSpawns()) {
+                spawner.setPotentialMobs(config.getMonsters());
+            } else {
+                spawner.addDefaultMobs();
+            }
+        }
+    }
     public void startArena() {
         if (lobbyPlayers.isEmpty()) {
             isRunning = true;
@@ -123,7 +130,7 @@ public class Arena {
             for (ServerPlayerEntity p : arenaPlayers) {
                 rewardManager.addPlayer(p);
             }
-
+            loadPotentialMobs();
             waveManager.setWaveType(WaveType.DEFAULT);
             waveManager.incrementWave();
             spawner.addEntitiesToSpawn(waveManager.getMobAmount(arenaPlayers.size()), waveManager.getWaveType());
@@ -404,12 +411,8 @@ public class Arena {
         }
     }
 
-    public void setCustomSpawnConfigValues(boolean usesCustomSpawns, ArrayList<String> monsters) {
-        if (usesCustomSpawns) {
-            spawner.setPotentialMobs(monsters);
-        } else {
-            spawner.addDefaultMobs();
-        }
+    public void initConfig(ArenaModel model) {
+        this.config = model;
     }
 
     public boolean forceClass() {

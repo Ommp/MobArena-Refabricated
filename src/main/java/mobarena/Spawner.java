@@ -102,4 +102,8 @@ public class Spawner {
         }
         monsters.clear();
     }
+
+    public ArrayList<String> getPotentialMobs() {
+        return potentialMobs;
+    }
 }
