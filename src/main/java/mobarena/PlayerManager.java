@@ -1,7 +1,6 @@
 package mobarena;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import mobarena.database.PlayerInventoryModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringNbtReader;
@@ -38,15 +37,15 @@ public class PlayerManager {
         try {
             var inventory = MobArena.database.getPlayerItems(p.getUuidAsString());
 
-            for (PlayerInventoryModel playerInventoryModel : inventory) {
-                var data = playerInventoryModel.itemStackNbt();
+            for (int i = 0; i < inventory.getItems().size(); i++) {
+                var data = inventory.getItems().get(i).getData();
                 ItemStack itemStack;
                 try {
                     itemStack = ItemStack.fromNbt(StringNbtReader.parse(data));
                 } catch (CommandSyntaxException e) {
                     throw new RuntimeException(e);
                 }
-                var slot = playerInventoryModel.slot();
+                var slot = inventory.getItems().get(i).slot;
 
                 p.getInventory().insertStack(slot, itemStack);
             }

@@ -14,49 +14,41 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3i;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static mobarena.MobArena.team;
 
 public class Spawner {
-    private ArrayList<String> potentialMobs = new ArrayList<>();
     private ArrayList<MobEntity> monsters = new ArrayList<>();
 
     private int deadMonsters;
     private String arenaName;
     private ServerWorld world;
 
-    public void addDefaultMobs() {
-        potentialMobs.add("minecraft:zombie");
-        potentialMobs.add("minecraft:husk");
-        potentialMobs.add("minecraft:spider");
-        potentialMobs.add("minecraft:cave_spider");
-        potentialMobs.add("minecraft:skeleton");
-        potentialMobs.add("minecraft:pillager");
-    }
-
-    public void setPotentialMobs(ArrayList<String> mobs) {
-        this.potentialMobs = mobs;
-    }
-
-    public void addEntitiesToSpawn(int mobsToSpawn, WaveType waveType) {
-        for (int i = 0; i < mobsToSpawn; i++) {
-            int index = (int)(Math.random() * potentialMobs.size());
-
-
-            NbtCompound nbtCompound = new NbtCompound();
-            nbtCompound.putString("id", potentialMobs.get(index));
-            Entity entity = EntityType.loadEntityWithPassengers(nbtCompound, world, entity2 -> entity2);
-            if (entity instanceof MobEntity) {
-                monsters.add((MobEntity) entity);
+    public void addEntitiesToSpawn(HashMap<String, Integer> mobs) {
+        //for every string in mobs, create an entity as many times as the value of the number
+        System.out.println("added entities that should be spawned later");
+        for (var str: mobs.keySet()) {
+            for (int i = 0; i < mobs.get(str); i++) {
+                NbtCompound nbtCompound = new NbtCompound();
+                nbtCompound.putString("id", str);
+                Entity entity = EntityType.loadEntityWithPassengers(nbtCompound, world, entity2 -> entity2);
+                if (entity instanceof MobEntity) {
+                    monsters.add((MobEntity) entity);
+                }
             }
+        }
+    }
 
-            if (waveType.equals(WaveType.BOSS)) {
+    public void addStatusEffects(WaveType type) {
+        for (int i = 0; i < monsters.size(); i++) {
+            if (type.equals(WaveType.BOSS)) {
                 monsters.get(i).addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 1000000, 3));
                 monsters.get(i).addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 1000000, 2));
             }
-            if (waveType.equals(WaveType.SWARM)) {
-                monsters.get(i).setHealth(monsters.get(i).getMaxHealth() / 2);
-                monsters.get(i).addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 1000000, 2));
+            if (type.equals(WaveType.SWARM)) {
+                monsters.get(i).setHealth(monsters.get(i).getMaxHealth() / 3);
+                monsters.get(i).addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 1000000, 3));
             }
         }
     }
@@ -73,10 +65,6 @@ public class Spawner {
             var closestPlayer = ArenaManager.getArena(arenaName).getClosestPlayer(entity);
             entity.setTarget(closestPlayer);
         }
-    }
-
-    public ArrayList<MobEntity> getMonsters() {
-        return monsters;
     }
 
     public Spawner(String arenaName, ServerWorld world) {
@@ -101,9 +89,5 @@ public class Spawner {
             entity.remove(Entity.RemovalReason.DISCARDED);
         }
         monsters.clear();
-    }
-
-    public ArrayList<String> getPotentialMobs() {
-        return potentialMobs;
     }
 }

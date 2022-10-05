@@ -1,6 +1,7 @@
 package mobarena.database;
 
 import mobarena.Arena;
+import mobarena.ArenaItem;
 import mobarena.Warp;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
@@ -184,19 +185,16 @@ public class Database {
         }
     }
 
-    public ArrayList<PlayerInventoryModel> getPlayerItems(String uuid) {
-        String sql = "SELECT * FROM playeritemstacks where player=? ";
+    public PlayerInventoryModel getPlayerItems(String uuid) {
         PreparedStatement statement;
-        PlayerInventoryModel model;
-        ArrayList<PlayerInventoryModel> inventory = new ArrayList<>();
-
+        PlayerInventoryModel inventory = new PlayerInventoryModel();
         try {
-            statement = con.prepareStatement(sql);
+            statement = con.prepareStatement("SELECT * FROM playeritemstacks where player=? ");
             statement.setString(1, uuid);
             ResultSet rs = statement.executeQuery();
             while (rs.next()){
-                model = new PlayerInventoryModel(rs.getString("player"), rs.getString("itemstack"), rs.getInt("slot"));
-                inventory.add(model);
+                var item = new ArenaItem(rs.getString("itemstack"), rs.getInt("slot"));
+                inventory.addItem(item);
             }
         } catch (SQLException e){
             throw new RuntimeException(e);
