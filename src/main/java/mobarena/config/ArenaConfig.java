@@ -53,4 +53,7 @@ public class ArenaConfig {
         return arenas.containsKey(name);
     }
 
+    public void addArenaConfig(String name, ArenaModel model) {
+        arenas.put(name, model);
+    }
 }

@@ -121,10 +121,25 @@ public class Arena {
                 rewardManager.addPlayer(p);
             }
 
+            waveManager.addCustomWaves(config);
             waveManager.addDefaultWaves();
+
             waveManager.pickWave();
             waveManager.getWave().calculateMobs(waveManager.getCurrentWave(), arenaPlayers.size());
-            waveManager.getWave().addDefaultMobs();
+
+            if (config.usesCustomSpawns()) {
+                if (config.getMonsters().isEmpty() && waveManager.getWave().getMobs().isEmpty()) {
+                    waveManager.getWave().addDefaultMobs();
+                } else {
+                    waveManager.getWave().addDefaultCustomMobs(config.getMonsters());
+                }
+            }
+
+            if (!config.usesCustomSpawns()) {
+                if (waveManager.getWave().getMobs().isEmpty()) {
+                    waveManager.getWave().addDefaultMobs();
+                }
+            }
 
             spawner.addEntitiesToSpawn(waveManager.getWave().getMobs());
             spawner.spawnMobs();
@@ -354,7 +369,7 @@ public class Arena {
 
     public void countDeadMobs() {
         spawner.count();
-        if (spawner.getDeadMonsters() == waveManager.getWave().getMobAmount()) {
+        if (spawner.getDeadMonsters() == waveManager.getWave().getMobs().values().stream().mapToInt(Integer::intValue).sum()) {
             waveManager.getWave().getMobs().clear();
             startNextWave();
         }
@@ -380,7 +395,21 @@ public class Arena {
 
             waveManager.pickWave();
             waveManager.getWave().calculateMobs(waveManager.getCurrentWave(), arenaPlayers.size());
-            waveManager.getWave().addDefaultMobs();
+
+            if (config.usesCustomSpawns()) {
+                if (config.getMonsters().isEmpty() && waveManager.getWave().getMobs().isEmpty()) {
+                    waveManager.getWave().addDefaultMobs();
+                } else {
+                    waveManager.getWave().addDefaultCustomMobs(config.getMonsters());
+                }
+            }
+
+            if (!config.usesCustomSpawns()) {
+                if (waveManager.getWave().getMobs().isEmpty()) {
+                    waveManager.getWave().addDefaultMobs();
+                }
+            }
+
 
             spawner.addEntitiesToSpawn(waveManager.getWave().getMobs());
 

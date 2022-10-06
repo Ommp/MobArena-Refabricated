@@ -7,11 +7,11 @@ import java.util.Random;
 public class Wave {
 
     //reset to the original frequency after a wave has been used
-    private final int startFrequency;
+    private int startFrequency;
 
     //a frequency of 1 means there's a chance the wave will appear when waves are picked
     private int frequency;
-    private int priority;
+    private int priority = 1;
 
     private boolean isSingle = false;
 
@@ -24,10 +24,11 @@ public class Wave {
     private int mobAmount;
 
     //for custom recurrent waves
-    private int startWave;
+    private int startWave = 1;
+
+    private boolean isFixed = true;
 
     public void useStandardMobs() {
-        defaultMobs.clear();
         defaultMobs.add("minecraft:zombie");
         defaultMobs.add("minecraft:husk");
         defaultMobs.add("minecraft:spider");
@@ -37,7 +38,6 @@ public class Wave {
     }
 
     public void useSwarmMobs() {
-        defaultMobs.clear();
         defaultMobs.add("minecraft:zombie");
         defaultMobs.add("minecraft:husk");
         defaultMobs.add("minecraft:spider");
@@ -45,15 +45,23 @@ public class Wave {
     }
 
     public void useBossMobs() {
-        defaultMobs.clear();
         defaultMobs.add("minecraft:zombie");
         defaultMobs.add("minecraft:husk");
         defaultMobs.add("minecraft:blaze");
-        defaultMobs.add("minecraft:iron_golem");
     }
 
-    public void useCustomMobs() {
+    public void addDefaultCustomMobs(ArrayList<String> monsters) {
+        for (int i = 0; i < mobAmount; i++) {
+            int index = new Random().nextInt(monsters.size());
 
+            if(mobs.containsKey(monsters.get(index))) {
+                var num = mobs.get(monsters.get(index));
+                mobs.put(monsters.get(index), num+1);
+            }
+            else {
+                mobs.put(monsters.get(index), 1);
+            }
+        }
     }
 
     public void addDefaultMobs() {
@@ -76,9 +84,6 @@ public class Wave {
             else {
                 mobs.put(defaultMobs.get(index), 1);
             }
-        }
-        for (String str: mobs.keySet()) {
-            System.out.println(str + " amount: " + mobs.get(str));
         }
     }
 
@@ -105,6 +110,20 @@ public class Wave {
         this.type = type;
         this.startFrequency = startFrequency;
         this.frequency = frequency;
+    }
+
+    public Wave(boolean isSingle, WaveType type, int startWave) {
+        this.isSingle = isSingle;
+        this.type = type;
+        this.startWave = startWave;
+    }
+
+    public Wave(int startFrequency, int frequency, int priority, WaveType type, int startWave) {
+        this.startFrequency = startFrequency;
+        this.frequency = frequency;
+        this.priority = priority;
+        this.type = type;
+        this.startWave = startWave;
     }
 
     public void resetFrequency() {
@@ -149,5 +168,9 @@ public class Wave {
     }
     public void decrementFrequency() {
         this.frequency--;
+    }
+
+    public int getStartWave() {
+        return startWave;
     }
 }

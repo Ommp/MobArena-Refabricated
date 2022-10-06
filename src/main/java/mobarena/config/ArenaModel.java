@@ -12,8 +12,8 @@ public class ArenaModel {
     @SerializedName("Monsters")
     private ArrayList<String> monsters = new ArrayList<>();
 
-    private ArrayList<SingleWave> singleWaves;
-    private ArrayList<RecurrentWave> recurrentWaves;
+    private ArrayList<SingleWave> singleWaves = new ArrayList<>();
+    private ArrayList<RecurrentWave> recurrentWaves = new ArrayList<>();
 
     private int finalWave;
 
@@ -35,5 +35,9 @@ public class ArenaModel {
 
     public int getFinalWave() {
         return finalWave;
+    }
+
+    public void setUseCustomSpawns(boolean useCustomSpawns) {
+        this.useCustomSpawns = useCustomSpawns;
     }
 }
