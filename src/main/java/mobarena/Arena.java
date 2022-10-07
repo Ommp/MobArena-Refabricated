@@ -124,6 +124,7 @@ public class Arena {
             waveManager.addCustomWaves(config);
             waveManager.addDefaultWaves();
 
+            waveManager.decrementWaveFrequencies();
             waveManager.pickWave();
             waveManager.getWave().calculateMobs(waveManager.getCurrentWave(), arenaPlayers.size());
 

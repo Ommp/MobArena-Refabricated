@@ -43,7 +43,7 @@ public class WaveManager {
             }
 
             for (RecurrentWave wave1 : arenaName.getRecurrentWaves()) {
-                var recurrentWave = new Wave(wave1.getFrequency(), wave1.getFrequency(), wave1.getPriority(), wave1.getType(), wave1.getWave());
+                var recurrentWave = new Wave(wave1.getFrequency(), 1, wave1.getPriority(), wave1.getType(), wave1.getWave());
                 if (!arenaName.getMonsters().isEmpty()) {
                     recurrentWave.setMobs(wave1.getMonsters());
                 }
@@ -53,7 +53,7 @@ public class WaveManager {
 
     public void decrementWaveFrequencies() {
         for (Wave w: waves) {
-            if (w.getFrequency() > 1) {
+            if (w.getFrequency() > 0) {
                 w.decrementFrequency();
             }
         }
@@ -62,22 +62,35 @@ public class WaveManager {
 
     public void pickWave() {
         ArrayList<Wave> possibleWaves = new ArrayList<>();
+
+        int minPriority = 1;
+
         for (Wave w: waves) {
             if (w.isSingle() && w.getStartWave() == currentWave) {
                 setWave(w);
                 return;
             }
 
-            if (w.getFrequency() == 1 && currentWave >= w.getStartWave()) {
+
+
+            if (w.getFrequency() <= 0 && currentWave >= w.getStartWave()) {
+                if (w.getPriority() >= minPriority) {
                 possibleWaves.add(w);
-                System.out.println("Found wave with frequency 1 of type " + w.getType());
+                minPriority = w.getPriority();
+                }
+
+            }
+        }
+
+        for (Wave w: possibleWaves) {
+            if (w.getPriority() < minPriority) {
+                possibleWaves.remove(w);
             }
         }
 
         int index = new Random().nextInt(possibleWaves.size());
 
         setWave(possibleWaves.get(index));
-        System.out.println("Selected wave with frequency: " + possibleWaves.get(index).getFrequency() + " of type: " + possibleWaves.get(index).getType());
         getWaves().get(index).resetFrequency();
         getWave().resetFrequency();
     }
