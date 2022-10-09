@@ -27,7 +27,6 @@ public class Spawner {
 
     public void addEntitiesToSpawn(HashMap<String, Integer> mobs) {
         //for every string in mobs, create an entity as many times as the value of the number
-        System.out.println("added entities that should be spawned later");
         for (var str: mobs.keySet()) {
             for (int i = 0; i < mobs.get(str); i++) {
                 NbtCompound nbtCompound = new NbtCompound();
@@ -39,16 +38,15 @@ public class Spawner {
             }
         }
     }
-
     public void addStatusEffects(WaveType type) {
-        for (int i = 0; i < monsters.size(); i++) {
+        for (MobEntity monster : monsters) {
             if (type.equals(WaveType.BOSS)) {
-                monsters.get(i).addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 1000000, 3));
-                monsters.get(i).addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 1000000, 2));
+                monster.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 10000, 3));
+                monster.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 10000, 2));
             }
             if (type.equals(WaveType.SWARM)) {
-                monsters.get(i).setHealth(monsters.get(i).getMaxHealth() / 3);
-                monsters.get(i).addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 1000000, 3));
+                monster.setHealth(monster.getMaxHealth() / 3);
+                monster.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 10000, 2));
             }
         }
     }
