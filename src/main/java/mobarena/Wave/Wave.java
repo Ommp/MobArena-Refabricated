@@ -27,9 +27,9 @@ public class Wave {
     private boolean isFixed = false;
 
     public void useStandardMobs() {
-        mobs.put("minecraft:zombie", 5);
-        mobs.put("minecraft:husk", 2);
-        mobs.put("minecraft:skeleton", 3);
+        mobs.put("minecraft:zombie", 8);
+        mobs.put("minecraft:husk", 3);
+        mobs.put("minecraft:skeleton", 5);
         mobs.put("minecraft:pillager", 1);
     }
 
@@ -37,8 +37,8 @@ public class Wave {
         mobs.put("minecraft:wolf", 8);
         mobs.put("minecraft:husk", 3);
         mobs.put("minecraft:zombie", 4);
-        mobs.put("minecraft:spider", 1);
-        mobs.put("minecraft:cave_spider", 2);
+        mobs.put("minecraft:spider", 2);
+        mobs.put("minecraft:cave_spider", 3);
     }
 
     public void useBossMobs() {
@@ -69,31 +69,43 @@ public class Wave {
     }
 
     public HashMap<String, Integer> updateUnfixedMobs() {
+
         if (!isFixed) {
-            ArrayList<String> unfixedMobs = new ArrayList<>();
 
-            for (var str: mobs.keySet()) {
-                for (int i = 0; i < mobs.get(str); i++) {
-                    unfixedMobs.add(str);
+            int totalWeight = this.mobs.values().stream().reduce(0, Integer::sum);
+            int addedMobAmount = 0;
+
+            HashMap<String, Integer> randomisedMobs = new HashMap<>();
+
+            for (int i = 0; i < mobAmount; i++) {
+
+                var randomWeight = new Random().nextInt(totalWeight);
+                int countWeight = 0;
+
+            for (String str: mobs.keySet()) {
+                countWeight += mobs.get(str);
+
+                if (addedMobAmount < mobAmount) {
+
+                if (countWeight >= randomWeight) {
+                    if (randomisedMobs.containsKey(str)) {
+                        int num = randomisedMobs.get(str);
+                        randomisedMobs.put(str, num+1);
+                    } else {
+                        randomisedMobs.put(str, 1);
+                    }
+                    addedMobAmount++;
+                        break;
                 }
             }
 
-            HashMap<String, Integer> mobs = new HashMap<>();
-            System.out.println(getMobAmount() + " in updateUnfixedMobs()");
-            for (int i = 0; i < getMobAmount(); i++) {
-            int index = new Random().nextInt(unfixedMobs.size());
-
-                if(mobs.containsKey(unfixedMobs.get(index))) {
-                    var num = mobs.get(unfixedMobs.get(index));
-                    mobs.put(unfixedMobs.get(index), num+1);
-                } else {
-                    mobs.put(unfixedMobs.get(index), 1);
-                }
-
             }
-            return mobs;
+            }
+
+            return randomisedMobs;
 
         }
+
         return mobs;
     }
 

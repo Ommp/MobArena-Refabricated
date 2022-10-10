@@ -1,19 +1,22 @@
 package mobarena.Wave;
 
+import mobarena.MobArena;
 import mobarena.config.ArenaModel;
 import mobarena.config.RecurrentWave;
 import mobarena.config.SingleWave;
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.apache.logging.log4j.Level;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class WaveManager {
 
-    private int currentWave = 1;
+    private int currentWave = 0;
     private int finalWave;
 
-    private ArrayList<Wave> waves = new ArrayList<>();
+    private final ArrayList<Wave> waves = new ArrayList<>();
 
     private Wave wave;
     public void incrementWave() {
@@ -25,6 +28,7 @@ public class WaveManager {
     }
 
     public void setWave(Wave wave) {
+        MobArena.log(Level.ERROR, wave.getMobs().entrySet() + "in setwave");
         this.wave = wave;
     }
 
@@ -72,6 +76,9 @@ public class WaveManager {
         int minPriority = 1;
 
         for (Wave w: waves) {
+
+            MobArena.log(Level.ERROR, w.getMobs().entrySet() + " first in pickwave");
+
             if (w.isSingle() && w.getStartWave() == currentWave) {
                 setWave(w);
                 return;
@@ -81,17 +88,15 @@ public class WaveManager {
 
             if (w.getFrequency() <= 0 && currentWave >= w.getStartWave() && !w.isSingle()) {
                 if (w.getPriority() >= minPriority) {
-                possibleWaves.add(w);
-                minPriority = w.getPriority();
+                    possibleWaves.add(w);
+                    minPriority = w.getPriority();
                 }
-
             }
         }
 
         var noPriorityWaves = new ArrayList<Wave>();
         for (Wave w: possibleWaves) {
             if (w.getPriority() < minPriority) {
-//                possibleWaves.remove(w);
                 noPriorityWaves.add(w);
             }
         }
@@ -102,6 +107,7 @@ public class WaveManager {
         setWave(possibleWaves.get(index));
         getWaves().get(index).resetFrequency();
         getWave().resetFrequency();
+        MobArena.log(Level.ERROR, getWave().getMobs().entrySet() + " second in pickwave");
     }
 
     public int getCurrentWave() {
@@ -120,14 +126,13 @@ public class WaveManager {
         return wave;
     }
 
-    public void startFirstWave(ArenaModel config, ArrayList<ServerPlayerEntity> arenaPlayers) {
-        addCustomWaves(config);
-        addDefaultWaves();
+    public HashMap<String, Integer> startWave(ArenaModel config, ArrayList<ServerPlayerEntity> arenaPlayers) {
 
+        incrementWave();
         decrementWaveFrequencies();
+
         pickWave();
         getWave().calculateMobs(getCurrentWave(), arenaPlayers.size());
-        System.out.println(wave.getMobAmount() + " in startfirstwave()");
 
         if (getWave().getMobs().isEmpty()) {
             if (config.usesCustomSpawns()) {
@@ -137,28 +142,6 @@ public class WaveManager {
             }
         }
 
-        this.wave.setMobs(wave.updateUnfixedMobs());
-    }
-
-    public void startNextWave(ArenaModel config, ArrayList<ServerPlayerEntity> arenaPlayers) {
-
-        incrementWave();
-        decrementWaveFrequencies();
-
-
-        pickWave();
-        getWave().calculateMobs(getCurrentWave(), arenaPlayers.size());
-        System.out.println(wave.getMobAmount() + " in startnextwave()");
-
-        if (getWave().getMobs().isEmpty()) {
-            System.out.println("mobs is empty");
-            if (config.usesCustomSpawns()) {
-                getWave().addDefaultCustomMobs(config.getMonsters());
-            } else {
-                getWave().useDefaultMobs();
-            }
-        }
-
-        this.wave.setMobs(wave.updateUnfixedMobs());
+        return wave.updateUnfixedMobs();
     }
 }
