@@ -68,13 +68,15 @@ public class Arena {
 
     private boolean forceClass;
 
+    private boolean isXPAllowed = false;
+
     public ArenaModel config = new ArenaModel();
 
     private final RewardManager rewardManager = new RewardManager();
 
     final ScheduledExecutorService waveService = Executors.newSingleThreadScheduledExecutor();
 
-    public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, BlockPos p1, BlockPos p2, int isEnabled, String dimensionName, int arenaStartCountdown, boolean forceClass) {
+    public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, BlockPos p1, BlockPos p2, int isEnabled, String dimensionName, int arenaStartCountdown, boolean forceClass, boolean isXPAllowed) {
         this.name = name;
         this.minPlayers = minPlayers;
         this.maxPlayers = maxPlayers;
@@ -87,6 +89,7 @@ public class Arena {
         this.dimensionName = dimensionName;
         this.arenaStartCountdown = arenaStartCountdown;
         this.forceClass = forceClass;
+        this.isXPAllowed = isXPAllowed;
         this.world = setWorld();
         this.mobSpawnPoints = setMobSpawnPoints();
         this.spawner = new Spawner(name, world);
@@ -419,5 +422,9 @@ public class Arena {
 
     public boolean getLobbyPlayer(ServerPlayerEntity p) {
         return lobbyPlayers.contains(p);
+    }
+
+    public boolean isXPAllowed() {
+        return isXPAllowed;
     }
 }

@@ -18,11 +18,20 @@ public abstract class LivingEntityMixin{
         ArenaManager.handleMobDeath(livingEntity.getUuidAsString());
         }
     }
-    @Inject(method = "drop", at = @At("HEAD"), cancellable = true)
-    private void disableDrop(DamageSource source, CallbackInfo ci) {
+    @Inject(method = "dropLoot", at = @At("HEAD"), cancellable = true)
+    private void disableDrop(DamageSource source, boolean causedByPlayer, CallbackInfo ci) {
         //cancel dropping items if the mob belongs to an arena
         if (ArenaManager.getMobFromAnyArena().containsKey(livingEntity.getUuidAsString())) {
             ci.cancel();
+        }
+    }
+
+    @Inject(method = "dropXp", at = @At("HEAD"), cancellable = true)
+    private void disableXP(CallbackInfo ci) {
+        if (ArenaManager.getMobFromAnyArena().containsKey(livingEntity.getUuidAsString())) {
+            if (!ArenaManager.getArena(ArenaManager.getArenaFromMob(livingEntity.getUuidAsString())).isXPAllowed()) {
+                ci.cancel();
+            }
         }
     }
 }

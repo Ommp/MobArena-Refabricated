@@ -191,6 +191,24 @@ public class SetCommand implements Command {
         return 1;
     }
 
+    private int setIsXPAllowed(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        var number = IntegerArgumentType.getInteger(context, "number");
+        var name = StringArgumentType.getString(context, "name");
+
+        ServerCommandSource source = context.getSource();
+        ServerPlayerEntity player = source.getPlayer();
+
+        if (number < 1 ) {
+            MobArena.database.setAllowXP(false, name);
+            player.sendMessage(new TranslatableText("mobarena.updatedallowxp", "false", name), false);
+        } else {
+            MobArena.database.setAllowXP(true, name);
+            player.sendMessage(new TranslatableText("mobarena.updatedallowxp", "true", name), false);
+        }
+
+        return 1;
+    }
+
 
     @Override
     public LiteralCommandNode<ServerCommandSource> getNode() {
@@ -247,6 +265,11 @@ public class SetCommand implements Command {
                 .then(CommandManager.argument("number", IntegerArgumentType.integer()).suggests(new forceClassSuggestionProvider())
                 .then(CommandManager.argument("name", StringArgumentType.greedyString()).suggests(new NameSuggestionProvider())
                 .executes(this::setForceClass))))
+
+                .then(CommandManager.literal("xpEnabled").requires(source -> source.hasPermissionLevel(2))
+                .then(CommandManager.argument("number", IntegerArgumentType.integer()).suggests(new forceClassSuggestionProvider())
+                .then(CommandManager.argument("name", StringArgumentType.greedyString()).suggests(new NameSuggestionProvider())
+                .executes(this::setIsXPAllowed))))
 
                 .build();
     }

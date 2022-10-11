@@ -50,6 +50,7 @@ public class Database {
                     "dimension varchar," +
                     "countdown INT DEFAULT 10," +
                     "forceclass BOOLEAN DEFAULT FALSE," +
+                    "allowXP BOOLEAN DEFAULT FALSE," +
                     "PRIMARY KEY (name))";
             String scoreboardTable = "CREATE TABLE IF NOT EXISTS scoreboard(" +
                     "player varchar UNIQUE," +
@@ -142,6 +143,11 @@ public class Database {
             if (!rs.next()) {
                 String addforceClassColumn = "ALTER TABLE arenas ADD forceclass BOOLEAN DEFAULT FALSE";
                 statement.execute(addforceClassColumn);
+            }
+            rs = md.getColumns(null, null, "arenas", "allowXP");
+            if (!rs.next()) {
+                String addAllowXPColumn = "ALTER TABLE arenas ADD allowXP BOOLEAN DEFAULT FALSE";
+                statement.execute(addAllowXPColumn);
             }
 
         } catch (SQLException e) {
@@ -359,7 +365,8 @@ public class Database {
                     rs.getInt("isEnabled"),
                     rs.getString("dimension"),
                     rs.getInt("countdown"),
-                    rs.getBoolean("forceclass"));
+                    rs.getBoolean("forceclass"),
+                    rs.getBoolean("allowXP"));
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -460,6 +467,19 @@ public class Database {
 
     public void setForceClass(boolean value, String arena) {
         String sql = "UPDATE arenas SET forceclass=? WHERE name=?";
+        PreparedStatement statement = null;
+        try {
+            statement = con.prepareStatement(sql);
+            statement.setBoolean(1, value);
+            statement.setString(2, arena);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setAllowXP(boolean value, String arena) {
+        String sql = "UPDATE arenas SET allowXP=? WHERE name=?";
         PreparedStatement statement = null;
         try {
             statement = con.prepareStatement(sql);

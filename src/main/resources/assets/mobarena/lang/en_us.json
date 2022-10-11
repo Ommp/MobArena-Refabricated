@@ -29,5 +29,6 @@
   "mobarena.deletedwaverewards": "All rewards for every %s waves deleted.",
   "mobarena.showreward": "Item: %s, wave: %s",
   "mobarena.updatedforceclass": "Set force class value to %s for arena %s.",
-  "mobarena.selectaclass": "You need to select a class first!"
+  "mobarena.selectaclass": "You need to select a class first!",
+  "mobarena.updatedallowxp": "Set xpEnabled to %s for arena %s"
 }

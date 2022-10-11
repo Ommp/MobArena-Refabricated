@@ -43,7 +43,7 @@ public class Spawner {
         for (MobEntity monster : monsters) {
             if (type.equals(WaveType.BOSS)) {
 
-                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)).addTemporaryModifier(new EntityAttributeModifier("movement", monster.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED)*0.8, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)).addTemporaryModifier(new EntityAttributeModifier("movement", monster.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED)*1.2, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
                 Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).addTemporaryModifier(new EntityAttributeModifier("max health", 2, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
                 monster.setHealth(monster.getMaxHealth());
                 Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE)).addTemporaryModifier(new EntityAttributeModifier("attack damage", 2, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
@@ -51,7 +51,7 @@ public class Spawner {
             }
             if (type.equals(WaveType.SWARM)) {
                 Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)).addTemporaryModifier(new EntityAttributeModifier("movement", monster.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED)*2.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).addTemporaryModifier(new EntityAttributeModifier("health", -2.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).addTemporaryModifier(new EntityAttributeModifier("health", -2, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
                 monster.setHealth(monster.getMaxHealth());
 
             }
