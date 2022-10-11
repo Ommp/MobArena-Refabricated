@@ -123,10 +123,11 @@ public class Arena {
 
             waveManager.addDefaultWaves();
             waveManager.addCustomWaves(config);
-            var mobs = waveManager.startWave(config, arenaPlayers);
+            var mobs = waveManager.prepareWaveReturnMobs(config, arenaPlayers);
 
             spawner.addEntitiesToSpawn(mobs);
             spawner.spawnMobs();
+            spawner.modifyMobStats(waveManager.getWave().getType());
         } else {
             arenaCountingDown = false;
         }
@@ -363,7 +364,7 @@ public class Arena {
         }
         reviveDead();
 
-        var mobs = waveManager.startWave(config, arenaPlayers);
+        var mobs = waveManager.prepareWaveReturnMobs(config, arenaPlayers);
 
         Text waveText = Text.of("Wave: " + waveManager.getCurrentWave()).getWithStyle(Style.EMPTY.withFormatting(Formatting.GREEN)).get(0);
         for (var p: anyArenaPlayer) {
@@ -378,7 +379,7 @@ public class Arena {
             spawner.resetDeadMonsters();
             spawner.addEntitiesToSpawn(mobs);
             spawner.spawnMobs();
-            spawner.addStatusEffects(waveManager.getWave().getType());
+            spawner.modifyMobStats(waveManager.getWave().getType());
         }, 5, TimeUnit.SECONDS);
 
     }

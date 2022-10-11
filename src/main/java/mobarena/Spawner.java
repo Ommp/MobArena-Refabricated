@@ -5,8 +5,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -15,6 +15,7 @@ import net.minecraft.util.math.Vec3i;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 import static mobarena.MobArena.team;
 
@@ -38,15 +39,21 @@ public class Spawner {
             }
         }
     }
-    public void addStatusEffects(WaveType type) {
+    public void modifyMobStats(WaveType type) {
         for (MobEntity monster : monsters) {
             if (type.equals(WaveType.BOSS)) {
-                monster.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 10000, 3));
-                monster.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 10000, 2));
+
+                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)).addTemporaryModifier(new EntityAttributeModifier("movement", monster.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED)*0.8, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).addTemporaryModifier(new EntityAttributeModifier("max health", 2, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                monster.setHealth(monster.getMaxHealth());
+                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE)).addTemporaryModifier(new EntityAttributeModifier("attack damage", 2, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+
             }
             if (type.equals(WaveType.SWARM)) {
-                monster.setHealth(monster.getMaxHealth() / 3);
-                monster.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 10000, 2));
+                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)).addTemporaryModifier(new EntityAttributeModifier("movement", monster.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED)*2.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).addTemporaryModifier(new EntityAttributeModifier("health", -2.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                monster.setHealth(monster.getMaxHealth());
+
             }
         }
     }
