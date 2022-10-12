@@ -25,6 +25,13 @@ public abstract class LivingEntityMixin{
             ci.cancel();
         }
     }
+    @Inject(method = "dropInventory", at = @At("HEAD"), cancellable = true)
+    private void disableDrop(CallbackInfo ci) {
+        //cancel dropping items if the mob belongs to an arena
+        if (ArenaManager.getMobFromAnyArena().containsKey(livingEntity.getUuidAsString())) {
+            ci.cancel();
+        }
+    }
 
     @Inject(method = "dropXp", at = @At("HEAD"), cancellable = true)
     private void disableXP(CallbackInfo ci) {

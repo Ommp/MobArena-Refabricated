@@ -43,7 +43,7 @@ public class RewardManager {
                 ItemStack itemStack;
                 try {
                     itemStack = ItemStack.fromNbt(StringNbtReader.parse(data));
-                    p.getInventory().insertStack(itemStack);
+                    p.getInventory().offerOrDrop(itemStack);
                 } catch (CommandSyntaxException e) {
                     throw new RuntimeException(e);
                 }

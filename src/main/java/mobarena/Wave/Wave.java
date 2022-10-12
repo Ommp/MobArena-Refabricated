@@ -31,12 +31,14 @@ public class Wave {
         mobs.put("minecraft:husk", 3);
         mobs.put("minecraft:skeleton", 5);
         mobs.put("minecraft:pillager", 1);
+        mobs.put("minecraft:wolf", 1);
+        mobs.put("minecraft:spider", 1);
     }
 
     public void useSwarmMobs() {
         mobs.put("minecraft:wolf", 8);
         mobs.put("minecraft:husk", 3);
-        mobs.put("minecraft:zombie", 4);
+        mobs.put("minecraft:zombie", 3);
         mobs.put("minecraft:spider", 2);
         mobs.put("minecraft:cave_spider", 3);
     }

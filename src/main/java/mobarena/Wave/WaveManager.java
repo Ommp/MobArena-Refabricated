@@ -1,11 +1,9 @@
 package mobarena.Wave;
 
-import mobarena.MobArena;
 import mobarena.config.ArenaModel;
 import mobarena.config.RecurrentWave;
 import mobarena.config.SingleWave;
 import net.minecraft.server.network.ServerPlayerEntity;
-import org.apache.logging.log4j.Level;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +26,6 @@ public class WaveManager {
     }
 
     public void setWave(Wave wave) {
-        MobArena.log(Level.ERROR, wave.getMobs().entrySet() + "in setwave");
         this.wave = wave;
     }
 
@@ -77,8 +74,6 @@ public class WaveManager {
 
         for (Wave w: waves) {
 
-            MobArena.log(Level.ERROR, w.getMobs().entrySet() + " first in pickwave");
-
             if (w.isSingle() && w.getStartWave() == currentWave) {
                 setWave(w);
                 return;
@@ -107,7 +102,6 @@ public class WaveManager {
         setWave(possibleWaves.get(index));
         getWaves().get(index).resetFrequency();
         getWave().resetFrequency();
-        MobArena.log(Level.ERROR, getWave().getMobs().entrySet() + " second in pickwave");
     }
 
     public int getCurrentWave() {
