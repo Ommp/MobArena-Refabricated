@@ -6,6 +6,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import mobarena.ArenaManager;
 import mobarena.PlayerManager;
+import mobarena.WarpType;
 import mobarena.commands.suggestions.NameSuggestionProvider;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -36,7 +37,7 @@ public class SpectateArena implements Command{
             PlayerManager.clearInventory(p);
             PlayerManager.setGameMode(p, GameMode.SPECTATOR);
             ArenaManager.addActivePlayer(p, name);
-            ArenaManager.arenas.get(name).transportPlayer(p, "spec");
+            ArenaManager.arenas.get(name).transportPlayer(p, WarpType.SPECTATOR);
             ArenaManager.arenas.get(name).addSpectatorPlayer(p);
             p.sendMessage(new TranslatableText("mobarena.joinedspec", name), false);
             return 1;

@@ -179,7 +179,7 @@ public class Arena {
             PlayerManager.setGameMode(p, GameMode.ADVENTURE);
 
             addLobbyPlayer(p);
-            transportPlayer(p, "lobby");
+            transportPlayer(p, WarpType.LOBBY);
             PlayerManager.restoreVitals(p);
             ArenaManager.addActivePlayer(p, name);
             p.sendMessage(new TranslatableText("mobarena.joinedarenalobby", name), true);
@@ -193,7 +193,7 @@ public class Arena {
         PlayerManager.clearInventory(p);
         PlayerManager.restoreVitals(p);
         PlayerManager.restoreGameMode(p);
-        transportPlayer(p, "exit");
+        transportPlayer(p, WarpType.EXIT);
         PlayerManager.retrieveItems(p);
         if (arenaPlayers.contains(p) || deadPlayers.contains(p)) {
             rewardManager.grantRewards(p);
@@ -224,7 +224,7 @@ public class Arena {
             deadPlayers.add(player);
         if (deadPlayers.size() < anyArenaPlayer.size()) {
             arenaPlayers.remove(player);
-            transportPlayer(player, "spec");
+            transportPlayer(player, WarpType.SPECTATOR);
             PlayerManager.restoreVitals(player);
 
         } else if (deadPlayers.size() == anyArenaPlayer.size()) {
@@ -236,7 +236,7 @@ public class Arena {
     //"revive" a "dead" spectator player if another player successfully finishes the wave in the same arena
     public void reviveDead() {
         for (ServerPlayerEntity p: deadPlayers) {
-            transportPlayer(p, "arena");
+            transportPlayer(p, WarpType.ARENA);
             deadPlayers.remove(p);
             arenaPlayers.add(p);
         }
@@ -246,7 +246,7 @@ public class Arena {
     public void exitAllPlayers() {
         for (ServerPlayerEntity p : anyArenaPlayer) {
             PlayerManager.clearInventory(p);
-            transportPlayer(p, "exit");
+            transportPlayer(p, WarpType.EXIT);
             PlayerManager.restoreGameMode(p);
             PlayerManager.restoreVitals(p);
 
@@ -264,7 +264,7 @@ public class Arena {
 
         for (ServerPlayerEntity p : specPlayers) {
             PlayerManager.clearInventory(p);
-            transportPlayer(p, "exit");
+            transportPlayer(p, WarpType.EXIT);
             PlayerManager.restoreGameMode(p);
             PlayerManager.restoreVitals(p);
 
@@ -300,14 +300,14 @@ public class Arena {
         anyArenaPlayer.clear();
     }
 
-    public void transportPlayer(ServerPlayerEntity player, String warp) {
-        if (warp == "lobby") {
+    public void transportPlayer(ServerPlayerEntity player, WarpType warpType) {
+        if (warpType.equals(WarpType.LOBBY)) {
             player.teleport(world, lobby.x,lobby.y,lobby.z, lobby.yaw, lobby.pitch);
-        } else if (warp == "arena") {
+        } else if (warpType.equals(WarpType.ARENA)) {
             player.teleport(world, arena.x, arena.y, arena.z, arena.yaw, arena.pitch);
-        } else if (warp == "spec") {
+        } else if (warpType.equals(WarpType.SPECTATOR)) {
             player.teleport(world, spectator.x, spectator.y, spectator.z, spectator.yaw, spectator.pitch);
-        } else if (warp == "exit") {
+        } else if (warpType.equals(WarpType.EXIT)) {
             player.teleport(world, exit.x, exit.y, exit.z, exit.yaw, exit.pitch);
         }
 
@@ -317,7 +317,7 @@ public class Arena {
         if (hasMinPlayers() && readyLobbyPlayers.size() == lobbyPlayers.size()) {
             for (ServerPlayerEntity player : lobbyPlayers) {
                 player.sendMessage(new TranslatableText("mobarena.allplayersready"), true);
-                transportPlayer(player, "arena");
+                transportPlayer(player, WarpType.ARENA);
                 arenaPlayers.add(player);
             }
             lobbyPlayers.clear();
@@ -384,9 +384,7 @@ public class Arena {
             spawner.addEntitiesToSpawn(mobs);
             spawner.spawnMobs();
             spawner.modifyMobStats(waveManager.getWave().getType());
-            for (ServerPlayerEntity p: arenaPlayers) {
-                System.out.println(arenaRegion.isInsideRegion(p.getBlockPos()));
-            }
+            transportStrayPlayers();
         }, 5, TimeUnit.SECONDS);
 
     }
@@ -430,5 +428,13 @@ public class Arena {
 
     public boolean isXPAllowed() {
         return isXPAllowed;
+    }
+
+    public void transportStrayPlayers() {
+        for (ServerPlayerEntity p: arenaPlayers) {
+            if (!arenaRegion.isInsideRegion(p.getBlockPos())) {
+                transportPlayer(p, WarpType.ARENA);
+            }
+        }
     }
 }
