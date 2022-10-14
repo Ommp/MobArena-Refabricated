@@ -3,6 +3,7 @@ package mobarena;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import mobarena.Wave.WaveManager;
 import mobarena.config.ArenaModel;
+import mobarena.region.Region;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.StringNbtReader;
@@ -111,7 +112,7 @@ public class Arena {
 
         //if mob spawn points table has no entries, set mob spawn points to be the same as the arena warp
         if (pointsList.isEmpty()) {
-            pointsList.add(new Vec3i(arena.x, arena.y, arena.z));
+            pointsList.add(new Vec3i(arena.x, arena.y+1, arena.z));
             return pointsList;
         }
         return pointsList;
@@ -383,6 +384,9 @@ public class Arena {
             spawner.addEntitiesToSpawn(mobs);
             spawner.spawnMobs();
             spawner.modifyMobStats(waveManager.getWave().getType());
+            for (ServerPlayerEntity p: arenaPlayers) {
+                System.out.println(arenaRegion.isInsideRegion(p.getBlockPos()));
+            }
         }, 5, TimeUnit.SECONDS);
 
     }

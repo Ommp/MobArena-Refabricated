@@ -1,4 +1,4 @@
-package mobarena;
+package mobarena.region;
 
 public class ArenaPoint {
     public int x,y,z;

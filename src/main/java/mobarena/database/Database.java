@@ -417,7 +417,7 @@ public class Database {
             ResultSet rs = statement.executeQuery();
 
             while (rs.next()) {
-                pointsList.add(new Vec3i(rs.getInt("x"), rs.getInt("y"), rs.getInt("z")));
+                pointsList.add(new Vec3i(rs.getInt("x"), rs.getInt("y")+1, rs.getInt("z")));
             }
 
             return pointsList;
