@@ -24,9 +24,8 @@ public class Spawner {
 
     private int deadMonsters;
     private String arenaName;
-    private ServerWorld world;
 
-    public void addEntitiesToSpawn(HashMap<String, Integer> mobs) {
+    public void addEntitiesToSpawn(HashMap<String, Integer> mobs, ServerWorld world) {
         //for every string in mobs, create an entity as many times as the value of the number
         for (var str: mobs.keySet()) {
             for (int i = 0; i < mobs.get(str); i++) {
@@ -51,14 +50,14 @@ public class Spawner {
             }
             if (type.equals(WaveType.SWARM)) {
                 Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)).addTemporaryModifier(new EntityAttributeModifier("movement", monster.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED)*2.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).addTemporaryModifier(new EntityAttributeModifier("health", -2, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).addTemporaryModifier(new EntityAttributeModifier("health", -1.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
                 monster.setHealth(monster.getMaxHealth());
 
             }
         }
     }
 
-    public void spawnMobs(){
+    public void spawnMobs(ServerWorld world){
         for (MobEntity entity: monsters) {
             ServerPlayerEntity p = ArenaManager.getArena(arenaName).getRandomArenaPlayer();
             Vec3i spawnPoint = ArenaManager.getArena(arenaName).getSpawnPointNearPlayer(p);
@@ -72,9 +71,8 @@ public class Spawner {
         }
     }
 
-    public Spawner(String arenaName, ServerWorld world) {
+    public Spawner(String arenaName) {
         this.arenaName = arenaName;
-        this.world = world;
     }
 
     public void count() {
@@ -94,5 +92,9 @@ public class Spawner {
             entity.remove(Entity.RemovalReason.DISCARDED);
         }
         monsters.clear();
+    }
+
+    public ArrayList<MobEntity> getMonsters() {
+        return monsters;
     }
 }

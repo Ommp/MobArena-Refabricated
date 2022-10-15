@@ -5,6 +5,7 @@ import mobarena.Wave.WaveManager;
 import mobarena.config.ArenaModel;
 import mobarena.region.Region;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.network.packet.s2c.play.TitleFadeS2CPacket;
@@ -76,6 +77,7 @@ public class Arena {
     private final RewardManager rewardManager = new RewardManager();
 
     final ScheduledExecutorService waveService = Executors.newSingleThreadScheduledExecutor();
+    ScheduledExecutorService entityService = Executors.newSingleThreadScheduledExecutor();
 
     public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, BlockPos p1, BlockPos p2, int isEnabled, String dimensionName, int arenaStartCountdown, boolean forceClass, boolean isXPAllowed) {
         this.name = name;
@@ -92,8 +94,8 @@ public class Arena {
         this.forceClass = forceClass;
         this.isXPAllowed = isXPAllowed;
         this.world = setWorld();
-        this.mobSpawnPoints = setMobSpawnPoints();
-        this.spawner = new Spawner(name, world);
+        this.mobSpawnPoints = setMobSpawnPoints(name);
+        this.spawner = new Spawner(name);
     }
     public ServerWorld setWorld(){
         if (!(dimensionName == null) && !dimensionName.isEmpty()) {
@@ -106,7 +108,7 @@ public class Arena {
 
     public ArrayList<Vec3i> mobSpawnPoints = new ArrayList<>();
 
-    public ArrayList<Vec3i> setMobSpawnPoints() {
+    public ArrayList<Vec3i> setMobSpawnPoints(String name) {
         ArrayList<Vec3i> pointsList;
         pointsList = MobArena.database.getMobSpawnPoints(name);
 
@@ -129,9 +131,10 @@ public class Arena {
             waveManager.addCustomWaves(config);
             var mobs = waveManager.prepareWaveReturnMobs(config, arenaPlayers);
 
-            spawner.addEntitiesToSpawn(mobs);
-            spawner.spawnMobs();
+            spawner.addEntitiesToSpawn(mobs, world);
+            spawner.spawnMobs(world);
             spawner.modifyMobStats(waveManager.getWave().getType());
+            startEntityService();
         } else {
             arenaCountingDown = false;
         }
@@ -142,6 +145,7 @@ public class Arena {
         spawner.clearMonsters();
         ArenaManager.clearArena(name);
         waveService.shutdownNow();
+        entityService.shutdownNow();
     }
 
     public boolean isRunning() {
@@ -381,8 +385,8 @@ public class Arena {
         waveService.schedule(() -> {
             spawner.clearMonsters();
             spawner.resetDeadMonsters();
-            spawner.addEntitiesToSpawn(mobs);
-            spawner.spawnMobs();
+            spawner.addEntitiesToSpawn(mobs, world);
+            spawner.spawnMobs(world);
             spawner.modifyMobStats(waveManager.getWave().getType());
             transportStrayPlayers();
         }, 5, TimeUnit.SECONDS);
@@ -436,5 +440,28 @@ public class Arena {
                 transportPlayer(p, WarpType.ARENA);
             }
         }
+    }
+
+    public void transportStrayMobs() {
+        for (MobEntity e: spawner.getMonsters()) {
+            if (!arenaRegion.isInsideRegion(e.getBlockPos())) {
+                var spawnPoint = getSpawnPointNearPlayer(getClosestPlayer(e));
+                e.updatePosition(spawnPoint.getX(), spawnPoint.getY(), spawnPoint.getZ());
+            }
+        }
+    }
+
+    public void makeMobsRetarget() {
+        for (MobEntity e: spawner.getMonsters()) {
+            e.setTarget(getClosestPlayer(e));
+        }
+    }
+
+    public void startEntityService() {
+        entityService.scheduleAtFixedRate(() -> {
+            transportStrayPlayers();
+            transportStrayMobs();
+            makeMobsRetarget();
+        }, 0, 500, TimeUnit.MILLISECONDS);
     }
 }
