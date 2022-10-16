@@ -7,6 +7,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerEntity.class)
@@ -20,6 +21,14 @@ public abstract class ServerPlayerEntityMixin {
             if (ArenaManager.getArenaFromPlayer(p).getLobbyPlayer(p)) {
                 cir.setReturnValue(null);
             }
+        }
+    }
+
+    @Inject(method = "onDisconnect", at = @At("HEAD"))
+    private void kickDisconnectedPlayer(CallbackInfo ci) {
+        if (ArenaManager.isPlayerActive(p)) {
+            ArenaManager.getArenaFromPlayer(p).leavePlayer(p);
+            ArenaManager.removeActivePlayer(p);
         }
     }
 
