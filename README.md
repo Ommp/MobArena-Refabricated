@@ -15,12 +15,11 @@ Check the [wiki](https://github.com/Ommp/MobArena-Refabricated/wiki) for help on
 - [x] Classes (with support for modded items and enchantments)
 - [ ] Scoreboard
   - [ ] Command to check an arena's scoreboard
-  - [ ] Scoreboards on signs
+  - [ ] Count stats like waves survived
 - [x] Bosses (WIP)
 - [x] Support for modded mobs
 - [x] Reward system
 - [ ] Configuration
-  - [ ] Difficulty
   - [x] Classes
-  - [ ] Waves
+  - [x] Waves
   - [x] Allowing only certain mobs to spawn
