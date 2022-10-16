@@ -6,7 +6,7 @@ This mod for Fabric allows players to fight against monsters in an arena.
 Currently, most of the core features have been implemented so that it's playable, but many features have not been implemented yet. See below for a quick summary about the current status.
 
 ### Getting Started
-Check the [wiki](https://github.com/Ommp/MobArena-Refabricated/wiki) for help on setting up and using arenas.
+Check the [wiki](docs/wiki/main.md) for help on setting up and using arenas.
 
 ### Features
 - [x] Arena creation
