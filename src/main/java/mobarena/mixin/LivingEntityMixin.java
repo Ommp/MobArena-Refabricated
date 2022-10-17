@@ -15,7 +15,7 @@ public abstract class LivingEntityMixin{
     @Inject(method = "onDeath", at = @At("HEAD"))
     private void injected(DamageSource source, CallbackInfo ci) {
         if (!livingEntity.getWorld().isClient) {
-        ArenaManager.handleMobDeath(livingEntity.getUuidAsString());
+        ArenaManager.handleMobDeath(livingEntity.getUuidAsString(), source);
         }
     }
     @Inject(method = "dropLoot", at = @At("HEAD"), cancellable = true)

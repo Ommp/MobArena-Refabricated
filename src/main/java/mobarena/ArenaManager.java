@@ -1,6 +1,7 @@
 package mobarena;
 
 import mobarena.config.ArenaClassConfig;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
 
@@ -88,7 +89,16 @@ public class ArenaManager {
         mobToArena.put(UUID, arenaName);
     }
 
-    public static void handleMobDeath(String UUID) {
+    public static void handleMobDeath(String UUID, DamageSource source) {
+        if (mobToArena.containsKey(UUID)) {
+            arenas.get(mobToArena.get(UUID)).countDeadMobs();
+            if (source.getSource() instanceof ServerPlayerEntity) {
+                arenas.get(mobToArena.get(UUID)).increasePlayerKillCount((source.getSource()).getUuidAsString());
+            }
+        }
+    }
+
+    public static void handleCreeperExplosion(String UUID) {
         if (mobToArena.containsKey(UUID)) {
             arenas.get(mobToArena.get(UUID)).countDeadMobs();
         }

@@ -50,6 +50,7 @@ public class Arena {
 
 
     private final HashMap<String, ArenaClass> playerClasses = new HashMap<>();
+    private final HashMap<String, Integer> playerKills = new HashMap<>();
 
     private Warp arena, lobby, exit, spectator;
 
@@ -463,5 +464,15 @@ public class Arena {
             transportStrayMobs();
             makeMobsRetarget();
         }, 0, 500, TimeUnit.MILLISECONDS);
+    }
+
+    public void increasePlayerKillCount(String playerUUID) {
+        if (playerKills.containsKey(playerUUID)) {
+            int num = playerKills.get(playerUUID);
+            playerKills.put(playerUUID, num+1);
+        }
+        else {
+            playerKills.put(playerUUID, 1);
+        }
     }
 }

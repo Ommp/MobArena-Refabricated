@@ -14,7 +14,7 @@ public abstract class CreeperEntityMixin {
     @Inject(method = "explode", at = @At("HEAD"))
     private void addCreeperDeath(CallbackInfo ci) {
         if (!entity.getWorld().isClient) {
-            ArenaManager.handleMobDeath(entity.getUuidAsString());
+            ArenaManager.handleCreeperExplosion(entity.getUuidAsString());
         }
     }
 }
