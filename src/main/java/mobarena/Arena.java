@@ -51,6 +51,7 @@ public class Arena {
 
     private final HashMap<String, ArenaClass> playerClasses = new HashMap<>();
     private final HashMap<String, Integer> playerKills = new HashMap<>();
+    private final HashMap<String, Float> playerDamage = new HashMap<>();
 
     private Warp arena, lobby, exit, spectator;
 
@@ -389,7 +390,6 @@ public class Arena {
             spawner.addEntitiesToSpawn(mobs, world);
             spawner.spawnMobs(world);
             spawner.modifyMobStats(waveManager.getWave().getType());
-            transportStrayPlayers();
         }, 5, TimeUnit.SECONDS);
 
     }
@@ -463,7 +463,7 @@ public class Arena {
             transportStrayPlayers();
             transportStrayMobs();
             makeMobsRetarget();
-        }, 0, 500, TimeUnit.MILLISECONDS);
+        }, 0, 250, TimeUnit.MILLISECONDS);
     }
 
     public void increasePlayerKillCount(String playerUUID) {
@@ -473,6 +473,15 @@ public class Arena {
         }
         else {
             playerKills.put(playerUUID, 1);
+        }
+    }
+    public void increasePlayerDamage(String playerUUID, float damage) {
+        if (playerDamage.containsKey(playerUUID)) {
+            var num = playerDamage.get(playerUUID);
+            playerDamage.put(playerUUID, num+damage);
+        }
+        else {
+            playerDamage.put(playerUUID, damage);
         }
     }
 }
