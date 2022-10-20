@@ -49,6 +49,7 @@ public class Database {
                     "isEnabled int DEFAULT 1," +
                     "dimension varchar," +
                     "countdown INT DEFAULT 10," +
+                    "waveCountdown INT DEFAULT 5," +
                     "forceclass BOOLEAN DEFAULT FALSE," +
                     "allowXP BOOLEAN DEFAULT FALSE," +
                     "PRIMARY KEY (name))";
@@ -147,6 +148,11 @@ public class Database {
             rs = md.getColumns(null, null, "arenas", "allowXP");
             if (!rs.next()) {
                 String addAllowXPColumn = "ALTER TABLE arenas ADD allowXP BOOLEAN DEFAULT FALSE";
+                statement.execute(addAllowXPColumn);
+            }
+            rs = md.getColumns(null, null, "arenas", "waveCountdown");
+            if (!rs.next()) {
+                String addAllowXPColumn = "ALTER TABLE arenas ADD waveCountdown INT DEFAULT 5";
                 statement.execute(addAllowXPColumn);
             }
 
@@ -365,6 +371,7 @@ public class Database {
                     rs.getInt("isEnabled"),
                     rs.getString("dimension"),
                     rs.getInt("countdown"),
+                    rs.getInt("waveCountdown"),
                     rs.getBoolean("forceclass"),
                     rs.getBoolean("allowXP"));
 
@@ -454,6 +461,19 @@ public class Database {
 
     public void setCountdown(int seconds, String arena) {
         String sql = "UPDATE arenas SET countdown=? WHERE name=?";
+        PreparedStatement statement = null;
+        try {
+            statement = con.prepareStatement(sql);
+            statement.setInt(1, seconds);
+            statement.setString(2, arena);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setWaveCountdown(int seconds, String arena) {
+        String sql = "UPDATE arenas SET waveCountdown=? WHERE name=?";
         PreparedStatement statement = null;
         try {
             statement = con.prepareStatement(sql);

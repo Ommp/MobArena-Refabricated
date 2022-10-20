@@ -68,6 +68,8 @@ public class Arena {
     public Spawner spawner;
 
     private int arenaStartCountdown;
+    private int waveCountdown;
+
     private boolean arenaCountingDown = false;
 
     private boolean forceClass;
@@ -81,7 +83,7 @@ public class Arena {
     final ScheduledExecutorService waveService = Executors.newSingleThreadScheduledExecutor();
     ScheduledExecutorService entityService = Executors.newSingleThreadScheduledExecutor();
 
-    public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, BlockPos p1, BlockPos p2, int isEnabled, String dimensionName, int arenaStartCountdown, boolean forceClass, boolean isXPAllowed) {
+    public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, BlockPos p1, BlockPos p2, int isEnabled, String dimensionName, int arenaStartCountdown, int waveCountdown, boolean forceClass, boolean isXPAllowed) {
         this.name = name;
         this.minPlayers = minPlayers;
         this.maxPlayers = maxPlayers;
@@ -93,6 +95,7 @@ public class Arena {
         this.isEnabled = isEnabled;
         this.dimensionName = dimensionName;
         this.arenaStartCountdown = arenaStartCountdown;
+        this.waveCountdown = waveCountdown;
         this.forceClass = forceClass;
         this.isXPAllowed = isXPAllowed;
         this.world = setWorld();
@@ -390,7 +393,7 @@ public class Arena {
             spawner.addEntitiesToSpawn(mobs, world);
             spawner.spawnMobs(world);
             spawner.modifyMobStats(waveManager.getWave().getType());
-        }, 5, TimeUnit.SECONDS);
+        }, waveCountdown, TimeUnit.SECONDS);
 
     }
 

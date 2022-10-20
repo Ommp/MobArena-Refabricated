@@ -25,6 +25,7 @@
   "mobarena.updatedmax": "Updated max players allowed.",
   "mobarena.updatedmin": "Updated min players needed.",
   "mobarena.updatedcountdown": "Set arena start countdown to: %s seconds.",
+  "mobarena.updatedwavecountdown": "Set wave start countdown to: %s seconds.",
   "mobarena.addedreward": "Reward added.",
   "mobarena.deletedwaverewards": "All rewards for every %s waves deleted.",
   "mobarena.showreward": "Item: %s, wave: %s",

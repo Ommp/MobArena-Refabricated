@@ -173,6 +173,18 @@ public class SetCommand implements Command {
         return 1;
     }
 
+    private int setWaveCountdown(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        int num = IntegerArgumentType.getInteger(context, "number");
+        String name = StringArgumentType.getString(context, "name");
+
+        ServerCommandSource source = context.getSource();
+        ServerPlayerEntity player = source.getPlayer();
+
+        MobArena.database.setWaveCountdown(num, name);
+        player.sendMessage(new TranslatableText("mobarena.updatedwavecountdown", num), false);
+        return 1;
+    }
+
     private int setForceClass(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         var number = IntegerArgumentType.getInteger(context, "number");
         var name = StringArgumentType.getString(context, "name");
@@ -260,6 +272,11 @@ public class SetCommand implements Command {
                 .then(CommandManager.argument("number", IntegerArgumentType.integer())
                 .then(CommandManager.argument("name", StringArgumentType.greedyString()).suggests(new NameSuggestionProvider())
                 .executes(this::setCountdown))))
+
+                .then(CommandManager.literal("waveCountdown").requires(source -> source.hasPermissionLevel(2))
+                .then(CommandManager.argument("number", IntegerArgumentType.integer())
+                .then(CommandManager.argument("name", StringArgumentType.greedyString()).suggests(new NameSuggestionProvider())
+                .executes(this::setWaveCountdown))))
 
                 .then(CommandManager.literal("forceclass").requires(source -> source.hasPermissionLevel(2))
                 .then(CommandManager.argument("number", IntegerArgumentType.integer()).suggests(new forceClassSuggestionProvider())
