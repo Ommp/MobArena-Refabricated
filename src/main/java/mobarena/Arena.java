@@ -5,6 +5,7 @@ import mobarena.Wave.WaveManager;
 import mobarena.config.ArenaModel;
 import mobarena.region.Region;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.StringNbtReader;
@@ -17,6 +18,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.registry.Registry;
@@ -127,6 +129,7 @@ public class Arena {
     public void startArena() {
         if (lobbyPlayers.isEmpty()) {
             isRunning = true;
+            despawnItemEntitites();
             rewardManager.setRewards(name);
             for (ServerPlayerEntity p : arenaPlayers) {
                 rewardManager.addPlayer(p);
@@ -466,6 +469,7 @@ public class Arena {
             transportStrayPlayers();
             transportStrayMobs();
             makeMobsRetarget();
+            removeForeignEntities();
         }, 0, 250, TimeUnit.MILLISECONDS);
     }
 
@@ -486,5 +490,25 @@ public class Arena {
         else {
             playerDamage.put(playerUUID, damage);
         }
+    }
+
+    public void removeForeignEntities() {
+        var foreignEntities= world.getEntitiesByType(TypeFilter.instanceOf(MobEntity.class), arenaRegion.asBox(), entity -> !belongsToArena(entity));
+
+        for (var entity: foreignEntities) {
+            entity.remove(Entity.RemovalReason.DISCARDED);
+        }
+    }
+
+    public void despawnItemEntitites() {
+        //TODO might want to find a better predicate than isLiving
+        var items = world.getEntitiesByType(TypeFilter.instanceOf(ItemEntity.class), arenaRegion.asBox(), itemEntity -> !itemEntity.isLiving());
+        for (var item: items) {
+            item.remove(Entity.RemovalReason.DISCARDED);
+        }
+    }
+
+    public boolean belongsToArena(MobEntity entity) {
+        return spawner.getMonsters().contains(entity);
     }
 }
