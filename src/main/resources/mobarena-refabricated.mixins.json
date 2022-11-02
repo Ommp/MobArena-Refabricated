@@ -11,7 +11,8 @@
     "MobEntityMixin",
     "ServerPlayerEntityMixin",
     "SignBlockEntityMixin",
-    "SpiderEntityMixin"
+    "SpiderEntityMixin",
+    "WorldMixin"
   ],
   "injectors": {
     "defaultRequire": 1

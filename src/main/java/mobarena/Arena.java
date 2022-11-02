@@ -188,7 +188,7 @@ public class Arena {
         if (hasLessThanMaxPlayers()) {
             PlayerManager.savePlayerInventory(p);
             PlayerManager.clearInventory(p);
-            PlayerManager.setGameMode(p, GameMode.ADVENTURE);
+            PlayerManager.setGameMode(p, GameMode.SURVIVAL);
 
             addLobbyPlayer(p);
             transportPlayer(p, WarpType.LOBBY);
@@ -510,5 +510,9 @@ public class Arena {
 
     public boolean belongsToArena(MobEntity entity) {
         return spawner.getMonsters().contains(entity);
+    }
+
+    public Region getArenaRegion() {
+        return arenaRegion;
     }
 }
