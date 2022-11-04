@@ -16,7 +16,7 @@ public abstract class WorldMixin {
     @Inject(method = "setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;II)Z", at = @At("HEAD"), cancellable = true)
     private void inject(BlockPos pos, BlockState state, int flags, int maxUpdateDepth, CallbackInfoReturnable<Boolean> cir) {
         for (var arena: ArenaManager.arenas.values()) {
-            if (arena.getArenaRegion().isInsideRegion(pos)) {
+            if (arena.getArenaRegion().isInsideRegion(pos) && arena.getIsProtected()) {
                 cir.setReturnValue(false);
                 break;
             }

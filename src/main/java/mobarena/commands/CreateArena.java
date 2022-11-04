@@ -26,6 +26,7 @@ public class CreateArena implements Command {
         }
         else {
             MobArena.database.addArena(name);
+            ArenaManager.loadInactiveArena(name);
             ArenaManager.addArenaNames();
             player.sendMessage(new TranslatableText("mobarena.createdarena", name), false);
         }

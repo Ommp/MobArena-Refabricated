@@ -9,6 +9,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.scoreboard.AbstractTeam;
 import net.minecraft.scoreboard.Team;
@@ -56,6 +57,11 @@ public class MobArena implements ModInitializer {
 		ArenaManager.initClasses();
 		arenaConfig.load();
 		ArenaManager.addArenaNames();
+
+		ServerWorldEvents.LOAD.register(((server, world) -> {
+			serverinstance = server.getOverworld().getServer();
+			ArenaManager.loadAllArenas();
+		}));
 
 		ServerPlayerEvents.ALLOW_DEATH.register(((player, source, amount) -> {
 			if (ArenaManager.isPlayerActive(player)) {

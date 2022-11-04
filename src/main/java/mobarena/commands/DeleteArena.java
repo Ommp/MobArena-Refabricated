@@ -22,7 +22,7 @@ public class DeleteArena implements Command {
 
 
             MobArena.database.deleteArena(name);
-            ArenaManager.addArenaNames();
+            ArenaManager.arenas.remove(name);
             player.sendMessage(new TranslatableText("mobarena.deletedarena", name), false);
             return 0;
     }

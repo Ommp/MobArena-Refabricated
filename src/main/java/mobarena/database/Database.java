@@ -52,11 +52,20 @@ public class Database {
                     "waveCountdown INT DEFAULT 5," +
                     "forceclass BOOLEAN DEFAULT FALSE," +
                     "allowXP BOOLEAN DEFAULT FALSE," +
+                    "isProtected BOOLEAN DEFAULT TRUE," +
                     "PRIMARY KEY (name))";
             String scoreboardTable = "CREATE TABLE IF NOT EXISTS scoreboard(" +
-                    "player varchar UNIQUE," +
-                    "score int," +
-                    "deaths int)";
+                    "arena varchar," +
+                    "player varchar," +
+                    "total_kills int," +
+                    "total_deaths int,"+
+                    "total_damage int,"+
+                    "total_waves int,"+
+                    "highest_wave int,"+
+                    "highest_damage int,"+
+                    "highest_kills int,"+
+                    "times_played int,"+
+                    "FOREIGN KEY(arena) REFERENCES arenas(name) ON DELETE CASCADE)";
             String mobSpawnpointsTable = "CREATE TABLE IF NOT EXISTS mobspawnpoints(" +
                     "arena varchar," +
                     "x double," +
@@ -152,8 +161,13 @@ public class Database {
             }
             rs = md.getColumns(null, null, "arenas", "waveCountdown");
             if (!rs.next()) {
-                String addAllowXPColumn = "ALTER TABLE arenas ADD waveCountdown INT DEFAULT 5";
-                statement.execute(addAllowXPColumn);
+                String addWaveCountdownColumn = "ALTER TABLE arenas ADD waveCountdown INT DEFAULT 5";
+                statement.execute(addWaveCountdownColumn);
+            }
+            rs = md.getColumns(null, null, "arenas", "isProtected");
+            if (!rs.next()) {
+                String addIsProtectedColumn = "ALTER TABLE arenas ADD isProtected BOOLEAN DEFAULT TRUE";
+                statement.execute(addIsProtectedColumn);
             }
 
         } catch (SQLException e) {
@@ -351,6 +365,24 @@ public class Database {
         }
     }
 
+    public ArrayList<String> getAllArenaNames() {
+        ArrayList<String> names = new ArrayList<>();
+        String sql = "SELECT name FROM arenas";
+        PreparedStatement statement;
+
+        try {
+            statement = con.prepareStatement(sql);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                names.add(rs.getString("name"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return names;
+    }
+
+    //for loading arena that players will use
     public Arena getArenaByName(String name) {
         String sql = "SELECT * FROM arenas where name=? ";
         PreparedStatement statement;
@@ -373,28 +405,57 @@ public class Database {
                     rs.getInt("countdown"),
                     rs.getInt("waveCountdown"),
                     rs.getBoolean("forceclass"),
-                    rs.getBoolean("allowXP"));
+                    rs.getBoolean("allowXP"),
+                    rs.getBoolean("isProtected"));
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public ArrayList<String> getAllArenaNames() {
-        ArrayList<String> names = new ArrayList<>();
-        String sql = "SELECT name FROM arenas";
-        PreparedStatement statement;
+    //for loading arena so that the arena area stays protected
+    public ArrayList<Arena> getAllInactiveArenas() {
+        ArrayList<Arena> arenas = new ArrayList<>();
 
         try {
-            statement = con.prepareStatement(sql);
+            var statement = con.prepareStatement("SELECT name, isProtected, p1_x,p1_y,p1_z, p2_x,p2_y,p2_z, dimension FROM arenas");
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                names.add(rs.getString("name"));
+                if (rs.getInt("p1_x") != 0 && rs.getInt("p1_y") != 0 && rs.getInt("p1_z") != 0 && rs.getInt("p2_x") != 0 && rs.getInt("p2_y") != 0 && rs.getInt("p2_z") != 0) {
+                    arenas.add(new Arena(rs.getString("name"),
+                            new BlockPos(rs.getInt("p1_x"), rs.getInt("p1_y"), rs.getInt("p1_z")),
+                            new BlockPos(rs.getInt("p2_x"), rs.getInt("p2_y"), rs.getInt("p2_z")),
+                            rs.getString("name"),
+                            rs.getBoolean("isProtected")
+                    ));
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return names;
+        return arenas;
+    }
+
+    //for after an arena is finished
+    public Arena getInactiveArena(String name) {
+        String sql = "SELECT name, isProtected, p1_x,p1_y,p1_z, p2_x,p2_y,p2_z, dimension FROM arenas where name=? ";
+        PreparedStatement statement;
+
+        try {
+            statement = con.prepareStatement(sql);
+            statement.setString(1, name);
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+
+            return new Arena(rs.getString("name"),
+                    new BlockPos(rs.getInt("p1_x"), rs.getInt("p1_y"), rs.getInt("p1_z")),
+                    new BlockPos(rs.getInt("p2_x"), rs.getInt("p2_y"), rs.getInt("p2_z")),
+                    rs.getString("dimension"),
+                    rs.getBoolean("isProtected"));
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void addMobSpawnPoint(String arena, double x, double y, double z) {
@@ -428,6 +489,18 @@ public class Database {
             }
 
             return pointsList;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean getIsProtected(String arena) {
+        try {
+            PreparedStatement statement = con.prepareStatement("SELECT isProtected FROM arenas WHERE name=?");
+            statement.setString(1, arena);
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+            return rs.getBoolean("isProtected");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -500,6 +573,19 @@ public class Database {
 
     public void setAllowXP(boolean value, String arena) {
         String sql = "UPDATE arenas SET allowXP=? WHERE name=?";
+        PreparedStatement statement = null;
+        try {
+            statement = con.prepareStatement(sql);
+            statement.setBoolean(1, value);
+            statement.setString(2, arena);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setIsProtected(boolean value, String arena) {
+        String sql = "UPDATE arenas SET isProtected=? WHERE name=?";
         PreparedStatement statement = null;
         try {
             statement = con.prepareStatement(sql);

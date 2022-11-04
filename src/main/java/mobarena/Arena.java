@@ -38,7 +38,7 @@ public class Arena {
     public String name;
     private String dimensionName;
     private ServerWorld world;
-    private boolean isRunning, isProtected, inEditMode;
+    private boolean isRunning, isProtected;
     public int isEnabled;
 
     private final ArrayList<ServerPlayerEntity> arenaPlayers = new ArrayList<>();
@@ -85,7 +85,7 @@ public class Arena {
     final ScheduledExecutorService waveService = Executors.newSingleThreadScheduledExecutor();
     ScheduledExecutorService entityService = Executors.newSingleThreadScheduledExecutor();
 
-    public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, BlockPos p1, BlockPos p2, int isEnabled, String dimensionName, int arenaStartCountdown, int waveCountdown, boolean forceClass, boolean isXPAllowed) {
+    public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, BlockPos p1, BlockPos p2, int isEnabled, String dimensionName, int arenaStartCountdown, int waveCountdown, boolean forceClass, boolean isXPAllowed, boolean isProtected) {
         this.name = name;
         this.minPlayers = minPlayers;
         this.maxPlayers = maxPlayers;
@@ -100,9 +100,18 @@ public class Arena {
         this.waveCountdown = waveCountdown;
         this.forceClass = forceClass;
         this.isXPAllowed = isXPAllowed;
+        this.isProtected = isProtected;
         this.world = setWorld();
         this.mobSpawnPoints = setMobSpawnPoints(name);
         this.spawner = new Spawner(name);
+    }
+
+    public Arena(String name, BlockPos p1, BlockPos p2, String dimensionName, boolean isProtected) {
+        this.name = name;
+        this.arenaRegion = new Region(p1, p2);
+        this.dimensionName = dimensionName;
+        this.world = setWorld();
+        this.isProtected = isProtected;
     }
     public ServerWorld setWorld(){
         if (!(dimensionName == null) && !dimensionName.isEmpty()) {
@@ -151,9 +160,9 @@ public class Arena {
     public void stopArena() {
         isRunning = false;
         spawner.clearMonsters();
-        ArenaManager.clearArena(name);
         waveService.shutdownNow();
         entityService.shutdownNow();
+        ArenaManager.loadInactiveArena(name);
     }
 
     public boolean isRunning() {
@@ -514,5 +523,13 @@ public class Arena {
 
     public Region getArenaRegion() {
         return arenaRegion;
+    }
+
+    public boolean getIsProtected() {
+        return isProtected;
+    }
+
+    public int getPlayerNumber() {
+        return deadPlayers.size()+arenaPlayers.size()+lobbyPlayers.size()+ lobbyPlayers.size()+specPlayers.size();
     }
 }

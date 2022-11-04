@@ -221,6 +221,26 @@ public class SetCommand implements Command {
         return 1;
     }
 
+    private int setIsProtected(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        var number = IntegerArgumentType.getInteger(context, "number");
+        var name = StringArgumentType.getString(context, "name");
+
+        ServerCommandSource source = context.getSource();
+        ServerPlayerEntity player = source.getPlayer();
+
+        if (number < 1 ) {
+            MobArena.database.setIsProtected(false, name);
+            player.sendMessage(new TranslatableText("mobarena.updatedisprotected", "false", name), false);
+            ArenaManager.loadInactiveArena(name);
+        } else {
+            MobArena.database.setIsProtected(true, name);
+            player.sendMessage(new TranslatableText("mobarena.updatedisprotected", "true", name), false);
+            ArenaManager.loadInactiveArena(name);
+        }
+
+        return 1;
+    }
+
 
     @Override
     public LiteralCommandNode<ServerCommandSource> getNode() {
@@ -287,6 +307,11 @@ public class SetCommand implements Command {
                 .then(CommandManager.argument("number", IntegerArgumentType.integer()).suggests(new forceClassSuggestionProvider())
                 .then(CommandManager.argument("name", StringArgumentType.greedyString()).suggests(new NameSuggestionProvider())
                 .executes(this::setIsXPAllowed))))
+
+                .then(CommandManager.literal("isProtected").requires(source -> source.hasPermissionLevel(2))
+                .then(CommandManager.argument("number", IntegerArgumentType.integer()).suggests(new forceClassSuggestionProvider())
+                .then(CommandManager.argument("name", StringArgumentType.greedyString()).suggests(new NameSuggestionProvider())
+                .executes(this::setIsProtected))))
 
                 .build();
     }

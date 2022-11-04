@@ -33,7 +33,7 @@ public class ArenaManager {
 
     public static void loadArena(String name) {
         MobArena.arenaConfig.load();
-        if (!arenas.containsKey(name)) {
+        if (arenas.get(name).getPlayerNumber() < 1) {
             Arena arena = MobArena.database.getArenaByName(name);
 
             if (MobArena.arenaConfig.configExists(name)) {
@@ -42,6 +42,18 @@ public class ArenaManager {
 
             arenas.put(name, arena);
         }
+    }
+
+    public static void loadAllArenas() {
+        if (arenas.isEmpty()) {
+            for (Arena arena : MobArena.database.getAllInactiveArenas()) {
+                arenas.put(arena.name, arena);
+            }
+        }
+    }
+
+    public static void loadInactiveArena(String name) {
+        arenas.put(name, MobArena.database.getInactiveArena(name));
     }
 
     public static void initClasses() {
@@ -70,10 +82,6 @@ public class ArenaManager {
 
     public static HashMap<ServerPlayerEntity, String> getActivePlayers() {
         return activePlayers;
-    }
-
-    public static void clearArena(String arenaName) {
-        arenas.remove(arenaName);
     }
 
     public static Arena getArenaFromPlayer(ServerPlayerEntity player) {
