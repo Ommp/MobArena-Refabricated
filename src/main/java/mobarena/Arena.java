@@ -138,7 +138,6 @@ public class Arena {
     public void startArena() {
         if (lobbyPlayers.isEmpty()) {
             isRunning = true;
-            despawnItemEntitites();
             rewardManager.setRewards(name);
             for (ServerPlayerEntity p : arenaPlayers) {
                 rewardManager.addPlayer(p);

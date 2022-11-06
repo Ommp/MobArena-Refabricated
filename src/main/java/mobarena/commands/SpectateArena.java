@@ -21,7 +21,7 @@ public class SpectateArena implements Command{
         ServerCommandSource source = context.getSource();
         ServerPlayerEntity p = source.getPlayer();
 
-        ArenaManager.loadArena(name);
+        ArenaManager.loadActiveArena(name);
         if (ArenaManager.checkArenaExists(name)) {
 
             if (ArenaManager.arenas.get(name).isPlayerInArena(p)) {

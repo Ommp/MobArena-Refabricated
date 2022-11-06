@@ -22,7 +22,7 @@ public class AddMobSpawn implements Command{
 
         MobArena.database.addMobSpawnPoint(name, player.getX(), player.getY(), player.getZ());
         player.sendMessage(new TranslatableText("mobarena.addedmobspawnpoint"), false);
-        ArenaManager.reloadArena(name);
+        ArenaManager.loadInactiveArena(name);
         return 1;
     }
 

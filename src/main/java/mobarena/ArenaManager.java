@@ -31,10 +31,11 @@ public class ArenaManager {
         return arenas.get(name);
     }
 
-    public static void loadArena(String name) {
+    public static void loadActiveArena(String name) {
         MobArena.arenaConfig.load();
         if (arenas.get(name).getPlayerNumber() < 1) {
             Arena arena = MobArena.database.getArenaByName(name);
+            arena.despawnItemEntitites();
 
             if (MobArena.arenaConfig.configExists(name)) {
                 arena.initConfig(MobArena.arenaConfig.getArenaConfig(name));
@@ -61,11 +62,6 @@ public class ArenaManager {
             config.load();
             classes = config.getArenaClasses();
         }
-
-    public static void reloadArena(String name) {
-        arenas.remove(name);
-        loadArena(name);
-    }
 
     //used in case a player tries to join another arena while already being in one
     public static boolean isPlayerActive(ServerPlayerEntity player) {
