@@ -531,4 +531,8 @@ public class Arena {
     public int getPlayerNumber() {
         return deadPlayers.size()+arenaPlayers.size()+lobbyPlayers.size()+ lobbyPlayers.size()+specPlayers.size();
     }
+
+    public ServerWorld getWorld() {
+        return world;
+    }
 }

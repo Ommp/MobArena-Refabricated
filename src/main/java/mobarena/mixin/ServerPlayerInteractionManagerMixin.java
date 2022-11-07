@@ -27,7 +27,6 @@ public abstract class ServerPlayerInteractionManagerMixin {
             for (var arena : ArenaManager.arenas.values()) {
                 if (arena.getArenaRegion().isInsideRegion(pos) && arena.getIsProtected()) {
                     cir.setReturnValue(false);
-                    System.out.println(Registry.BLOCK.getId(world.getBlockState(pos).getBlock()));
                 }
             }
 
