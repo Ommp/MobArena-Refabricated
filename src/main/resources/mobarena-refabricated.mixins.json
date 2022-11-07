@@ -10,6 +10,7 @@
     "LivingEntityMixin",
     "MobEntityMixin",
     "ServerPlayerEntityMixin",
+    "ServerPlayerInteractionManagerMixin",
     "SignBlockEntityMixin",
     "SpiderEntityMixin",
     "WorldMixin"
