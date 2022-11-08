@@ -22,7 +22,7 @@ public abstract class ServerPlayerInteractionManagerMixin {
     @Inject(method = "tryBreakBlock", at = @At("HEAD"), cancellable = true)
     private void inject(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
 
-        if (!Objects.equals(Registry.BLOCK.getId(world.getBlockState(pos).getBlock()).toString(), "minecraft:fire") && !Objects.equals(Registry.BLOCK.getId(world.getBlockState(pos).getBlock()).toString(), "minecraft:soul_fire")) {
+        if (!Objects.equals(Registry.BLOCK.getId(world.getBlockState(pos).getBlock()).toString(), "minecraft:fire") && !Objects.equals(Registry.BLOCK.getId(world.getBlockState(pos).getBlock()).toString(), "minecraft:soul_fire") && !Objects.equals(Registry.BLOCK.getId(world.getBlockState(pos).getBlock()).toString(), "minecraft:tnt")) {
 
             for (var arena : ArenaManager.arenas.values()) {
                 if (arena.getArenaRegion().isInsideRegion(pos) && arena.getIsProtected()) {
