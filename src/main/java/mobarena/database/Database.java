@@ -425,7 +425,7 @@ public class Database {
                     arenas.add(new Arena(rs.getString("name"),
                             new BlockPos(rs.getInt("p1_x"), rs.getInt("p1_y"), rs.getInt("p1_z")),
                             new BlockPos(rs.getInt("p2_x"), rs.getInt("p2_y"), rs.getInt("p2_z")),
-                            rs.getString("name"),
+                            rs.getString("dimension"),
                             rs.getBoolean("isProtected")
                     ));
                 }
