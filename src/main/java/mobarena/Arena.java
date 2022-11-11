@@ -2,6 +2,7 @@ package mobarena;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import mobarena.Wave.WaveManager;
+import mobarena.abilities.Drain;
 import mobarena.config.ArenaModel;
 import mobarena.region.Region;
 import net.minecraft.entity.Entity;
@@ -25,10 +26,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.GameMode;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -469,6 +467,8 @@ public class Arena {
     public void makeMobsRetarget() {
         for (MobEntity e: spawner.getMonsters()) {
             e.setTarget(getClosestPlayer(e));
+            Drain drain = new Drain();
+            drain.use(spawner.getMonsters().get(0), Objects.requireNonNull(spawner.getMonsters().get(0).getTarget()));
         }
     }
 
