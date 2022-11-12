@@ -1,6 +1,6 @@
 package mobarena.abilities;
 
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.projectile.FireballEntity;
 import net.minecraft.util.math.Vec3d;
 
@@ -9,7 +9,8 @@ public class Fireball implements Ability {
     private final String name = "fireball";
     public final AbilityTargetType type = AbilityTargetType.SINGLE_TARGET;
 
-    public void use(LivingEntity user, LivingEntity target) {
+    @Override
+    public void use(MobEntity user) {
         //spawn fireball from user and send towards target
         Vec3d vec3d = user.getRotationVec(1.0f);
         double f = user.getX() - (user.getX() + vec3d.x * 4.0);
