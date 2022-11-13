@@ -24,6 +24,7 @@ public class AbilityTracker {
     public Ability selectRandomAbililty() {
         int random = new Random().nextInt(Abilities.abilities.size());
         abilityLimit = 0;
+        abilityCount = 0;
         return Abilities.abilities.get(random);
     }
 }

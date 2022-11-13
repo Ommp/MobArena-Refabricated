@@ -2,6 +2,7 @@ package mobarena.abilities;
 
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 
 import java.util.Random;
 
@@ -19,18 +20,17 @@ public class Drain implements Ability{
 
         var drainedHealth = target.getHealth()/2;
         System.out.println(target.getHealth());
-        target.setHealth(target.getHealth()-drainedHealth/10);
+        target.setHealth(target.getHealth()-drainedHealth/5);
         user.setHealth(user.getHealth()+drainedHealth);
-        System.out.println("drained " + drainedHealth);
-        System.out.println(target.getHealth());
-        System.out.println(user.getHealth());
 
         Random random = new Random();
 
         float f = (random.nextFloat() - 0.5f) * 8.0f;
         float g = (random.nextFloat() - 0.5f) * 4.0f;
         float h = (random.nextFloat() - 0.5f) * 8.0f;
-        user.world.addParticle(ParticleTypes.DRAGON_BREATH, user.getX() + (double)f, user.getY() + 2.0 + (double)g, user.getZ() + (double)h, 0.0, 0.0, 0.0);
+        ServerWorld world = (ServerWorld) user.world;
+        world.spawnParticles(ParticleTypes.HEART, user.getX() + world.random.nextDouble(), user.getY() + 1, user.getZ() + world.random.nextDouble(), 10, 0.0, 0.01, 0.0, 0.2);
+        world.spawnParticles(ParticleTypes.SOUL, user.getTarget().getX() + world.random.nextDouble(), user.getTarget().getY() + 1, user.getTarget().getZ() + world.random.nextDouble(), 10, 0.0, 0.01, 0.0, 0.2);
 
     }
 
