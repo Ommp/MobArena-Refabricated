@@ -2,6 +2,7 @@ package mobarena;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import mobarena.Wave.WaveManager;
+import mobarena.Wave.WaveType;
 import mobarena.access.MobEntityAccess;
 import mobarena.config.ArenaModel;
 import mobarena.region.Region;
@@ -475,7 +476,7 @@ public class Arena {
     }
 
     public void updateAbilityTracker() {
-//        if (waveManager.getWave().getType().equals(WaveType.BOSS)) {
+        if (waveManager.getWave().getType().equals(WaveType.BOSS)) {
 
             for(var mob: spawner.getMonsters()) {
                 if (!mob.isDead()) {
@@ -494,7 +495,7 @@ public class Arena {
 
                 }
             }
-//            }
+            }
     }
 
     public void startEntityService() {

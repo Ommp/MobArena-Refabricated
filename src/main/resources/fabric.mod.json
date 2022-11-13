@@ -13,6 +13,7 @@
         ]
       },
     "mixins": ["mobarena-refabricated.mixins.json"],
+  "accessWidener" : "mobarena-refabricated.accesswidener",
     "depends": {
       "fabricloader": ">=0.14.6",
       "fabric": "*",
