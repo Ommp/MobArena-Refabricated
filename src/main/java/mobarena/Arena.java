@@ -6,6 +6,7 @@ import mobarena.Wave.WaveType;
 import mobarena.access.MobEntityAccess;
 import mobarena.config.ArenaModel;
 import mobarena.region.Region;
+import mobarena.utils.MobUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.mob.MobEntity;
@@ -406,6 +407,7 @@ public class Arena {
             spawner.addEntitiesToSpawn(mobs, world);
             spawner.spawnMobs(world);
             spawner.modifyMobStats(waveManager.getWave().getType());
+            MobUtils.addEquipment(waveManager.getCurrentWave(), waveManager.getWave().getType(), spawner.getMonsters());
         }, waveCountdown, TimeUnit.SECONDS);
 
     }

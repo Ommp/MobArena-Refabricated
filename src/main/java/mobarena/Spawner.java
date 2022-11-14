@@ -12,8 +12,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.LocalDifficulty;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,8 +46,6 @@ public class Spawner {
                 Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).addTemporaryModifier(new EntityAttributeModifier("max health", 3, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
                 monster.setHealth(monster.getMaxHealth());
                 Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE)).addTemporaryModifier(new EntityAttributeModifier("attack damage", 2, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                LocalDifficulty localDifficulty = new LocalDifficulty(Difficulty.HARD, 10,10000,10);
-                monster.initEquipment(localDifficulty);
 
             }
             if (type.equals(WaveType.SWARM)) {
