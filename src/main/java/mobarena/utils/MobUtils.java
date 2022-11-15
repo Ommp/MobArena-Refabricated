@@ -29,12 +29,19 @@ public class MobUtils {
 
     }
 
-    private static void createEquipment(int wave, MobEntity entity) {
+    private static void createEquipment(int wave, WaveType waveType, MobEntity entity) {
 
         ArrayList<Item> head = new ArrayList<>();
         ArrayList<Item> chest = new ArrayList<>();
         ArrayList<Item> legs = new ArrayList<>();
         ArrayList<Item> feet = new ArrayList<>();
+
+        if (!waveType.equals(WaveType.BOSS)) {
+            head.add(Items.AIR);
+            chest.add(Items.AIR);
+            legs.add(Items.AIR);
+            feet.add(Items.AIR);
+        }
 
         if (wave >= 0) {
             head.add(Items.LEATHER_HELMET);
@@ -83,13 +90,12 @@ public class MobUtils {
         entity.equipStack(EquipmentSlot.CHEST, new ItemStack(chest.get(pickedChest)));
         entity.equipStack(EquipmentSlot.LEGS, new ItemStack(legs.get(pickedLegs)));
         entity.equipStack(EquipmentSlot.FEET, new ItemStack(feet.get(pickedFeet)));
-
     }
 
     public static void addEquipment(int wave, WaveType waveType, List<MobEntity> monsters) {
         for (var mob: monsters) {
             if (getsArmour(waveType)) {
-            createEquipment(wave, mob);
+            createEquipment(wave, waveType, mob);
             }
         }
     }
