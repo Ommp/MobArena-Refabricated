@@ -1,6 +1,8 @@
 package mobarena.utils;
 
 import mobarena.Wave.WaveType;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.Item;
@@ -8,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -19,13 +22,23 @@ public class MobUtils {
         EASY, MEDIUM, HARD, INSANE
     }
 
-    private static boolean getsArmour(WaveType waveType) {
+    private static boolean getsArmour(WaveType waveType, int wave) {
         if (waveType.equals(WaveType.BOSS)) {
             return true;
         }
 
         var random = new Random().nextInt((100 - 1) + 1) + 1;
-        return random >= 50;
+        return random >= 50-(wave/2);
+
+    }
+
+    private static boolean getsEnchantments(WaveType waveType) {
+        if (waveType.equals(WaveType.BOSS)) {
+            return true;
+        }
+
+        var random = new Random().nextInt((100 - 1) + 1) + 1;
+        return random >= 75;
 
     }
 
@@ -92,11 +105,46 @@ public class MobUtils {
         entity.equipStack(EquipmentSlot.FEET, new ItemStack(feet.get(pickedFeet)));
     }
 
+    public static void createEnchantments(WaveType waveType, MobEntity entity) {
+        ArrayList<Enchantment> armour = new ArrayList<>(Arrays.asList(Enchantments.PROTECTION, Enchantments.FIRE_PROTECTION, Enchantments.PROJECTILE_PROTECTION, Enchantments.THORNS));
+
+        for (int i = 0; i < 4; i++) {
+            if (getsEnchantments(waveType)) {
+                if (i==0) {
+                    var randomLevel = new Random().nextInt((4 - 1) + 1) + 1;
+                    var randomArmourEnchantment =  new Random().nextInt(armour.size());
+                    entity.getEquippedStack(EquipmentSlot.HEAD).addEnchantment(armour.get(randomArmourEnchantment), randomLevel);
+                }
+                else if (i==1) {
+                    var randomLevel = new Random().nextInt((4 - 1) + 1) + 1;
+                    var randomArmourEnchantment =  new Random().nextInt(armour.size());
+                    entity.getEquippedStack(EquipmentSlot.CHEST).addEnchantment(armour.get(randomArmourEnchantment), randomLevel);
+                }
+                else if (i==2) {
+                    var randomLevel = new Random().nextInt((4 - 1) + 1) + 1;
+                    var randomArmourEnchantment =  new Random().nextInt(armour.size());
+                    entity.getEquippedStack(EquipmentSlot.LEGS).addEnchantment(armour.get(randomArmourEnchantment), randomLevel);
+                }
+                else {
+                    var randomLevel = new Random().nextInt((4 - 1) + 1) + 1;
+                    var randomArmourEnchantment =  new Random().nextInt(armour.size());
+                    entity.getEquippedStack(EquipmentSlot.FEET).addEnchantment(armour.get(randomArmourEnchantment), randomLevel);
+                }
+            }
+        }
+
+
+
+
+
+    }
+
     public static void addEquipment(int wave, WaveType waveType, List<MobEntity> monsters) {
         for (var mob: monsters) {
-            if (getsArmour(waveType)) {
+            if (getsArmour(waveType, wave)) {
             createEquipment(wave, waveType, mob);
             }
+            createEnchantments(waveType, mob);
         }
     }
 
