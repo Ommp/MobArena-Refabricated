@@ -22,23 +22,23 @@ public class MobUtils {
         EASY, MEDIUM, HARD, INSANE
     }
 
-    private static boolean getsArmour(WaveType waveType, int wave) {
+    private static boolean getsEquipment(WaveType waveType, int wave) {
         if (waveType.equals(WaveType.BOSS)) {
             return true;
         }
 
         var random = new Random().nextInt((100 - 1) + 1) + 1;
-        return random >= 50-(wave/2);
+        return random >= 80-(wave/2);
 
     }
 
-    private static boolean getsEnchantments(WaveType waveType) {
+    private static boolean getsEnchantments(WaveType waveType, int wave) {
         if (waveType.equals(WaveType.BOSS)) {
             return true;
         }
 
         var random = new Random().nextInt((100 - 1) + 1) + 1;
-        return random >= 75;
+        return random >= 90-(wave/2);
 
     }
 
@@ -48,12 +48,14 @@ public class MobUtils {
         ArrayList<Item> chest = new ArrayList<>();
         ArrayList<Item> legs = new ArrayList<>();
         ArrayList<Item> feet = new ArrayList<>();
+        ArrayList<Item> hand = new ArrayList<>();
 
         if (!waveType.equals(WaveType.BOSS)) {
             head.add(Items.AIR);
             chest.add(Items.AIR);
             legs.add(Items.AIR);
             feet.add(Items.AIR);
+            hand.add(Items.AIR);
         }
 
         if (wave >= 0) {
@@ -61,30 +63,35 @@ public class MobUtils {
             chest.add(Items.LEATHER_CHESTPLATE);
             legs.add(Items.LEATHER_LEGGINGS);
             feet.add(Items.LEATHER_BOOTS);
+            hand.add(Items.WOODEN_SWORD);
         }
         if (wave >= 5) {
             head.add(Items.GOLDEN_HELMET);
             chest.add(Items.GOLDEN_CHESTPLATE);
             legs.add(Items.GOLDEN_LEGGINGS);
             feet.add(Items.GOLDEN_BOOTS);
+            hand.add(Items.STONE_SWORD);
         }
         if (wave >= 10) {
             head.add(Items.CHAINMAIL_HELMET);
             chest.add(Items.CHAINMAIL_CHESTPLATE);
             legs.add(Items.CHAINMAIL_LEGGINGS);
             feet.add(Items.CHAINMAIL_BOOTS);
+            hand.add(Items.GOLDEN_SWORD);
         }
         if (wave >= 15) {
             head.add(Items.IRON_HELMET);
             chest.add(Items.IRON_CHESTPLATE);
             legs.add(Items.IRON_LEGGINGS);
             feet.add(Items.IRON_BOOTS);
+            hand.add(Items.IRON_SWORD);
         }
         if (wave >= 20) {
             head.add(Items.DIAMOND_HELMET);
             chest.add(Items.DIAMOND_CHESTPLATE);
             legs.add(Items.DIAMOND_LEGGINGS);
             feet.add(Items.DIAMOND_BOOTS);
+            hand.add(Items.DIAMOND_SWORD);
         }
 
         if (wave >= 25) {
@@ -92,24 +99,32 @@ public class MobUtils {
             chest.add(Items.NETHERITE_CHESTPLATE);
             legs.add(Items.NETHERITE_LEGGINGS);
             feet.add(Items.NETHERITE_BOOTS);
+            hand.add(Items.NETHERITE_SWORD);
         }
 
         var pickedHead = new Random().nextInt(head.size());
         var pickedChest = new Random().nextInt(chest.size());
         var pickedLegs = new Random().nextInt(legs.size());
         var pickedFeet = new Random().nextInt(feet.size());
+        var pickedHand = new Random().nextInt(hand.size());
 
         entity.equipStack(EquipmentSlot.HEAD, new ItemStack(head.get(pickedHead)));
         entity.equipStack(EquipmentSlot.CHEST, new ItemStack(chest.get(pickedChest)));
         entity.equipStack(EquipmentSlot.LEGS, new ItemStack(legs.get(pickedLegs)));
         entity.equipStack(EquipmentSlot.FEET, new ItemStack(feet.get(pickedFeet)));
+
+        ItemStack itemStack = entity.getEquippedStack(EquipmentSlot.MAINHAND);
+
+        if (itemStack.isEmpty()) {
+            entity.equipStack(EquipmentSlot.MAINHAND, new ItemStack(hand.get(pickedHand)));
+        }
     }
 
-    public static void createEnchantments(WaveType waveType, MobEntity entity) {
+    public static void createEnchantments(WaveType waveType, MobEntity entity, int wave) {
         ArrayList<Enchantment> armour = new ArrayList<>(Arrays.asList(Enchantments.PROTECTION, Enchantments.FIRE_PROTECTION, Enchantments.PROJECTILE_PROTECTION, Enchantments.THORNS));
 
         for (int i = 0; i < 4; i++) {
-            if (getsEnchantments(waveType)) {
+            if (getsEnchantments(waveType, wave)) {
                 if (i==0) {
                     var randomLevel = new Random().nextInt((4 - 1) + 1) + 1;
                     var randomArmourEnchantment =  new Random().nextInt(armour.size());
@@ -141,10 +156,10 @@ public class MobUtils {
 
     public static void addEquipment(int wave, WaveType waveType, List<MobEntity> monsters) {
         for (var mob: monsters) {
-            if (getsArmour(waveType, wave)) {
+            if (getsEquipment(waveType, wave)) {
             createEquipment(wave, waveType, mob);
             }
-            createEnchantments(waveType, mob);
+            createEnchantments(waveType, mob, wave);
         }
     }
 
