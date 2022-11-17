@@ -27,26 +27,29 @@ public class Wave {
     private boolean isFixed = false;
 
     public void useStandardMobs() {
-        mobs.put("minecraft:zombie", 8);
+        mobs.put("minecraft:zombie", 5);
         mobs.put("minecraft:husk", 3);
         mobs.put("minecraft:skeleton", 5);
         mobs.put("minecraft:pillager", 1);
         mobs.put("minecraft:wolf", 1);
-        mobs.put("minecraft:spider", 1);
+        mobs.put("minecraft:spider", 2);
+        mobs.put("minecraft:wither_skeleton", 1);
     }
 
     public void useSwarmMobs() {
         mobs.put("minecraft:wolf", 8);
         mobs.put("minecraft:husk", 3);
         mobs.put("minecraft:zombie", 3);
-        mobs.put("minecraft:spider", 2);
-        mobs.put("minecraft:cave_spider", 3);
+        mobs.put("minecraft:spider", 3);
+        mobs.put("minecraft:cave_spider", 2);
     }
 
     public void useBossMobs() {
-        mobs.put("minecraft:zombie", 5);
-        mobs.put("minecraft:husk", 10);
+        mobs.put("minecraft:zombie", 3);
+        mobs.put("minecraft:husk", 3);
         mobs.put("minecraft:blaze", 3);
+        mobs.put("minecraft:witch", 3);
+        mobs.put("minecraft:piglin", 3);
     }
 
     public void addDefaultCustomMobs(ArrayList<String> monsters) {

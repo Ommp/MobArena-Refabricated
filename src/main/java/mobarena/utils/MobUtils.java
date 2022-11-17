@@ -8,11 +8,9 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.registry.Registry;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class MobUtils {
 
@@ -22,6 +20,10 @@ public class MobUtils {
         EASY, MEDIUM, HARD, INSANE
     }
 
+    private static final ArrayList<Enchantment> armour = new ArrayList<>(Arrays.asList(Enchantments.PROTECTION, Enchantments.FIRE_PROTECTION, Enchantments.PROJECTILE_PROTECTION, Enchantments.THORNS));
+    private static final ArrayList<Enchantment> melee = new ArrayList<>(Arrays.asList(Enchantments.SHARPNESS, Enchantments.KNOCKBACK, Enchantments.FIRE_ASPECT));
+    private static final ArrayList<Enchantment> bow = new ArrayList<>(Arrays.asList(Enchantments.FLAME, Enchantments.MULTISHOT, Enchantments.PIERCING, Enchantments.POWER, Enchantments.PUNCH));
+    private static final ArrayList<Enchantment> crossbow = new ArrayList<>(Arrays.asList(Enchantments.FLAME, Enchantments.MULTISHOT, Enchantments.PIERCING, Enchantments.POWER, Enchantments.PUNCH, Enchantments.QUICK_CHARGE));
     private static boolean getsEquipment(WaveType waveType, int wave) {
         if (waveType.equals(WaveType.BOSS)) {
             return true;
@@ -38,7 +40,7 @@ public class MobUtils {
         }
 
         var random = new Random().nextInt((100 - 1) + 1) + 1;
-        return random >= 90-(wave/2);
+        return random >= 85-(wave/2);
 
     }
 
@@ -121,9 +123,7 @@ public class MobUtils {
     }
 
     public static void createEnchantments(WaveType waveType, MobEntity entity, int wave) {
-        ArrayList<Enchantment> armour = new ArrayList<>(Arrays.asList(Enchantments.PROTECTION, Enchantments.FIRE_PROTECTION, Enchantments.PROJECTILE_PROTECTION, Enchantments.THORNS));
-
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
             if (getsEnchantments(waveType, wave)) {
                 if (i==0) {
                     var randomLevel = new Random().nextInt((4 - 1) + 1) + 1;
@@ -140,10 +140,26 @@ public class MobUtils {
                     var randomArmourEnchantment =  new Random().nextInt(armour.size());
                     entity.getEquippedStack(EquipmentSlot.LEGS).addEnchantment(armour.get(randomArmourEnchantment), randomLevel);
                 }
-                else {
+                else if (i==3) {
                     var randomLevel = new Random().nextInt((4 - 1) + 1) + 1;
                     var randomArmourEnchantment =  new Random().nextInt(armour.size());
-                    entity.getEquippedStack(EquipmentSlot.FEET).addEnchantment(armour.get(randomArmourEnchantment), randomLevel);
+                    entity.getEquippedStack(EquipmentSlot.LEGS).addEnchantment(armour.get(randomArmourEnchantment), randomLevel);
+                }
+                else {
+                    var randomLevel = new Random().nextInt((4 - 1) + 1) + 1;
+                    var randomWeaponEnchantment =  new Random().nextInt(melee.size());
+
+                    if (!Objects.equals(Registry.ITEM.getId(entity.getEquippedStack(EquipmentSlot.MAINHAND).getItem()).toString(), "minecraft:bow")) {
+                        randomWeaponEnchantment =  new Random().nextInt(bow.size());
+                        entity.getEquippedStack(EquipmentSlot.MAINHAND).addEnchantment(bow.get(randomWeaponEnchantment), randomLevel);
+                    } else if (!Objects.equals(Registry.ITEM.getId(entity.getEquippedStack(EquipmentSlot.MAINHAND).getItem()).toString(), "minecraft:crossbow")) {
+
+
+                        randomWeaponEnchantment =  new Random().nextInt(crossbow.size());
+                        entity.getEquippedStack(EquipmentSlot.MAINHAND).addEnchantment(crossbow.get(randomWeaponEnchantment), randomLevel);
+                    } else {
+                        entity.getEquippedStack(EquipmentSlot.MAINHAND).addEnchantment(melee.get(randomWeaponEnchantment), randomLevel);
+                    }
                 }
             }
         }
