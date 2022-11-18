@@ -7,6 +7,8 @@
   "mixins": [
     "CreeperEntityMixin",
     "DamageSourceMixin",
+    "EndermanPickUpMixin",
+    "EndermanPlaceMixin",
     "FireBlockMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
