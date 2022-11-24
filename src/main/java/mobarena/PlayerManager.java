@@ -49,7 +49,7 @@ public class PlayerManager {
 
                 p.getInventory().insertStack(slot, itemStack);
             }
-            MobArena.database.deletePlayer(p.getUuidAsString());
+            MobArena.database.deleteStoredPlayerItems(p.getUuidAsString());
 
         } catch (RuntimeException e) {
             throw new RuntimeException(e);

@@ -57,15 +57,11 @@ public class Database {
             String scoreboardTable = "CREATE TABLE IF NOT EXISTS scoreboard(" +
                     "arena varchar," +
                     "player varchar," +
-                    "total_kills int," +
-                    "total_deaths int,"+
-                    "total_damage int,"+
-                    "total_waves int,"+
-                    "highest_wave int,"+
-                    "highest_damage int,"+
-                    "highest_kills int,"+
-                    "times_played int,"+
-                    "FOREIGN KEY(arena) REFERENCES arenas(name) ON DELETE CASCADE)";
+                    "highest_wave int DEFAULT 0,"+
+                    "highest_damage int DEFAULT 0,"+
+                    "highest_kills int DEFAULT 0,"+
+                    "FOREIGN KEY(arena) REFERENCES arenas(name),"+
+                    "FOREIGN KEY(player) REFERENCES players(uuid))";
             String mobSpawnpointsTable = "CREATE TABLE IF NOT EXISTS mobspawnpoints(" +
                     "arena varchar," +
                     "x double," +
@@ -169,19 +165,40 @@ public class Database {
                 String addIsProtectedColumn = "ALTER TABLE arenas ADD isProtected BOOLEAN DEFAULT TRUE";
                 statement.execute(addIsProtectedColumn);
             }
+            rs = md.getColumns(null, null, "scoreboard", "highest_wave");
+            if (!rs.next()) {
+                String addIsProtectedColumn = "DROP TABLE scoreboard";
+                statement.execute(addIsProtectedColumn);
+            }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void addPlayer(String uuid) {
+    public boolean playerExists(String uuid) {
         try {
-            PreparedStatement statement = con.prepareStatement("INSERT INTO players(uuid) VALUES(?)");
+            PreparedStatement statement = con.prepareStatement("SELECT uuid FROM players WHERE uuid=?");
             statement.setString(1, uuid);
-            statement.executeUpdate();
+            var rs = statement.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+        return false;
+    }
+
+    public void addPlayer(String uuid) {
+        if (!playerExists(uuid)) {
+            try {
+                PreparedStatement statement = con.prepareStatement("INSERT INTO players(uuid) VALUES(?)");
+                statement.setString(1, uuid);
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -192,6 +209,16 @@ public class Database {
             statement.setString(1, uuid);
             statement.setString(2, itemStackNbt);
             statement.setInt(3, slot);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void deleteStoredPlayerItems(String UUID) {
+        try {
+            PreparedStatement statement = con.prepareStatement("DELETE FROM playeritemstacks WHERE player=?");
+            statement.setString(1, UUID);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -592,6 +619,87 @@ public class Database {
             statement.setBoolean(1, value);
             statement.setString(2, arena);
             statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean scoreboardArenaPlayerExist(String arena, String player) {
+        try {
+            var statement = con.prepareStatement("SELECT player FROM scoreboard WHERE (arena=? AND player=?)");
+            statement.setString(1, arena);
+            statement.setString(2, player);
+            var rs = statement.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
+    public int getScoreboardHighestWave(String arena, String player) {
+        try {
+            var statement = con.prepareStatement("SELECT highest_wave FROM scoreboard WHERE (arena=? AND player=?)");
+            statement.setString(1, arena);
+            statement.setString(2, player);
+            var rs = statement.executeQuery();
+            return rs.getInt("highest_wave");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public int getScoreboardHighestDamage(String arena, String player) {
+        try {
+            var statement = con.prepareStatement("SELECT highest_damage FROM scoreboard WHERE (arena=? AND player=?)");
+            statement.setString(1, arena);
+            statement.setString(2, player);
+            var rs = statement.executeQuery();
+            return rs.getInt("highest_damage");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getScoreboardHighestKills(String arena, String player) {
+        try {
+            var statement = con.prepareStatement("SELECT highest_kills FROM scoreboard WHERE (arena=? AND player=?)");
+            statement.setString(1, arena);
+            statement.setString(2, player);
+            var rs = statement.executeQuery();
+            return rs.getInt("highest_kills");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updateScoreboard(String arena, String player, int wave, int damage, int kills) {
+        try {
+            if (scoreboardArenaPlayerExist(arena, player)) {
+
+                if (wave > getScoreboardHighestWave(arena, player)) {
+                    PreparedStatement statement = con.prepareStatement("UPDATE scoreboard SET highest_wave=? WHERE (arena=? AND player=?)");
+                    statement.setInt(1, wave);
+                    statement.executeUpdate();
+                }
+                if (damage > getScoreboardHighestDamage(arena, player)) {
+                    PreparedStatement statement = con.prepareStatement("UPDATE scoreboard SET highest_damage=? WHERE (arena=? AND player=?)");
+                    statement.setInt(1, damage);
+                    statement.executeUpdate();
+                }
+                if (kills > getScoreboardHighestKills(arena, player)) {
+                    PreparedStatement statement = con.prepareStatement("UPDATE scoreboard SET highest_kills=? WHERE (arena=? AND player=?)");
+                    statement.setInt(1, kills);
+                    statement.executeUpdate();
+                }
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
