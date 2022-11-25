@@ -31,5 +31,9 @@
   "mobarena.showreward": "Item: %s, wave: %s",
   "mobarena.updatedforceclass": "Set force class value to %s for arena %s.",
   "mobarena.selectaclass": "You need to select a class first!",
-  "mobarena.updatedallowxp": "Set xpEnabled to %s for arena %s"
+  "mobarena.updatedallowxp": "Set xpEnabled to %s for arena %s",
+  "mobarena.scoreboard": "Stats for %s:",
+  "mobarena.scoreboardKills": "%s kills",
+  "mobarena.scoreboardWavesSurvived": "%s waves survived",
+  "mobarena.scoreboardTotalDamage": "%s damage total"
 }

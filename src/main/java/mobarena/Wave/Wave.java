@@ -49,7 +49,6 @@ public class Wave {
         mobs.put("minecraft:husk", 3);
         mobs.put("minecraft:blaze", 3);
         mobs.put("minecraft:witch", 3);
-        mobs.put("minecraft:piglin", 3);
     }
 
     public void addDefaultCustomMobs(ArrayList<String> monsters) {

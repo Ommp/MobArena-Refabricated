@@ -97,7 +97,7 @@ public class ArenaManager {
         if (mobToArena.containsKey(UUID)) {
             arenas.get(mobToArena.get(UUID)).countDeadMobs();
             if (source.getSource() instanceof ServerPlayerEntity) {
-                arenas.get(mobToArena.get(UUID)).increasePlayerKillCount((source.getSource()).getUuidAsString());
+                arenas.get(mobToArena.get(UUID)).scoreboard.increasePlayerKillCount((ServerPlayerEntity) source.getSource());
             }
         }
     }

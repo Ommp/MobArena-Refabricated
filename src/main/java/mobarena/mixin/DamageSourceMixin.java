@@ -20,7 +20,7 @@ public abstract class DamageSourceMixin {
     private void inject(DamageSource damageSource, float originalHealth, float damage, CallbackInfo ci) {
         if (damageSource.getSource() instanceof ServerPlayerEntity p) {
             if (ArenaManager.isPlayerActive(p)) {
-                ArenaManager.getArenaFromPlayer(p).increasePlayerDamage(p.getUuidAsString(), originalHealth-getEntity().getHealth());
+                ArenaManager.getArenaFromPlayer(p).getScoreboard().increasePlayerDamage(p, originalHealth-getEntity().getHealth());
             }
         }
     }

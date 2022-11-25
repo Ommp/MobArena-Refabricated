@@ -52,11 +52,9 @@ public class Arena {
 
     private final HashSet<ServerPlayerEntity> lobbyPlayers = new HashSet<>();
 
-
-
     private final HashMap<String, ArenaClass> playerClasses = new HashMap<>();
-    private final HashMap<String, Integer> playerKills = new HashMap<>();
-    private final HashMap<String, Float> playerDamage = new HashMap<>();
+
+    Scoreboard scoreboard = new Scoreboard();
 
     private Warp arena, lobby, exit, spectator;
 
@@ -69,7 +67,7 @@ public class Arena {
         this.name = name;
     }
 
-    private WaveManager waveManager = new WaveManager();
+    private final WaveManager waveManager = new WaveManager();
     public Spawner spawner;
 
     private int arenaStartCountdown;
@@ -142,9 +140,6 @@ public class Arena {
         if (lobbyPlayers.isEmpty()) {
             isRunning = true;
             rewardManager.setRewards(name);
-            for (ServerPlayerEntity p : arenaPlayers) {
-                rewardManager.addPlayer(p);
-            }
 
             waveManager.addDefaultWaves();
             waveManager.addCustomWaves(config);
@@ -205,6 +200,7 @@ public class Arena {
             transportPlayer(p, WarpType.LOBBY);
             PlayerManager.restoreVitals(p);
             ArenaManager.addActivePlayer(p, name);
+            scoreboard.addPlayer(p);
             p.sendMessage(new TranslatableText("mobarena.joinedarenalobby", name), true);
         } else {
             p.sendMessage(new TranslatableText("mobarena.maxplayersinarena"), false);
@@ -219,7 +215,8 @@ public class Arena {
         transportPlayer(p, WarpType.EXIT);
         PlayerManager.retrieveItems(p);
         if (arenaPlayers.contains(p) || deadPlayers.contains(p)) {
-            rewardManager.grantRewards(p);
+            MobArena.database.updateScoreboard(name, p.getUuidAsString(), scoreboard.getWavesSurvived(p), Math.round(scoreboard.getPlayerDamage().get(p)), scoreboard.getPlayerKills().get(p));
+            rewardManager.grantRewards(p, scoreboard.getWavesSurvived(p));
         }
         removePlayerFromArena(p);
         ArenaManager.removeActivePlayer(p);
@@ -251,6 +248,7 @@ public class Arena {
             PlayerManager.restoreVitals(player);
 
         } else if (deadPlayers.size() == anyArenaPlayer.size()) {
+            displayScoreboard();
             exitAllPlayers();
             stopArena();
         }
@@ -272,14 +270,13 @@ public class Arena {
             transportPlayer(p, WarpType.EXIT);
             PlayerManager.restoreGameMode(p);
             PlayerManager.restoreVitals(p);
-
+            MobArena.database.updateScoreboard(name, p.getUuidAsString(), scoreboard.getWavesSurvived(p), Math.round(scoreboard.getPlayerDamage().get(p)), scoreboard.getPlayerKills().get(p));
         }
         for (ServerPlayerEntity p : anyArenaPlayer) {
-
             PlayerManager.retrieveItems(p);
             ArenaManager.removeActivePlayer(p);
             for (ServerPlayerEntity player : deadPlayers) {
-                rewardManager.grantRewards(player);
+                rewardManager.grantRewards(player, scoreboard.getWavesSurvived(p));
             }
         }
 
@@ -298,6 +295,17 @@ public class Arena {
             ArenaManager.removeActivePlayer(p);
         }
                 cleanUpPlayers();
+    }
+
+    public void displayScoreboard() {
+        for (ServerPlayerEntity p: anyArenaPlayer) {
+            for (ServerPlayerEntity p1: anyArenaPlayer) {
+                p.sendMessage(new TranslatableText("mobarena.scoreboard", p1.getName()), false);
+                p.sendMessage(new TranslatableText("mobarena.scoreboardKills", scoreboard.getPlayerKills().get(p1)), false);
+                p.sendMessage(new TranslatableText("mobarena.scoreboardWavesSurvived", scoreboard.getWavesSurvived(p1)), false);
+                p.sendMessage(new TranslatableText("mobarena.scoreboardTotalDamage", scoreboard.getPlayerDamage().get(p1)), false);
+            }
+        }
     }
 
     public void removePlayerFromArena(ServerPlayerEntity player) {
@@ -387,7 +395,7 @@ public class Arena {
     }
     public void startNextWave() {
         for (var p: arenaPlayers) {
-            rewardManager.incrementPlayerWave(p);
+            scoreboard.incrementPlayerWave(p);
         }
         reviveDead();
 
@@ -510,25 +518,6 @@ public class Arena {
         }, 0, 250, TimeUnit.MILLISECONDS);
     }
 
-    public void increasePlayerKillCount(String playerUUID) {
-        if (playerKills.containsKey(playerUUID)) {
-            int num = playerKills.get(playerUUID);
-            playerKills.put(playerUUID, num+1);
-        }
-        else {
-            playerKills.put(playerUUID, 1);
-        }
-    }
-    public void increasePlayerDamage(String playerUUID, float damage) {
-        if (playerDamage.containsKey(playerUUID)) {
-            var num = playerDamage.get(playerUUID);
-            playerDamage.put(playerUUID, num+damage);
-        }
-        else {
-            playerDamage.put(playerUUID, damage);
-        }
-    }
-
     public void removeForeignEntities() {
         var foreignEntities= world.getEntitiesByType(TypeFilter.instanceOf(MobEntity.class), arenaRegion.asBox(), entity -> !belongsToArena(entity));
 
@@ -563,5 +552,9 @@ public class Arena {
 
     public ServerWorld getWorld() {
         return world;
+    }
+
+    public Scoreboard getScoreboard() {
+        return scoreboard;
     }
 }
