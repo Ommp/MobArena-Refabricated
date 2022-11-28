@@ -97,12 +97,12 @@ public class MobArena implements ModInitializer {
 				new JoinArena(),
 				new LeaveArena(),
 				new Ready(),
-				new AddMobSpawn(),
 				new SpectateArena(),
 				new DeleteArena(),
 				new SetCommand(),
 				new RestoreItems(),
-				new RewardCommands()
+				new RewardCommands(),
+				new MobSpawnCommands()
 		};
 
 		for (Command command : commands) {

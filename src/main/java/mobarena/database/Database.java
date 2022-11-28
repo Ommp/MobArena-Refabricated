@@ -719,4 +719,20 @@ public class Database {
         }
         return false;
     }
+
+    public void removeMobSpawnPoint(String arena, double x, double y, double z) {
+        String sql = "DELETE FROM mobspawnpoints WHERE (arena=? AND x=? AND y=? AND z=?)";
+        PreparedStatement statement;
+
+        try {
+            statement = con.prepareStatement(sql);
+            statement.setString(1, arena);
+            statement.setDouble(2, x);
+            statement.setDouble(3, y);
+            statement.setDouble(4, z);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
