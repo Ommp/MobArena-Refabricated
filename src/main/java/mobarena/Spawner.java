@@ -97,4 +97,9 @@ public class Spawner {
     public ArrayList<MobEntity> getMonsters() {
         return monsters;
     }
+
+    //used for spawning ability
+    public void addMonster(MobEntity e) {
+        monsters.add(e);
+    }
 }

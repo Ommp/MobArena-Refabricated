@@ -498,11 +498,8 @@ public class Arena {
 
                     if (abilityTracker.limitReached()) {
                         var ability = abilityTracker.selectRandomAbililty();
-                        System.out.println(ability.getName());
                         ability.use(mob);
                     }
-
-
                 }
             }
             }
