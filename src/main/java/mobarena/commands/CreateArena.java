@@ -7,6 +7,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import mobarena.ArenaManager;
 import mobarena.MobArena;
 import mobarena.commands.suggestions.NameSuggestionProvider;
+import mobarena.config.ArenaModel;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -28,6 +29,8 @@ public class CreateArena implements Command {
             MobArena.database.addArena(name);
             ArenaManager.loadInactiveArena(name);
             ArenaManager.addArenaNames();
+            MobArena.arenaConfig.addArenaConfig(name, new ArenaModel());
+            MobArena.arenaConfig.save();
             player.sendMessage(new TranslatableText("mobarena.createdarena", name), false);
         }
 
