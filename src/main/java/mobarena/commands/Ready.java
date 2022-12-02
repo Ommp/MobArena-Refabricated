@@ -6,7 +6,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import static mobarena.ArenaManager.getArenaFromPlayer;
 
@@ -18,7 +18,7 @@ public class Ready implements Command{
 
         if (getArenaFromPlayer(player).forceClass()) {
             if (!getArenaFromPlayer(player).playerHasClass(player.getUuidAsString())) {
-                player.sendMessage(new TranslatableText("mobarena.selectaclass"), false);
+                player.sendMessage(Text.translatable("mobarena.selectaclass"), false);
             }
             else {
                 getArenaFromPlayer(player).addReadyLobbyPlayer(player);

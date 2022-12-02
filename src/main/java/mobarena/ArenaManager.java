@@ -111,13 +111,13 @@ public class ArenaManager {
     public static void handleSignEvent(String text1, String text2, ServerPlayerEntity player) {
         if (text1.equals("[arena]") && classes.containsKey(text2) && !activePlayers.isEmpty()) {
             arenas.get(activePlayers.get(player)).addPlayerClass(player, classes.get(text2));
-            player.sendMessage(new TranslatableText("mobarena.selectedclass", text2), false);
+            player.sendMessage(Text.translatable("mobarena.selectedclass", text2), false);
             }
 
         else if (text1.equals("[arena]") && text2.equals("ready")) {
             if (getArenaFromPlayer(player).forceClass()) {
                 if (!getArenaFromPlayer(player).playerHasClass(player.getUuidAsString())) {
-                    player.sendMessage(new TranslatableText("mobarena.selectaclass"), false);
+                    player.sendMessage(Text.translatable("mobarena.selectaclass"), false);
                 }
                 else {
                     getArenaFromPlayer(player).addReadyLobbyPlayer(player);

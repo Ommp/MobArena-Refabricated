@@ -11,7 +11,7 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 public class MobSpawnCommands implements Command {
 
@@ -22,7 +22,7 @@ public class MobSpawnCommands implements Command {
         ServerPlayerEntity player = source.getPlayer();
 
         MobArena.database.addMobSpawnPoint(name, player.getX(), player.getY(), player.getZ());
-        player.sendMessage(new TranslatableText("mobarena.addedmobspawnpoint"), false);
+        player.sendMessage(Text.translatable("mobarena.addedmobspawnpoint"), false);
         ArenaManager.loadInactiveArena(name);
         return 1;
     }
@@ -40,7 +40,7 @@ public class MobSpawnCommands implements Command {
             world.spawnParticles(ParticleTypes.LARGE_SMOKE, point.getX(), point.getY(), point.getZ(), 1 ,0, 0, 0, 0);
         }
 
-        player.sendMessage(new TranslatableText("mobarena.showingpoints"), false);
+        player.sendMessage(Text.translatable("mobarena.showingpoints"), false);
         ArenaManager.loadInactiveArena(name);
         return 1;
     }
@@ -52,7 +52,7 @@ public class MobSpawnCommands implements Command {
         ServerPlayerEntity player = source.getPlayer();
 
         MobArena.database.removeMobSpawnPoint(name, player.getX(), player.getY(), player.getZ());
-        player.sendMessage(new TranslatableText("mobarena.removedmobspawnpoint"), false);
+        player.sendMessage(Text.translatable("mobarena.removedmobspawnpoint"), false);
         ArenaManager.loadInactiveArena(name);
         return 1;
     }

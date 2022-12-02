@@ -18,7 +18,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;
 
 import java.util.Objects;
@@ -33,7 +33,7 @@ public class SetCommand implements Command {
         ServerPlayerEntity player = source.getPlayer();
 
         MobArena.database.setMinPlayers(number, name);
-        player.sendMessage(new TranslatableText("mobarena.updatedmin"), false);
+        player.sendMessage(Text.translatable("mobarena.updatedmin"), false);
         ArenaManager.loadInactiveArena(name);
         return 1;
     }
@@ -45,7 +45,7 @@ public class SetCommand implements Command {
         ServerPlayerEntity player = source.getPlayer();
 
         MobArena.database.setMaxPlayers(number, name);
-        player.sendMessage(new TranslatableText("mobarena.updatedmax"), false);
+        player.sendMessage(Text.translatable("mobarena.updatedmax"), false);
         ArenaManager.loadInactiveArena(name);
         return 1;
     }
@@ -57,7 +57,7 @@ public class SetCommand implements Command {
         ServerPlayerEntity player = source.getPlayer();
 
         MobArena.database.updateLobbyWarp(name, player.getX(), player.getY(), player.getZ(), player.getYaw(), player.getPitch());
-        player.sendMessage(new TranslatableText("mobarena.updatedwarp"), false);
+        player.sendMessage(Text.translatable("mobarena.updatedwarp"), false);
         ArenaManager.loadInactiveArena(name);
         return 1;
     }
@@ -68,7 +68,7 @@ public class SetCommand implements Command {
         ServerPlayerEntity player = source.getPlayer();
 
         MobArena.database.updateExitWarp(name, player.getX(), player.getY(), player.getZ(), player.getYaw(), player.getPitch());
-        player.sendMessage(new TranslatableText("mobarena.updatedwarp"), false);
+        player.sendMessage(Text.translatable("mobarena.updatedwarp"), false);
         ArenaManager.loadInactiveArena(name);
         return 1;
     }
@@ -80,7 +80,7 @@ public class SetCommand implements Command {
         ServerPlayerEntity player = source.getPlayer();
 
         MobArena.database.updateArenaWarp(name, player.getX(), player.getY(), player.getZ(), player.getYaw(), player.getPitch());
-        player.sendMessage(new TranslatableText("mobarena.updatedwarp"), false);
+        player.sendMessage(Text.translatable("mobarena.updatedwarp"), false);
         ArenaManager.loadInactiveArena(name);
         return 1;
     }
@@ -92,7 +92,7 @@ public class SetCommand implements Command {
         ServerPlayerEntity player = source.getPlayer();
 
         MobArena.database.updateSpecWarp(name, player.getX(), player.getY(), player.getZ(), player.getYaw(), player.getPitch());
-        player.sendMessage(new TranslatableText("mobarena.updatedwarp"), false);
+        player.sendMessage(Text.translatable("mobarena.updatedwarp"), false);
         ArenaManager.loadInactiveArena(name);
         return 1;
     }
@@ -104,7 +104,7 @@ public class SetCommand implements Command {
         ServerPlayerEntity player = source.getPlayer();
 
         MobArena.database.updateP1(name, player.getBlockX(), player.getBlockY(), player.getBlockZ());
-        player.sendMessage(new TranslatableText("mobarena.updatedpos"), false);
+        player.sendMessage(Text.translatable("mobarena.updatedpos"), false);
         ArenaManager.loadInactiveArena(name);
         return 1;
     }
@@ -116,7 +116,7 @@ public class SetCommand implements Command {
         ServerPlayerEntity player = source.getPlayer();
 
         MobArena.database.updateP2(name, player.getBlockX(), player.getBlockY(), player.getBlockZ());
-        player.sendMessage(new TranslatableText("mobarena.updatedpos"), false);
+        player.sendMessage(Text.translatable("mobarena.updatedpos"), false);
         ArenaManager.loadInactiveArena(name);
         return 1;
     }
@@ -144,7 +144,7 @@ public class SetCommand implements Command {
         config.save();
         ArenaManager.initClasses();
 
-        player.sendMessage(new TranslatableText("mobarena.setclass", name), false);
+        player.sendMessage(Text.translatable("mobarena.setclass", name), false);
 
         return 1;
     }
@@ -156,7 +156,7 @@ public class SetCommand implements Command {
         ServerPlayerEntity player = source.getPlayer();
 
         MobArena.database.updateWorld(player.getWorld().getRegistryKey().getValue().toString(), name);
-        player.sendMessage(new TranslatableText("mobarena.updatedworld"), false);
+        player.sendMessage(Text.translatable("mobarena.updatedworld"), false);
         ArenaManager.loadInactiveArena(name);
         return 1;
     }
@@ -169,7 +169,7 @@ public class SetCommand implements Command {
         ServerPlayerEntity player = source.getPlayer();
 
         MobArena.database.setCountdown(num, name);
-        player.sendMessage(new TranslatableText("mobarena.updatedcountdown", num), false);
+        player.sendMessage(Text.translatable("mobarena.updatedcountdown", num), false);
         ArenaManager.loadInactiveArena(name);
         return 1;
     }
@@ -182,7 +182,7 @@ public class SetCommand implements Command {
         ServerPlayerEntity player = source.getPlayer();
 
         MobArena.database.setWaveCountdown(num, name);
-        player.sendMessage(new TranslatableText("mobarena.updatedwavecountdown", num), false);
+        player.sendMessage(Text.translatable("mobarena.updatedwavecountdown", num), false);
         ArenaManager.loadInactiveArena(name);
         return 1;
     }
@@ -196,11 +196,11 @@ public class SetCommand implements Command {
 
         if (number < 1 ) {
             MobArena.database.setForceClass(false, name);
-            player.sendMessage(new TranslatableText("mobarena.updatedforceclass", "false", name), false);
+            player.sendMessage(Text.translatable("mobarena.updatedforceclass", "false", name), false);
             ArenaManager.loadInactiveArena(name);
         } else {
             MobArena.database.setForceClass(true, name);
-            player.sendMessage(new TranslatableText("mobarena.updatedforceclass", "true", name), false);
+            player.sendMessage(Text.translatable("mobarena.updatedforceclass", "true", name), false);
             ArenaManager.loadInactiveArena(name);
         }
 
@@ -216,11 +216,11 @@ public class SetCommand implements Command {
 
         if (number < 1 ) {
             MobArena.database.setAllowXP(false, name);
-            player.sendMessage(new TranslatableText("mobarena.updatedallowxp", "false", name), false);
+            player.sendMessage(Text.translatable("mobarena.updatedallowxp", "false", name), false);
             ArenaManager.loadInactiveArena(name);
         } else {
             MobArena.database.setAllowXP(true, name);
-            player.sendMessage(new TranslatableText("mobarena.updatedallowxp", "true", name), false);
+            player.sendMessage(Text.translatable("mobarena.updatedallowxp", "true", name), false);
             ArenaManager.loadInactiveArena(name);
         }
 
@@ -236,11 +236,11 @@ public class SetCommand implements Command {
 
         if (number < 1 ) {
             MobArena.database.setIsProtected(false, name);
-            player.sendMessage(new TranslatableText("mobarena.updatedisprotected", "false", name), false);
+            player.sendMessage(Text.translatable("mobarena.updatedisprotected", "false", name), false);
             ArenaManager.loadInactiveArena(name);
         } else {
             MobArena.database.setIsProtected(true, name);
-            player.sendMessage(new TranslatableText("mobarena.updatedisprotected", "true", name), false);
+            player.sendMessage(Text.translatable("mobarena.updatedisprotected", "true", name), false);
             ArenaManager.loadInactiveArena(name);
         }
 

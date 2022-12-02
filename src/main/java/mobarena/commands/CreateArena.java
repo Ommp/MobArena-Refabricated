@@ -11,7 +11,7 @@ import mobarena.config.ArenaModel;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 public class CreateArena implements Command {
 
@@ -22,7 +22,7 @@ public class CreateArena implements Command {
         ServerPlayerEntity player = source.getPlayer();
 
         if (ArenaManager.checkArenaExists(name)) {
-            player.sendMessage(new TranslatableText("mobarena.arenaexists", name), false);
+            player.sendMessage(Text.translatable("mobarena.arenaexists", name), false);
             return 0;
         }
         else {
@@ -31,7 +31,7 @@ public class CreateArena implements Command {
             ArenaManager.addArenaNames();
             MobArena.arenaConfig.addArenaConfig(name, new ArenaModel());
             MobArena.arenaConfig.save();
-            player.sendMessage(new TranslatableText("mobarena.createdarena", name), false);
+            player.sendMessage(Text.translatable("mobarena.createdarena", name), false);
         }
 
         return 1;

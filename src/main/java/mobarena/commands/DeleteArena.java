@@ -10,7 +10,7 @@ import mobarena.commands.suggestions.NameSuggestionProvider;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 public class DeleteArena implements Command {
 
@@ -23,7 +23,7 @@ public class DeleteArena implements Command {
 
             MobArena.database.deleteArena(name);
             ArenaManager.arenas.remove(name);
-            player.sendMessage(new TranslatableText("mobarena.deletedarena", name), false);
+            player.sendMessage(Text.translatable("mobarena.deletedarena", name), false);
             return 0;
     }
 

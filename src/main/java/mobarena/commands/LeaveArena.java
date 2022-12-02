@@ -7,7 +7,7 @@ import mobarena.ArenaManager;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 public class LeaveArena implements Command{
     private int run(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -15,7 +15,7 @@ public class LeaveArena implements Command{
         ServerPlayerEntity player = source.getPlayer();
 
         ArenaManager.getArenaFromPlayer(player).leavePlayer(player);
-        player.sendMessage(new TranslatableText("mobarena.leftarena"), false);
+        player.sendMessage(Text.translatable("mobarena.leftarena"), false);
         return 1;
     }
 

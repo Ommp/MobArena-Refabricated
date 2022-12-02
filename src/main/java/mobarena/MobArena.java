@@ -6,11 +6,12 @@ import mobarena.commands.*;
 import mobarena.config.ArenaConfig;
 import mobarena.database.Database;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.scoreboard.AbstractTeam;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
@@ -80,7 +81,7 @@ public class MobArena implements ModInitializer {
 		}));
 	}
 
-	private static void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, boolean dedicated) {
+	private static void registerCommands(CommandDispatcher<ServerCommandSource> serverCommandSourceCommandDispatcher, CommandRegistryAccess commandRegistryAccess, CommandManager.RegistrationEnvironment registrationEnvironment) {
 		LiteralCommandNode<ServerCommandSource> mobarena = CommandManager
 				.literal("mobarena")
 				.build();
@@ -89,8 +90,8 @@ public class MobArena implements ModInitializer {
 				.literal("ma")
 				.build();
 
-		dispatcher.getRoot().addChild(mobarena);
-		dispatcher.getRoot().addChild(alias);
+		serverCommandSourceCommandDispatcher.getRoot().addChild(mobarena);
+		serverCommandSourceCommandDispatcher.getRoot().addChild(alias);
 
 		Command[] commands = new Command[] {
 				new CreateArena(),

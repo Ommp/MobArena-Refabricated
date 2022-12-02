@@ -18,7 +18,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
@@ -183,7 +182,7 @@ public class Arena {
         if (!arenaCountingDown && (arenaPlayers.size() + lobbyPlayers.size() + readyLobbyPlayers.size() >= minPlayers)) {
             arenaCountingDown = true;
             for (ServerPlayerEntity p: anyArenaPlayer) {
-                p.sendMessage(new TranslatableText("mobarena.countdown", arenaStartCountdown), true);
+                p.sendMessage(Text.translatable("mobarena.countdown", arenaStartCountdown), true);
             }
             final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
             executorService.schedule(this::startArena, arenaStartCountdown, TimeUnit.SECONDS);
@@ -201,9 +200,9 @@ public class Arena {
             PlayerManager.restoreVitals(p);
             ArenaManager.addActivePlayer(p, name);
             scoreboard.addPlayer(p);
-            p.sendMessage(new TranslatableText("mobarena.joinedarenalobby", name), true);
+            p.sendMessage(Text.translatable("mobarena.joinedarenalobby", name), true);
         } else {
-            p.sendMessage(new TranslatableText("mobarena.maxplayersinarena"), false);
+            p.sendMessage(Text.translatable("mobarena.maxplayersinarena"), false);
         }
     }
 
@@ -300,10 +299,10 @@ public class Arena {
     public void displayScoreboard() {
         for (ServerPlayerEntity p: anyArenaPlayer) {
             for (ServerPlayerEntity p1: anyArenaPlayer) {
-                p.sendMessage(new TranslatableText("mobarena.scoreboard", p1.getName()), false);
-                p.sendMessage(new TranslatableText("mobarena.scoreboardKills", scoreboard.getPlayerKills().get(p1)), false);
-                p.sendMessage(new TranslatableText("mobarena.scoreboardWavesSurvived", scoreboard.getWavesSurvived(p1)), false);
-                p.sendMessage(new TranslatableText("mobarena.scoreboardTotalDamage", scoreboard.getPlayerDamage().get(p1)), false);
+                p.sendMessage(Text.translatable("mobarena.scoreboard", p1.getName()), false);
+                p.sendMessage(Text.translatable("mobarena.scoreboardKills", scoreboard.getPlayerKills().get(p1)), false);
+                p.sendMessage(Text.translatable("mobarena.scoreboardWavesSurvived", scoreboard.getWavesSurvived(p1)), false);
+                p.sendMessage(Text.translatable("mobarena.scoreboardTotalDamage", scoreboard.getPlayerDamage().get(p1)), false);
             }
         }
     }
@@ -347,7 +346,7 @@ public class Arena {
     public void transportAllFromLobby() {
         if (hasMinPlayers() && readyLobbyPlayers.size() == lobbyPlayers.size()) {
             for (ServerPlayerEntity player : lobbyPlayers) {
-                player.sendMessage(new TranslatableText("mobarena.allplayersready"), true);
+                player.sendMessage(Text.translatable("mobarena.allplayersready"), true);
                 transportPlayer(player, WarpType.ARENA);
                 arenaPlayers.add(player);
             }

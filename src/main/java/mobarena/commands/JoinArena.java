@@ -9,7 +9,7 @@ import mobarena.commands.suggestions.NameSuggestionProvider;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 public class JoinArena implements Command{
     private int run(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -21,15 +21,15 @@ public class JoinArena implements Command{
 
             ArenaManager.loadActiveArena(name);
             if (ArenaManager.arenas.get(name).isPlayerInArena(player)) {
-                player.sendMessage(new TranslatableText("mobarena.alreadyjoined", name), true);
+                player.sendMessage(Text.translatable("mobarena.alreadyjoined", name), true);
                 return 0;
             }
             if(ArenaManager.isPlayerActive(player)) {
-                player.sendMessage(new TranslatableText("mobarena.alreadyinanotherarena"), true);
+                player.sendMessage(Text.translatable("mobarena.alreadyinanotherarena"), true);
                 return 0;
             }
             if (ArenaManager.arenas.get(name).isRunning()) {
-                player.sendMessage(new TranslatableText("mobarena.arenaalreadyrunning"), true);
+                player.sendMessage(Text.translatable("mobarena.arenaalreadyrunning"), true);
                 return 0;
             }
 
@@ -38,7 +38,7 @@ public class JoinArena implements Command{
             }
 
         else {
-            player.sendMessage(new TranslatableText("mobarena.arenanotfound", name), false);
+            player.sendMessage(Text.translatable("mobarena.arenanotfound", name), false);
             return 0;
         }
     }

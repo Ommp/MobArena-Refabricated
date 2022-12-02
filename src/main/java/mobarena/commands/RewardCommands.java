@@ -13,7 +13,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 public class RewardCommands implements Command {
 
@@ -27,7 +27,7 @@ public class RewardCommands implements Command {
         var nbt = ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, inventory.getMainHandStack()).get().orThrow().toString();
 
         MobArena.database.createReward(nbt, wave, name);
-        player.sendMessage(new TranslatableText("mobarena.addedreward"), false);
+        player.sendMessage(Text.translatable("mobarena.addedreward"), false);
         return 1;
     }
 
@@ -38,7 +38,7 @@ public class RewardCommands implements Command {
         var player = context.getSource().getPlayer();
 
         MobArena.database.deleteWaveRewards(wave, name);
-        player.sendMessage(new TranslatableText("mobarena.deletedwaverewards", wave), false);
+        player.sendMessage(Text.translatable("mobarena.deletedwaverewards", wave), false);
         return 1;
     }
 
@@ -55,10 +55,10 @@ public class RewardCommands implements Command {
 
             if (stack.hasNbt()) {
                 var reward = stack.getNbt().toString();
-                player.sendMessage(new TranslatableText("mobarena.showreward", reward, wave), false);
+                player.sendMessage(Text.translatable("mobarena.showreward", reward, wave), false);
             } else {
                 var reward = stack.getItem().toString();
-                player.sendMessage(new TranslatableText("mobarena.showreward", reward, wave), false);
+                player.sendMessage(Text.translatable("mobarena.showreward", reward, wave), false);
             }
         }
         return 1;
