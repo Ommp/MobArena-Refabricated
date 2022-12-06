@@ -24,6 +24,7 @@ public class DeleteArena implements Command {
             MobArena.database.deleteArena(name);
             ArenaManager.arenas.remove(name);
             player.sendMessage(new TranslatableText("mobarena.deletedarena", name), false);
+            ArenaManager.addArenaNames();
             return 0;
     }
 

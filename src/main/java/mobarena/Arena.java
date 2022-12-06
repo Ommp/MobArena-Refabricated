@@ -147,7 +147,7 @@ public class Arena {
 
             spawner.addEntitiesToSpawn(mobs, world);
             spawner.spawnMobs(world);
-            spawner.modifyMobStats(waveManager.getWave().getType());
+            spawner.modifyMobStats(waveManager.getWave().getType(), arenaPlayers.size());
             startEntityService();
         } else {
             arenaCountingDown = false;
@@ -414,8 +414,9 @@ public class Arena {
             spawner.resetDeadMonsters();
             spawner.addEntitiesToSpawn(mobs, world);
             spawner.spawnMobs(world);
-            spawner.modifyMobStats(waveManager.getWave().getType());
+            spawner.modifyMobStats(waveManager.getWave().getType(), arenaPlayers.size());
             MobUtils.addEquipment(waveManager.getCurrentWave(), waveManager.getWave().getType(), spawner.getMonsters());
+            addReinforcementItems();
         }, waveCountdown, TimeUnit.SECONDS);
 
     }
@@ -427,17 +428,38 @@ public class Arena {
         player.getInventory().clear();
 
         //add the items
-        for (int i = 0; i < arenaClass.getItems().size(); i++) {
-            var data = arenaClass.getItem(i).getData();
+        for (var arenaItem : arenaClass.getItems()) {
+            var data = arenaItem.getData();
             ItemStack itemStack;
             try {
                 itemStack = ItemStack.fromNbt(StringNbtReader.parse(data));
             } catch (CommandSyntaxException e) {
                 throw new RuntimeException(e);
             }
-            var slot = arenaClass.getItems().get(i).getSlot();
+            var slot = arenaItem.getSlot();
 
             player.getInventory().insertStack(slot,itemStack);
+        }
+    }
+    public void addReinforcementItems() {
+        for (var reinforcement : config.getReinforcements()) {
+            if (reinforcement.getWave() == waveManager.getCurrentWave()) {
+                for (var classToItem : reinforcement.getClassItems().entrySet()) {
+                    for (var p : arenaPlayers) {
+                        //TODO implement checking for specific classes
+                        if (classToItem.getKey().equals("all")) {
+                            for (var item : classToItem.getValue()) {
+                                try {
+                                    var itemStack = ItemStack.fromNbt(StringNbtReader.parse(item));
+                                    p.getInventory().offerOrDrop(itemStack);
+                                } catch (CommandSyntaxException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

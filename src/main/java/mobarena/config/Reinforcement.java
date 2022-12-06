@@ -1,31 +1,34 @@
 package mobarena.config;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Reinforcement {
 
-    private int wave;
+    private int wave = 5;
 
     //classes and their items
-    private final HashMap<String, String> items = new HashMap<>();
+    private final HashMap<String, ArrayList<String>> items = new HashMap<>();
 
-    private String className;
-
-    private boolean recurrent;
+    private boolean recurrent = true;
 
     public int getWave() {
         return wave;
     }
 
-    public HashMap<String, String> getItem() {
+    public HashMap<String, ArrayList<String>> getClassItems() {
         return items;
-    }
-
-    public String getClassName() {
-        return className;
     }
 
     public boolean isRecurrent() {
         return recurrent;
+    }
+
+    public void setWave(int wave) {
+        this.wave = wave;
+    }
+
+    public void setRecurrent(boolean recurrent) {
+        this.recurrent = recurrent;
     }
 }
