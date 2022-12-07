@@ -408,6 +408,7 @@ public class Arena {
             p.networkHandler.sendPacket(new TitleFadeS2CPacket(10, 30, 5));
         }
 
+        addReinforcementItems();
 
         waveService.schedule(() -> {
             spawner.clearMonsters();
@@ -416,7 +417,6 @@ public class Arena {
             spawner.spawnMobs(world);
             spawner.modifyMobStats(waveManager.getWave().getType(), arenaPlayers.size());
             MobUtils.addEquipment(waveManager.getCurrentWave(), waveManager.getWave().getType(), spawner.getMonsters());
-            addReinforcementItems();
         }, waveCountdown, TimeUnit.SECONDS);
 
     }
@@ -447,7 +447,7 @@ public class Arena {
                 for (var classToItem : reinforcement.getClassItems().entrySet()) {
                     for (var p : arenaPlayers) {
                         //TODO implement checking for specific classes
-                        if (classToItem.getKey().equals("all")) {
+                        if (classToItem.getKey().equals("all") || classToItem.getKey().equals(playerClasses.get(p.getUuidAsString()).getName())) {
                             for (var item : classToItem.getValue()) {
                                 try {
                                     var itemStack = ItemStack.fromNbt(StringNbtReader.parse(item));
