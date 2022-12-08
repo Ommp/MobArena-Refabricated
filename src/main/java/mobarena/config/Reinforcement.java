@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class Reinforcement {
 
-    private int wave = 5;
+    private int wave;
 
     //classes and their items
     private final HashMap<String, ArrayList<String>> items = new HashMap<>();
@@ -20,15 +20,19 @@ public class Reinforcement {
         return items;
     }
 
-    public boolean isRecurrent() {
-        return recurrent;
+    public boolean isRecurrentCanBeUsed(int wave) {
+        return recurrent && wave > getWave() && wave % getWave() == 0;
     }
 
     public void setWave(int wave) {
         this.wave = wave;
     }
 
-    public void setRecurrent(boolean recurrent) {
+    public Reinforcement() {
+    }
+
+    public Reinforcement(int wave, boolean recurrent) {
+        this.wave = wave;
         this.recurrent = recurrent;
     }
 }

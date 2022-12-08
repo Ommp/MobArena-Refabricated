@@ -443,15 +443,15 @@ public class Arena {
     }
     public void addReinforcementItems() {
         for (var reinforcement : config.getReinforcements()) {
-            if (reinforcement.getWave() == waveManager.getCurrentWave()) {
+            //check if the reinforcement wave is equal to the current wave OR if it's a recurrent wave and can be used
+            if (reinforcement.getWave() == waveManager.getCurrentWave() || reinforcement.isRecurrentCanBeUsed(waveManager.getCurrentWave())) {
                 for (var classToItem : reinforcement.getClassItems().entrySet()) {
-                    for (var p : arenaPlayers) {
-                        //TODO implement checking for specific classes
-                        if (classToItem.getKey().equals("all") || classToItem.getKey().equals(playerClasses.get(p.getUuidAsString()).getName())) {
-                            for (var item : classToItem.getValue()) {
+                    for (var player : arenaPlayers) {
+                        if (classToItem.getKey().equals("all") || classToItem.getKey().equals(playerClasses.get(player.getUuidAsString()).getName())) {
+                            for (String item : classToItem.getValue()) {
                                 try {
                                     var itemStack = ItemStack.fromNbt(StringNbtReader.parse(item));
-                                    p.getInventory().offerOrDrop(itemStack);
+                                    player.getInventory().offerOrDrop(itemStack);
                                 } catch (CommandSyntaxException e) {
                                     throw new RuntimeException(e);
                                 }

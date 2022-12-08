@@ -29,7 +29,9 @@ public class CreateArena implements Command {
             MobArena.database.addArena(name);
             ArenaManager.loadInactiveArena(name);
             ArenaManager.addArenaNames();
-            MobArena.arenaConfig.addArenaConfig(name, new ArenaModel());
+            var arenaModel = new ArenaModel();
+            arenaModel.createDefaultReinforcements();
+            MobArena.arenaConfig.addArenaConfig(name, arenaModel);
             MobArena.arenaConfig.save();
             player.sendMessage(new TranslatableText("mobarena.createdarena", name), false);
         }
