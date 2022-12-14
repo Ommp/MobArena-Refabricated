@@ -51,7 +51,7 @@ public class ArenaModel {
         //create default reinforcements for wave 5
         var reinforcement = new Reinforcement(5, true);
         ArrayList<String> items = new ArrayList<>();
-        items.add("\"{Count:1,id:\\\"minecraft:golden_apple\\\"}\"");
+        items.add("{Count:1,id:\"minecraft:golden_apple\"}");
         items.add("{Count:4,id:\"minecraft:apple\"}");
         reinforcement.getClassItems().put("all", items);
         reinforcements.add(reinforcement);

@@ -4,7 +4,6 @@ import mobarena.Arena;
 import mobarena.ArenaItem;
 import mobarena.Warp;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -64,9 +63,9 @@ public class Database {
                     "FOREIGN KEY(player) REFERENCES players(uuid))";
             String mobSpawnpointsTable = "CREATE TABLE IF NOT EXISTS mobspawnpoints(" +
                     "arena varchar," +
-                    "x double," +
-                    "y double," +
-                    "z double," +
+                    "x int," +
+                    "y int," +
+                    "z int," +
                     "FOREIGN KEY(arena) REFERENCES arenas(name) ON DELETE CASCADE)";
             String playerTable = "CREATE TABLE IF NOT EXISTS players(" +
                     "uuid varchar," +
@@ -79,7 +78,7 @@ public class Database {
             String rewardsTable = "CREATE TABLE IF NOT EXISTS rewards(arena varchar, itemstack varchar, wave int, chance int DEFAULT 100, FOREIGN KEY(arena) REFERENCES arenas(name) ON DELETE CASCADE)" ;
 
             Statement statement = con.createStatement();
-            String[] statements = new String[] {arenaTable, scoreboardTable, mobSpawnpointsTable, playerTable, playerItemStacksTable, rewardsTable};
+            String[] statements = new String[] {arenaTable, playerTable, scoreboardTable, mobSpawnpointsTable, playerItemStacksTable, rewardsTable};
             for (String table : statements) {
                 statement.execute(table);
             }
@@ -203,9 +202,8 @@ public class Database {
     }
 
     public void addPlayerInventoryItemStack(String uuid, String itemStackNbt, int slot) {
-        PreparedStatement statement = null;
         try {
-            statement = con.prepareStatement("INSERT INTO playeritemstacks(player, itemstack, slot) VALUES(?,?,?)");
+            PreparedStatement statement = con.prepareStatement("INSERT INTO playeritemstacks(player, itemstack, slot) VALUES(?,?,?)");
             statement.setString(1, uuid);
             statement.setString(2, itemStackNbt);
             statement.setInt(3, slot);
@@ -218,19 +216,6 @@ public class Database {
     public void deleteStoredPlayerItems(String UUID) {
         try {
             PreparedStatement statement = con.prepareStatement("DELETE FROM playeritemstacks WHERE player=?");
-            statement.setString(1, UUID);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void deletePlayer(String UUID) {
-        String sql = "DELETE FROM players WHERE uuid=?";
-        PreparedStatement statement;
-
-        try {
-            statement = con.prepareStatement(sql);
             statement.setString(1, UUID);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -485,12 +470,9 @@ public class Database {
         }
     }
 
-    public void addMobSpawnPoint(String arena, double x, double y, double z) {
-        String sql = "INSERT INTO mobspawnpoints(arena, x, y, z) VALUES (?,?,?,?)";
-        PreparedStatement statement;
-
+    public void addMobSpawnPoint(String arena, int x, int y, int z) {
         try {
-            statement = con.prepareStatement(sql);
+            PreparedStatement statement = con.prepareStatement("INSERT INTO mobspawnpoints(arena, x, y, z) VALUES (?,?,?,?)");
             statement.setString(1, arena);
             statement.setDouble(2, x);
             statement.setDouble(3, y);
@@ -501,10 +483,10 @@ public class Database {
         }
     }
 
-    public ArrayList<Vec3i> getMobSpawnPoints(String arena) {
+    public ArrayList<BlockPos> getMobSpawnPoints(String arena) {
         String sql = "SELECT x,y,z FROM mobspawnpoints WHERE arena=? ";
         PreparedStatement statement;
-        ArrayList<Vec3i> pointsList = new ArrayList<>();
+        ArrayList<BlockPos> pointsList = new ArrayList<>();
 
         try {
             statement = con.prepareStatement(sql);
@@ -512,7 +494,7 @@ public class Database {
             ResultSet rs = statement.executeQuery();
 
             while (rs.next()) {
-                pointsList.add(new Vec3i(rs.getInt("x"), rs.getInt("y")+1, rs.getInt("z")));
+                pointsList.add(new BlockPos(rs.getInt("x"), rs.getInt("y")+1, rs.getInt("z")));
             }
 
             return pointsList;
@@ -720,16 +702,13 @@ public class Database {
         return false;
     }
 
-    public void removeMobSpawnPoint(String arena, double x, double y, double z) {
-        String sql = "DELETE FROM mobspawnpoints WHERE (arena=? AND x=? AND y=? AND z=?)";
-        PreparedStatement statement;
-
+    public void removeMobSpawnPoint(String arena, int x, int y, int z) {
         try {
-            statement = con.prepareStatement(sql);
+            PreparedStatement statement = con.prepareStatement("DELETE FROM mobspawnpoints WHERE arena=? AND x=? AND y=? AND z=? ");
             statement.setString(1, arena);
-            statement.setDouble(2, x);
-            statement.setDouble(3, y);
-            statement.setDouble(4, z);
+            statement.setInt(2, x);
+            statement.setInt(3, y);
+            statement.setInt(4, z);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

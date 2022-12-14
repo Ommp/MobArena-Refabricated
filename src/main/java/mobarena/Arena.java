@@ -123,15 +123,15 @@ public class Arena {
         return world;
     }
 
-    public ArrayList<Vec3i> mobSpawnPoints = new ArrayList<>();
+    public ArrayList<BlockPos> mobSpawnPoints = new ArrayList<>();
 
-    public ArrayList<Vec3i> setMobSpawnPoints(String name) {
-        ArrayList<Vec3i> pointsList;
+    public ArrayList<BlockPos> setMobSpawnPoints(String name) {
+        ArrayList<BlockPos> pointsList;
         pointsList = MobArena.database.getMobSpawnPoints(name);
 
         //if mob spawn points table has no entries, set mob spawn points to be the same as the arena warp
         if (pointsList.isEmpty()) {
-            pointsList.add(new Vec3i(arena.x, arena.y+1, arena.z));
+            pointsList.add(new BlockPos(arena.x, arena.y+1, arena.z));
             return pointsList;
         }
         return pointsList;

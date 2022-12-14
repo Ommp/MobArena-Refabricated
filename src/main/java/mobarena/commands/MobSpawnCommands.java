@@ -13,6 +13,9 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class MobSpawnCommands implements Command {
 
     private int addMobSpawn(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -21,7 +24,7 @@ public class MobSpawnCommands implements Command {
         ServerCommandSource source = context.getSource();
         ServerPlayerEntity player = source.getPlayer();
 
-        MobArena.database.addMobSpawnPoint(name, player.getX(), player.getY(), player.getZ());
+        MobArena.database.addMobSpawnPoint(name, player.getBlockPos().getX(), player.getBlockPos().getY(), player.getBlockPos().getZ());
         player.sendMessage(new TranslatableText("mobarena.addedmobspawnpoint"), false);
         ArenaManager.loadInactiveArena(name);
         return 1;
@@ -36,7 +39,6 @@ public class MobSpawnCommands implements Command {
 
         var points = MobArena.database.getMobSpawnPoints(name);
         for (var point: points) {
-            System.out.println(point);
             world.spawnParticles(ParticleTypes.LARGE_SMOKE, point.getX(), point.getY(), point.getZ(), 1 ,0, 0, 0, 0);
         }
 
@@ -51,9 +53,16 @@ public class MobSpawnCommands implements Command {
         ServerCommandSource source = context.getSource();
         ServerPlayerEntity player = source.getPlayer();
 
-        MobArena.database.removeMobSpawnPoint(name, player.getX(), player.getY(), player.getZ());
-        player.sendMessage(new TranslatableText("mobarena.removedmobspawnpoint"), false);
-        ArenaManager.loadInactiveArena(name);
+        var points = MobArena.database.getMobSpawnPoints(name);
+        ArrayList<Double> distances = new ArrayList<>();
+        for (var point: points) {
+            distances.add(point.getSquaredDistance(player.getPos()));
+        }
+        var minDistanceIndex = distances.indexOf(Collections.min(distances));
+        var point = points.get(minDistanceIndex);
+
+        MobArena.database.removeMobSpawnPoint(name, point.getX(), point.getY()-1, point.getZ());
+        player.sendMessage(new TranslatableText("mobarena.removedmobspawnpoint", point.toShortString()), false);
         return 1;
     }
 
