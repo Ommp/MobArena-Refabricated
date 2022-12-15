@@ -37,5 +37,6 @@
   "mobarena.scoreboardWavesSurvived": "%s waves survived",
   "mobarena.scoreboardTotalDamage": "%s damage total",
   "mobarena.removedmobspawnpoint": "Removed mob spawn point at: %s",
-  "mobarena.showingpoints": "Showing mob spawn points."
+  "mobarena.showingpoints": "Showing mob spawn points.",
+  "mobarena.updatedisprotected": "Updated arena protection setting."
 }

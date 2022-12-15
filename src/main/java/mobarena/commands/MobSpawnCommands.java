@@ -2,7 +2,6 @@ package mobarena.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import mobarena.ArenaManager;
 import mobarena.MobArena;
@@ -11,26 +10,26 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class MobSpawnCommands implements Command {
 
-    private int addMobSpawn(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    private int addMobSpawn(CommandContext<ServerCommandSource> context) {
         String name = StringArgumentType.getString(context, "name");
 
         ServerCommandSource source = context.getSource();
         ServerPlayerEntity player = source.getPlayer();
 
         MobArena.database.addMobSpawnPoint(name, player.getBlockPos().getX(), player.getBlockPos().getY(), player.getBlockPos().getZ());
-        player.sendMessage(new TranslatableText("mobarena.addedmobspawnpoint"), false);
+        player.sendMessage(Text.translatable("mobarena.addedmobspawnpoint"), false);
         ArenaManager.loadInactiveArena(name);
         return 1;
     }
 
-    private int showMobSpawn(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    private int showMobSpawn(CommandContext<ServerCommandSource> context) {
         String name = StringArgumentType.getString(context, "name");
 
         var source = context.getSource();
@@ -42,12 +41,12 @@ public class MobSpawnCommands implements Command {
             world.spawnParticles(ParticleTypes.LARGE_SMOKE, point.getX(), point.getY(), point.getZ(), 1 ,0, 0, 0, 0);
         }
 
-        player.sendMessage(new TranslatableText("mobarena.showingpoints"), false);
+        player.sendMessage(Text.translatable("mobarena.showingpoints"), false);
         ArenaManager.loadInactiveArena(name);
         return 1;
     }
 
-    private int removeMobSpawn(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    private int removeMobSpawn(CommandContext<ServerCommandSource> context) {
         String name = StringArgumentType.getString(context, "name");
 
         ServerCommandSource source = context.getSource();
@@ -62,7 +61,7 @@ public class MobSpawnCommands implements Command {
         var point = points.get(minDistanceIndex);
 
         MobArena.database.removeMobSpawnPoint(name, point.getX(), point.getY()-1, point.getZ());
-        player.sendMessage(new TranslatableText("mobarena.removedmobspawnpoint", point.toShortString()), false);
+        player.sendMessage(Text.translatable("mobarena.removedmobspawnpoint", point.toShortString()), false);
         return 1;
     }
 

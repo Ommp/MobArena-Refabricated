@@ -3,7 +3,7 @@ package mobarena;
 import mobarena.config.ArenaClassConfig;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
