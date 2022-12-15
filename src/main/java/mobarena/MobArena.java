@@ -7,7 +7,7 @@ import mobarena.config.ArenaConfig;
 import mobarena.database.Database;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.loader.api.FabricLoader;
@@ -17,6 +17,7 @@ import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -72,13 +73,15 @@ public class MobArena implements ModInitializer {
 			}
 		}));
 
-		ServerPlayerEvents.ALLOW_DEATH.register(((player, source, amount) -> {
-			if (ArenaManager.isPlayerActive(player)) {
-				ArenaManager.getArenaFromPlayer(player).addDeadPlayer(player);
-				return false;
+		ServerLivingEntityEvents.ALLOW_DEATH.register((entity, damageSource, damageAmount) -> {
+			if (entity instanceof ServerPlayerEntity player) {
+				if (ArenaManager.isPlayerActive(player)) {
+					ArenaManager.getArenaFromPlayer(player).addDeadPlayer(player);
+					return false;
+				}
 			}
 			return true;
-		}));
+		});
 	}
 
 	private static void registerCommands(CommandDispatcher<ServerCommandSource> serverCommandSourceCommandDispatcher, CommandRegistryAccess commandRegistryAccess, CommandManager.RegistrationEnvironment registrationEnvironment) {
