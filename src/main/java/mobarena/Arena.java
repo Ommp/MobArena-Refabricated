@@ -122,15 +122,15 @@ public class Arena {
         return world;
     }
 
-    public ArrayList<Vec3i> mobSpawnPoints = new ArrayList<>();
+    public ArrayList<BlockPos> mobSpawnPoints = new ArrayList<>();
 
-    public ArrayList<Vec3i> setMobSpawnPoints(String name) {
-        ArrayList<Vec3i> pointsList;
+    public ArrayList<BlockPos> setMobSpawnPoints(String name) {
+        ArrayList<BlockPos> pointsList;
         pointsList = MobArena.database.getMobSpawnPoints(name);
 
         //if mob spawn points table has no entries, set mob spawn points to be the same as the arena warp
         if (pointsList.isEmpty()) {
-            pointsList.add(new Vec3i(arena.x, arena.y+1, arena.z));
+            pointsList.add(new BlockPos(arena.x, arena.y+1, arena.z));
             return pointsList;
         }
         return pointsList;
@@ -146,7 +146,7 @@ public class Arena {
 
             spawner.addEntitiesToSpawn(mobs, world);
             spawner.spawnMobs(world);
-            spawner.modifyMobStats(waveManager.getWave().getType());
+            spawner.modifyMobStats(waveManager.getWave().getType(), arenaPlayers.size());
             startEntityService();
         } else {
             arenaCountingDown = false;
@@ -407,13 +407,14 @@ public class Arena {
             p.networkHandler.sendPacket(new TitleFadeS2CPacket(10, 30, 5));
         }
 
+        addReinforcementItems();
 
         waveService.schedule(() -> {
             spawner.clearMonsters();
             spawner.resetDeadMonsters();
             spawner.addEntitiesToSpawn(mobs, world);
             spawner.spawnMobs(world);
-            spawner.modifyMobStats(waveManager.getWave().getType());
+            spawner.modifyMobStats(waveManager.getWave().getType(), arenaPlayers.size());
             MobUtils.addEquipment(waveManager.getCurrentWave(), waveManager.getWave().getType(), spawner.getMonsters());
         }, waveCountdown, TimeUnit.SECONDS);
 
@@ -426,17 +427,38 @@ public class Arena {
         player.getInventory().clear();
 
         //add the items
-        for (int i = 0; i < arenaClass.getItems().size(); i++) {
-            var data = arenaClass.getItem(i).getData();
+        for (var arenaItem : arenaClass.getItems()) {
+            var data = arenaItem.getData();
             ItemStack itemStack;
             try {
                 itemStack = ItemStack.fromNbt(StringNbtReader.parse(data));
             } catch (CommandSyntaxException e) {
                 throw new RuntimeException(e);
             }
-            var slot = arenaClass.getItems().get(i).getSlot();
+            var slot = arenaItem.getSlot();
 
             player.getInventory().insertStack(slot,itemStack);
+        }
+    }
+    public void addReinforcementItems() {
+        for (var reinforcement : config.getReinforcements()) {
+            //check if the reinforcement wave is equal to the current wave OR if it's a recurrent wave and can be used
+            if (reinforcement.getWave() == waveManager.getCurrentWave() || reinforcement.isRecurrentCanBeUsed(waveManager.getCurrentWave())) {
+                for (var classToItem : reinforcement.getClassItems().entrySet()) {
+                    for (var player : arenaPlayers) {
+                        if (classToItem.getKey().equals("all") || classToItem.getKey().equals(playerClasses.get(player.getUuidAsString()).getName())) {
+                            for (String item : classToItem.getValue()) {
+                                try {
+                                    var itemStack = ItemStack.fromNbt(StringNbtReader.parse(item));
+                                    player.getInventory().offerOrDrop(itemStack);
+                                } catch (CommandSyntaxException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

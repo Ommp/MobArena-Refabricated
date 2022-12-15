@@ -33,6 +33,9 @@ public class ArenaClassConfig {
         }
         ArenaClassConfig config = gson.fromJson(reader, ArenaClassConfig.class);
         arenaClasses.putAll(config.arenaClasses);
+        for (String s: arenaClasses.keySet()) {
+            arenaClasses.get(s).setName(s);
+        }
     }
     public void save() {
         try {

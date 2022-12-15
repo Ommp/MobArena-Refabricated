@@ -38,12 +38,12 @@ public class Spawner {
             }
         }
     }
-    public void modifyMobStats(WaveType type) {
+    public void modifyMobStats(WaveType type, int players) {
         for (MobEntity monster : monsters) {
             if (type.equals(WaveType.BOSS)) {
 
                 Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)).addTemporaryModifier(new EntityAttributeModifier("movement", monster.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED)*1.2, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).addTemporaryModifier(new EntityAttributeModifier("max health", 3, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).addTemporaryModifier(new EntityAttributeModifier("max health", 3+players, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
                 monster.setHealth(monster.getMaxHealth());
                 Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE)).addTemporaryModifier(new EntityAttributeModifier("attack damage", 2, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
 
