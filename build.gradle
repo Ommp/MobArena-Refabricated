@@ -7,7 +7,7 @@ sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
-version = project.mod_version
+version = "${project.mod_version}+MC${project.minecraft_version}"
 group = project.maven_group
 
 repositories {
@@ -27,20 +27,8 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 
-	//Decide on a database implementation
-	// https://mvnrepository.com/artifact/com.h2database/h2
-	modImplementation 'com.h2database:h2:2.1.214'
+	implementation 'com.h2database:h2:2.1.214'
 	include 'com.h2database:h2:2.1.214'
-
-	// https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
-//	include "org.xerial:sqlite-jdbc:3.36.0.3"
-//	modImplementation"org.xerial:sqlite-jdbc:3.36.0.3"
-
-	// https://mvnrepository.com/artifact/org.hsqldb/hsqldb
-//	modImplementation 'org.hsqldb:hsqldb:2.6.1'
-
-
-
 }
 
 processResources {
