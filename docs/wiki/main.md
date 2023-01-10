@@ -8,4 +8,6 @@ This is the main page of the MobArena Refabricated wiki.
 
 [Rewards](rewards.md)
 
+[Reinforcements](reinforcements.md)
+
 [Troubleshooting](troubleshooting.md)

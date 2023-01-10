@@ -52,7 +52,7 @@ public class ArenaModel {
         var reinforcement = new Reinforcement(5, true);
         ArrayList<String> items = new ArrayList<>();
         items.add("{Count:1,id:\"minecraft:golden_apple\"}");
-        items.add("{Count:4,id:\"minecraft:apple\"}");
+        items.add("{Count:4,id:\"minecraft:cooked_beef\"}");
         reinforcement.getClassItems().put("all", items);
         reinforcements.add(reinforcement);
     }
