@@ -1,6 +1,7 @@
 # Custom Waves
 
-The mod does not currently automatically create configuration sections for arenas, so the easiest way to get started with custom waves is to copy the example at the bottom of this page, overwrite arenaconfigs.json in the config folder with it, and edit it as you like. **Note** that the custom waves _should_ work with modded mobs.
+An entry for an arena in the configuration file should automatically be created after you have created an arena.
+ **Note** that the custom waves _should_ work with modded mobs.
 ## Explanation of various settings:
 
 ### Single Waves

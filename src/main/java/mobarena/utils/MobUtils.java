@@ -163,11 +163,6 @@ public class MobUtils {
                 }
             }
         }
-
-
-
-
-
     }
 
     public static void addEquipment(int wave, WaveType waveType, List<MobEntity> monsters) {

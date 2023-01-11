@@ -1,6 +1,7 @@
 package mobarena;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import mobarena.database.PlayerInventoryModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringNbtReader;
@@ -35,19 +36,16 @@ public class PlayerManager {
 
     public static void retrieveItems(ServerPlayerEntity p) {
         try {
-            var inventory = MobArena.database.getPlayerItems(p.getUuidAsString());
+            PlayerInventoryModel inventory = MobArena.database.getPlayerItems(p.getUuidAsString());
 
-            for (int i = 0; i < inventory.getItems().size(); i++) {
-                var data = inventory.getItems().get(i).getData();
-                ItemStack itemStack;
+            for (ArenaItem item: inventory.getItems()) {
                 try {
-                    itemStack = ItemStack.fromNbt(StringNbtReader.parse(data));
+                    ItemStack itemStack = ItemStack.fromNbt(StringNbtReader.parse(item.getData()));
+                    int slot = item.getSlot();
+                    p.getInventory().insertStack(slot, itemStack);
                 } catch (CommandSyntaxException e) {
                     throw new RuntimeException(e);
                 }
-                var slot = inventory.getItems().get(i).slot;
-
-                p.getInventory().insertStack(slot, itemStack);
             }
             MobArena.database.deleteStoredPlayerItems(p.getUuidAsString());
 

@@ -3,7 +3,7 @@
 ## About
 
 This mod for Fabric allows players to fight against monsters in an arena.
-Currently, most of the core features have been implemented so that it's playable, but many features have not been implemented yet. See below for a quick summary about the current status.
+Currently, most of the core features have been implemented so that it's playable, but some features may be missing and there may be balancing issues depending on how you configure your arena. See below for a quick summary about the current status.
 
 ### Getting Started
 Check the [wiki](docs/wiki/main.md) for help on setting up and using arenas.
@@ -12,14 +12,13 @@ Check the [wiki](docs/wiki/main.md) for help on setting up and using arenas.
 - [x] Arena creation
 - [x] Fight mobs in arenas
 - [x] Wave types like swarms (WIP)
-- [x] Classes (with support for modded items and enchantments)
 - [ ] Scoreboard
   - [ ] Command to check an arena's scoreboard
-  - [ ] Count stats like waves survived
+  - [x] Count stats like waves survived
 - [x] Bosses (WIP)
-- [x] Support for modded mobs
+- [x] Boss abilities (WIP)
 - [x] Reward system
-- [ ] Configuration
-  - [x] Classes
-  - [x] Waves
-  - [x] Allowing only certain mobs to spawn
+- [x] Configuration
+  - [x] Classes (with vanilla and modded items)
+  - [x] Custom waves (with vanilla and modded mobs)
+  - [x] Reinforcements
