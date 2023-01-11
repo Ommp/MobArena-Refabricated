@@ -7,6 +7,7 @@ import net.minecraft.network.packet.s2c.play.ExplosionS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.explosion.ExplosionBehavior;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,12 +25,12 @@ public abstract class WorldMixin {
     @Shadow public abstract List<ServerPlayerEntity> getPlayers();
 
     @Inject(method = "createExplosion", at = @At("HEAD"), cancellable = true)
-    private void inject(Entity entity, DamageSource damageSource, ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, Explosion.DestructionType destructionType, CallbackInfoReturnable<Explosion> cir) {
+    private void inject(Entity entity, DamageSource damageSource, ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, World.ExplosionSourceType explosionSourceType, CallbackInfoReturnable<Explosion> cir) {
 
         for (var arena: ArenaManager.arenas.values()) {
             if (arena.getArenaRegion().isInsideRegion(new BlockPos(x,y,z)) && arena.getIsProtected()) {
 
-                    Explosion noharmExplosion = new Explosion(arena.getWorld(), entity, x, y, z, power, createFire, Explosion.DestructionType.NONE);
+                    Explosion noharmExplosion = new Explosion(arena.getWorld(), entity, x, y, z, power, createFire, Explosion.DestructionType.KEEP);
                     noharmExplosion.collectBlocksAndDamageEntities();
                     noharmExplosion.affectWorld(false);
 

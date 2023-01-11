@@ -5,9 +5,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 
 public class Summon implements Ability {
 
@@ -20,7 +20,7 @@ public class Summon implements Ability {
         var arenaName = ArenaManager.getArenaFromMob(user.getUuidAsString());
 
         var nbtCompound = new NbtCompound();
-        nbtCompound.putString("id", String.valueOf(RegistryKey.ofRegistry(Registry.ENTITY_TYPE.getId(user.getType())).getValue()));
+        nbtCompound.putString("id", String.valueOf(RegistryKey.ofRegistry(Registries.ENTITY_TYPE.getId(user.getType())).getValue()));
 
         MobEntity entity = (MobEntity) EntityType.loadEntityWithPassengers(nbtCompound, world, entity1 -> entity1);
         ArenaManager.getArena(arenaName).spawner.addMonster(entity);
@@ -34,6 +34,5 @@ public class Summon implements Ability {
     public String getName() {
         return name;
     }
-
 
 }

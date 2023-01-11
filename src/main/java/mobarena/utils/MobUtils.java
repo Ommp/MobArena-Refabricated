@@ -8,7 +8,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import java.util.*;
 
@@ -149,10 +149,10 @@ public class MobUtils {
                     var randomLevel = new Random().nextInt((4 - 1) + 1) + 1;
                     var randomWeaponEnchantment =  new Random().nextInt(melee.size());
 
-                    if (!Objects.equals(Registry.ITEM.getId(entity.getEquippedStack(EquipmentSlot.MAINHAND).getItem()).toString(), "minecraft:bow")) {
+                    if (!Objects.equals(Registries.ITEM.getId(entity.getEquippedStack(EquipmentSlot.MAINHAND).getItem()).toString(), "minecraft:bow")) {
                         randomWeaponEnchantment =  new Random().nextInt(bow.size());
                         entity.getEquippedStack(EquipmentSlot.MAINHAND).addEnchantment(bow.get(randomWeaponEnchantment), randomLevel);
-                    } else if (!Objects.equals(Registry.ITEM.getId(entity.getEquippedStack(EquipmentSlot.MAINHAND).getItem()).toString(), "minecraft:crossbow")) {
+                    } else if (!Objects.equals(Registries.ITEM.getId(entity.getEquippedStack(EquipmentSlot.MAINHAND).getItem()).toString(), "minecraft:crossbow")) {
 
 
                         randomWeaponEnchantment =  new Random().nextInt(crossbow.size());

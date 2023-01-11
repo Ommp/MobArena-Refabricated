@@ -14,6 +14,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.network.packet.s2c.play.TitleFadeS2CPacket;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Style;
@@ -23,8 +25,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.GameMode;
 
 import java.util.ArrayList;
@@ -115,9 +115,9 @@ public class Arena {
     }
     public ServerWorld setWorld(){
         if (!(dimensionName == null) && !dimensionName.isEmpty()) {
-            world = MobArena.serverinstance.getWorld(RegistryKey.of(Registry.WORLD_KEY, new Identifier(dimensionName)));
+            world = MobArena.serverinstance.getWorld(RegistryKey.of(RegistryKeys.WORLD, new Identifier(dimensionName)));
         } else {
-            world = MobArena.serverinstance.getWorld(RegistryKey.of(Registry.WORLD_KEY, new Identifier("minecraft:overworld")));
+            world = MobArena.serverinstance.getWorld(RegistryKey.of(RegistryKeys.WORLD, new Identifier("minecraft:overworld")));
         }
         return world;
     }

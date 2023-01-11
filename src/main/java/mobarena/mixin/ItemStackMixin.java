@@ -4,8 +4,8 @@ import mobarena.ArenaManager;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.registry.Registry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,7 +22,7 @@ public abstract class ItemStackMixin {
 
         var pos = context.getBlockPos();
 
-        if (!Registry.ITEM.getId(this.getItem()).toString().equals("minecraft:flint_and_steel") && !Registry.ITEM.getId(this.getItem()).toString().equals("minecraft:tnt") && !Registry.ITEM.getId(this.getItem()).toString().matches("^minecraft:.*egg$")) {
+        if (!Registries.ITEM.getId(this.getItem()).toString().equals("minecraft:flint_and_steel") && !Registries.ITEM.getId(this.getItem()).toString().equals("minecraft:tnt") && !Registries.ITEM.getId(this.getItem()).toString().matches("^minecraft:.*egg$")) {
 
             for (var arena : ArenaManager.arenas.values()) {
                 if (arena.getArenaRegion().isInsideRegion(pos) && arena.getIsProtected()) {

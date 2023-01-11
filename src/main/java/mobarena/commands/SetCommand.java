@@ -15,11 +15,11 @@ import mobarena.config.ArenaClassConfig;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.registry.Registry;
 
 import java.util.Objects;
 
@@ -132,7 +132,7 @@ public class SetCommand implements Command {
         ArenaClass arenaClass = new ArenaClass();
         arenaClass.setName(name);
         for (int i = 0; i < inventory.size(); i++) {
-            if (!Objects.equals(Registry.ITEM.getId(inventory.getStack(i).getItem()).toString(), "minecraft:air")) {
+            if (!Objects.equals(Registries.ITEM.getId(inventory.getStack(i).getItem()).toString(), "minecraft:air")) {
 
                 var stackEncoded = ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, inventory.getStack(i)).get().orThrow().toString();
                 arenaClass.addItems(new ArenaItem(stackEncoded, i));
