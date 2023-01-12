@@ -2,6 +2,7 @@ package mobarena;
 
 import mobarena.config.ArenaClassConfig;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
@@ -98,6 +99,10 @@ public class ArenaManager {
             arenas.get(mobToArena.get(UUID)).countDeadMobs();
             if (source.getSource() instanceof ServerPlayerEntity) {
                 arenas.get(mobToArena.get(UUID)).scoreboard.increasePlayerKillCount((ServerPlayerEntity) source.getSource());
+            } else if (source.getSource() instanceof PersistentProjectileEntity projectile) {
+                if (projectile.getOwner() instanceof ServerPlayerEntity player) {
+                    arenas.get(mobToArena.get(UUID)).scoreboard.increasePlayerKillCount(player);
+                }
             }
         }
     }
