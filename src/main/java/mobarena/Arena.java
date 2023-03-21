@@ -24,7 +24,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 
 import java.util.ArrayList;
@@ -130,7 +130,7 @@ public class Arena {
 
         //if mob spawn points table has no entries, set mob spawn points to be the same as the arena warp
         if (pointsList.isEmpty()) {
-            pointsList.add(new BlockPos(arena.x, arena.y+1, arena.z));
+            pointsList.add(new BlockPos((int) arena.x, (int) (arena.y+1), (int) arena.z));
             return pointsList;
         }
         return pointsList;
@@ -356,9 +356,9 @@ public class Arena {
         }
     }
 
-    public Vec3i getRandomSpawnPoint() {
+    public Vec3d getRandomSpawnPoint() {
         int index = (int)(Math.random() * mobSpawnPoints.size());
-        return new Vec3i(mobSpawnPoints.get(index).getX(), mobSpawnPoints.get(index).getY(), mobSpawnPoints.get(index).getZ());
+        return new Vec3d(mobSpawnPoints.get(index).getX(), mobSpawnPoints.get(index).getY(), mobSpawnPoints.get(index).getZ());
     }
     //get a random player's pos and choose the closest spawn point to the player
     public ServerPlayerEntity getRandomArenaPlayer() {
@@ -366,10 +366,10 @@ public class Arena {
         return arenaPlayers.get(playerIndex);
     }
 
-    public Vec3i getSpawnPointNearPlayer(ServerPlayerEntity p) {
+    public BlockPos getSpawnPointNearPlayer(ServerPlayerEntity p) {
         BlockPos playerPos = p.getBlockPos();
         ArrayList<Double> distances = new ArrayList<>();
-        for (Vec3i mobSpawnPoint : mobSpawnPoints) {
+        for (BlockPos mobSpawnPoint : mobSpawnPoints) {
             distances.add(playerPos.getSquaredDistance(mobSpawnPoint));
         }
         int spawnPointIndex = distances.indexOf(Collections.min(distances));
