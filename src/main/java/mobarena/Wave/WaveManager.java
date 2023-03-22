@@ -121,8 +121,6 @@ public class WaveManager {
     }
 
     public HashMap<String, Integer> prepareWaveReturnMobs(ArenaModel config, ArrayList<ServerPlayerEntity> arenaPlayers) {
-
-        incrementWave();
         decrementWaveFrequencies();
 
         pickWave();

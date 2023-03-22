@@ -142,6 +142,7 @@ public class Arena {
 
             waveManager.addDefaultWaves();
             waveManager.addCustomWaves(config);
+            waveManager.incrementWave();
             var mobs = waveManager.prepareWaveReturnMobs(config, arenaPlayers);
 
             spawner.addEntitiesToSpawn(mobs, world);
@@ -254,7 +255,7 @@ public class Arena {
     }
 
     //"revive" a "dead" spectator player if another player successfully finishes the wave in the same arena
-    public void reviveDead() {
+    public void reviveDeadPlayers() {
         for (ServerPlayerEntity p: deadPlayers) {
             transportPlayer(p, WarpType.ARENA);
             deadPlayers.remove(p);
@@ -392,41 +393,40 @@ public class Arena {
             startNextWave();
         }
     }
-    public void startNextWave() {
-        for (var p: arenaPlayers) {
-            scoreboard.incrementPlayerWave(p);
-        }
-        reviveDead();
 
+
+
+    private void startNextWaveSpawner() {
         var mobs = waveManager.prepareWaveReturnMobs(config, arenaPlayers);
+        spawner.clearMonsters();
+        spawner.resetDeadMonsters();
+        spawner.addEntitiesToSpawn(mobs, world);
+        spawner.spawnMobs(world);
+        spawner.modifyMobStats(waveManager.getWave().getType(), arenaPlayers.size());
+    }
+    public void startNextWave() {
+        waveManager.incrementWave();
+        scoreboard.incrementPlayerWave(arenaPlayers);
+        reviveDeadPlayers();
+        displayWaveText();
+        addReinforcementItems();
 
+        waveService.schedule(() -> {
+            startNextWaveSpawner();
+            MobUtils.addEquipment(waveManager.getCurrentWave(), waveManager.getWave().getType(), spawner.getMonsters());
+        }, waveCountdown, TimeUnit.SECONDS);
+    }
+
+    public void displayWaveText() {
         Text waveText = Text.of("Wave: " + waveManager.getCurrentWave()).getWithStyle(Style.EMPTY.withFormatting(Formatting.GREEN)).get(0);
         for (var p: anyArenaPlayer) {
             var titleS2CPacket = new TitleS2CPacket(waveText);
             p.networkHandler.sendPacket(titleS2CPacket);
             p.networkHandler.sendPacket(new TitleFadeS2CPacket(10, 30, 5));
         }
-
-        addReinforcementItems();
-
-        waveService.schedule(() -> {
-            spawner.clearMonsters();
-            spawner.resetDeadMonsters();
-            spawner.addEntitiesToSpawn(mobs, world);
-            spawner.spawnMobs(world);
-            spawner.modifyMobStats(waveManager.getWave().getType(), arenaPlayers.size());
-            MobUtils.addEquipment(waveManager.getCurrentWave(), waveManager.getWave().getType(), spawner.getMonsters());
-        }, waveCountdown, TimeUnit.SECONDS);
-
     }
 
-    //save the player's class
-    public void addPlayerClass(ServerPlayerEntity player, ArenaClass arenaClass) {
-        this.playerClasses.put(player.getUuidAsString(), arenaClass);
-        //clear player's inventory in case they switch to another class to avoid duplicating
-        player.getInventory().clear();
-
-        //add the items
+    public void addPlayerClassItems(ServerPlayerEntity player, ArenaClass arenaClass) {
         for (var arenaItem : arenaClass.getItems()) {
             var data = arenaItem.getData();
             ItemStack itemStack;
@@ -439,6 +439,15 @@ public class Arena {
 
             player.getInventory().insertStack(slot,itemStack);
         }
+    }
+
+    //save the player's class
+    public void addPlayerClass(ServerPlayerEntity p, ArenaClass arenaClass) {
+        this.playerClasses.put(p.getUuidAsString(), arenaClass);
+        //clear player's inventory in case they switch to another class to prevent duplicating
+        p.getInventory().clear();
+
+        addPlayerClassItems(p, arenaClass);
     }
     public void addReinforcementItems() {
         for (var reinforcement : config.getReinforcements()) {
@@ -502,7 +511,6 @@ public class Arena {
     public void makeMobsRetarget() {
         for (MobEntity e: spawner.getMonsters()) {
             e.setTarget(getClosestPlayer(e));
-
         }
     }
 
