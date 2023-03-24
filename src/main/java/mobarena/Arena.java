@@ -30,7 +30,6 @@ import net.minecraft.world.GameMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -44,12 +43,12 @@ public class Arena {
     public int isEnabled;
 
     private final ArrayList<ServerPlayerEntity> arenaPlayers = new ArrayList<>();
-    private final HashSet<ServerPlayerEntity> specPlayers= new HashSet<>();
-    private final HashSet<ServerPlayerEntity> deadPlayers= new HashSet<>();
-    private final HashSet<ServerPlayerEntity> readyLobbyPlayers = new HashSet<>();
-    private final HashSet<ServerPlayerEntity> anyArenaPlayer = new HashSet<>();
+    private final ArrayList<ServerPlayerEntity> specPlayers= new ArrayList<>();
+    private final ArrayList<ServerPlayerEntity> deadPlayers= new ArrayList<>();
+    private final ArrayList<ServerPlayerEntity> readyLobbyPlayers = new ArrayList<>();
+    private final ArrayList<ServerPlayerEntity> anyArenaPlayer = new ArrayList<>();
 
-    private final HashSet<ServerPlayerEntity> lobbyPlayers = new HashSet<>();
+    private final ArrayList<ServerPlayerEntity> lobbyPlayers = new ArrayList<>();
 
     private final HashMap<String, ArenaClass> playerClasses = new HashMap<>();
 
@@ -83,7 +82,7 @@ public class Arena {
     private final RewardManager rewardManager = new RewardManager();
 
     final ScheduledExecutorService waveService = Executors.newSingleThreadScheduledExecutor();
-    ScheduledExecutorService entityService = Executors.newSingleThreadScheduledExecutor();
+    final ScheduledExecutorService entityService = Executors.newSingleThreadScheduledExecutor();
 
     public Arena(String name, int minPlayers, int maxPlayers, Warp lobby, Warp arena, Warp spectator, Warp exit, BlockPos p1, BlockPos p2, int isEnabled, String dimensionName, int arenaStartCountdown, int waveCountdown, boolean forceClass, boolean isXPAllowed, boolean isProtected) {
         this.name = name;
@@ -113,7 +112,7 @@ public class Arena {
         this.world = setWorld();
         this.isProtected = isProtected;
     }
-    public ServerWorld setWorld(){
+    private ServerWorld setWorld(){
         if (!(dimensionName == null) && !dimensionName.isEmpty()) {
             world = MobArena.serverinstance.getWorld(RegistryKey.of(RegistryKeys.WORLD, new Identifier(dimensionName)));
         } else {
@@ -122,9 +121,9 @@ public class Arena {
         return world;
     }
 
-    public ArrayList<BlockPos> mobSpawnPoints = new ArrayList<>();
+    private ArrayList<BlockPos> mobSpawnPoints = new ArrayList<>();
 
-    public ArrayList<BlockPos> setMobSpawnPoints(String name) {
+    private ArrayList<BlockPos> setMobSpawnPoints(String name) {
         ArrayList<BlockPos> pointsList;
         pointsList = MobArena.database.getMobSpawnPoints(name);
 
@@ -135,7 +134,7 @@ public class Arena {
         }
         return pointsList;
     }
-    public void startArena() {
+    private void startArena() {
         if (lobbyPlayers.isEmpty()) {
             isRunning = true;
             rewardManager.setRewards(name);
@@ -154,7 +153,7 @@ public class Arena {
         }
     }
 
-    public void stopArena() {
+    private void stopArena() {
         isRunning = false;
         spawner.clearMonsters();
         waveService.shutdownNow();
@@ -166,20 +165,20 @@ public class Arena {
         return isRunning;
     }
 
-    public void addLobbyPlayer(ServerPlayerEntity player) {
+    private void addLobbyPlayer(ServerPlayerEntity player) {
         lobbyPlayers.add(player);
         anyArenaPlayer.add(player);
     }
 
-    public boolean hasMinPlayers() {
+    private boolean hasMinPlayers() {
         return lobbyPlayers.size() + arenaPlayers.size() >= minPlayers;
     }
 
-    public boolean hasLessThanMaxPlayers() {
+    private boolean hasLessThanMaxPlayers() {
         return lobbyPlayers.size() < maxPlayers;
     }
 
-    public void countdownArenaStart() {
+    private void countdownArenaStart() {
         if (!arenaCountingDown && (arenaPlayers.size() + lobbyPlayers.size() + readyLobbyPlayers.size() >= minPlayers)) {
             arenaCountingDown = true;
             for (ServerPlayerEntity p: anyArenaPlayer) {
@@ -255,7 +254,7 @@ public class Arena {
     }
 
     //"revive" a "dead" spectator player if another player successfully finishes the wave in the same arena
-    public void reviveDeadPlayers() {
+    private void reviveDeadPlayers() {
         for (ServerPlayerEntity p: deadPlayers) {
             transportPlayer(p, WarpType.ARENA);
             deadPlayers.remove(p);
@@ -264,7 +263,7 @@ public class Arena {
     }
 
     //teleport all players to exit and restore various stats
-    public void exitAllPlayers() {
+    private void exitAllPlayers() {
         for (ServerPlayerEntity p : anyArenaPlayer) {
             PlayerManager.clearInventory(p);
             transportPlayer(p, WarpType.EXIT);
@@ -297,7 +296,7 @@ public class Arena {
                 cleanUpPlayers();
     }
 
-    public void displayScoreboard() {
+    private void displayScoreboard() {
         for (ServerPlayerEntity p: anyArenaPlayer) {
             for (ServerPlayerEntity p1: anyArenaPlayer) {
                 p.sendMessage(Text.translatable("mobarena.scoreboard", p1.getName()), false);
@@ -308,7 +307,7 @@ public class Arena {
         }
     }
 
-    public void removePlayerFromArena(ServerPlayerEntity player) {
+    private void removePlayerFromArena(ServerPlayerEntity player) {
         anyArenaPlayer.remove(player);
 
         lobbyPlayers.remove(player);
@@ -322,7 +321,7 @@ public class Arena {
         }
     }
 
-    public void cleanUpPlayers(){
+    private void cleanUpPlayers(){
         lobbyPlayers.clear();
         readyLobbyPlayers.clear();
         arenaPlayers.clear();
@@ -344,7 +343,7 @@ public class Arena {
 
     }
 
-    public void transportAllFromLobby() {
+    private void transportAllFromLobby() {
         if (hasMinPlayers() && readyLobbyPlayers.size() == lobbyPlayers.size()) {
             for (ServerPlayerEntity player : lobbyPlayers) {
                 player.sendMessage(Text.translatable("mobarena.allplayersready"), true);
@@ -404,7 +403,7 @@ public class Arena {
         spawner.spawnMobs(world);
         spawner.modifyMobStats(waveManager.getWave().getType(), arenaPlayers.size());
     }
-    public void startNextWave() {
+    private void startNextWave() {
         waveManager.incrementWave();
         scoreboard.incrementPlayerWave(arenaPlayers);
         reviveDeadPlayers();
@@ -417,7 +416,7 @@ public class Arena {
         }, waveCountdown, TimeUnit.SECONDS);
     }
 
-    public void displayWaveText() {
+    private void displayWaveText() {
         Text waveText = Text.of("Wave: " + waveManager.getCurrentWave()).getWithStyle(Style.EMPTY.withFormatting(Formatting.GREEN)).get(0);
         for (var p: anyArenaPlayer) {
             var titleS2CPacket = new TitleS2CPacket(waveText);
@@ -426,7 +425,7 @@ public class Arena {
         }
     }
 
-    public void addPlayerClassItems(ServerPlayerEntity player, ArenaClass arenaClass) {
+    private void addPlayerClassItems(ServerPlayerEntity player, ArenaClass arenaClass) {
         for (var arenaItem : arenaClass.getItems()) {
             var data = arenaItem.getData();
             ItemStack itemStack;
@@ -449,7 +448,7 @@ public class Arena {
 
         addPlayerClassItems(p, arenaClass);
     }
-    public void addReinforcementItems() {
+    private void addReinforcementItems() {
         for (var reinforcement : config.getReinforcements()) {
             //check if the reinforcement wave is equal to the current wave OR if it's a recurrent wave and can be used
             if (reinforcement.getWave() == waveManager.getCurrentWave() || reinforcement.isRecurrentCanBeUsed(waveManager.getCurrentWave())) {
@@ -491,7 +490,7 @@ public class Arena {
         return isXPAllowed;
     }
 
-    public void transportStrayPlayers() {
+    private void transportStrayPlayers() {
         for (ServerPlayerEntity p: arenaPlayers) {
             if (!arenaRegion.isInsideRegion(p.getBlockPos())) {
                 transportPlayer(p, WarpType.ARENA);
@@ -499,7 +498,7 @@ public class Arena {
         }
     }
 
-    public void transportStrayMobs() {
+    private void transportStrayMobs() {
         for (MobEntity e: spawner.getMonsters()) {
             if (!arenaRegion.isInsideRegion(e.getBlockPos())) {
                 var spawnPoint = getSpawnPointNearPlayer(getClosestPlayer(e));
@@ -508,13 +507,13 @@ public class Arena {
         }
     }
 
-    public void makeMobsRetarget() {
+    private void makeMobsRetarget() {
         for (MobEntity e: spawner.getMonsters()) {
             e.setTarget(getClosestPlayer(e));
         }
     }
 
-    public void updateAbilityTracker() {
+    private void updateAbilityTracker() {
         if (waveManager.getWave().getType().equals(WaveType.BOSS)) {
 
             for(var mob: spawner.getMonsters()) {
@@ -534,7 +533,7 @@ public class Arena {
             }
     }
 
-    public void startEntityService() {
+    private void startEntityService() {
         entityService.scheduleAtFixedRate(() -> {
             transportStrayPlayers();
             transportStrayMobs();
@@ -544,7 +543,7 @@ public class Arena {
         }, 0, 250, TimeUnit.MILLISECONDS);
     }
 
-    public void removeForeignEntities() {
+    private void removeForeignEntities() {
         var foreignEntities= world.getEntitiesByType(TypeFilter.instanceOf(MobEntity.class), arenaRegion.asBox(), entity -> !belongsToArena(entity));
 
         for (var entity: foreignEntities) {
@@ -560,7 +559,7 @@ public class Arena {
         }
     }
 
-    public boolean belongsToArena(MobEntity entity) {
+    private boolean belongsToArena(MobEntity entity) {
         return spawner.getMonsters().contains(entity);
     }
 
