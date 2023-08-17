@@ -1,10 +1,12 @@
 package mobarena.mixin;
 
 import mobarena.ArenaManager;
+import mobarena.MobArena;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import org.apache.logging.log4j.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,9 +27,14 @@ public abstract class ServerPlayerInteractionManagerMixin {
         if (!Objects.equals(Registries.BLOCK.getId(world.getBlockState(pos).getBlock()).toString(), "minecraft:fire") && !Objects.equals(Registries.BLOCK.getId(world.getBlockState(pos).getBlock()).toString(), "minecraft:soul_fire") && !Objects.equals(Registries.BLOCK.getId(world.getBlockState(pos).getBlock()).toString(), "minecraft:tnt")) {
 
             for (var arena : ArenaManager.arenas.values()) {
-                if (arena.getArenaRegion().isInsideRegion(pos) && arena.getIsProtected()) {
-                    cir.setReturnValue(false);
+                if (arena.getIsProtected()) {
+                    if (arena.getArenaRegion().isInsideRegion(pos)) {
+                        MobArena.log(Level.ERROR, "trybreak ran");
+                        cir.setReturnValue(false);
+                    }
                 }
+
+
             }
 
         }
