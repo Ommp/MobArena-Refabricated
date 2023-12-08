@@ -7,6 +7,8 @@ import mobarena.access.MobEntityAccess;
 import mobarena.config.ArenaModel;
 import mobarena.region.Region;
 import mobarena.utils.MobUtils;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.mob.MobEntity;
@@ -30,6 +32,7 @@ import net.minecraft.world.GameMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -80,6 +83,8 @@ public class Arena {
     public ArenaModel config = new ArenaModel();
 
     private final RewardManager rewardManager = new RewardManager();
+
+    private final HashSet<BlockState> destroyedBlocks = new HashSet<>();
 
     final ScheduledExecutorService waveService = Executors.newSingleThreadScheduledExecutor();
     final ScheduledExecutorService entityService = Executors.newSingleThreadScheduledExecutor();
@@ -581,5 +586,9 @@ public class Arena {
 
     public Scoreboard getScoreboard() {
         return scoreboard;
+    }
+
+    public HashSet<BlockState> getDestroyedBlocks() {
+        return destroyedBlocks;
     }
 }
