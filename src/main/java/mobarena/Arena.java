@@ -7,7 +7,6 @@ import mobarena.access.MobEntityAccess;
 import mobarena.config.ArenaModel;
 import mobarena.region.Region;
 import mobarena.utils.MobUtils;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
@@ -32,7 +31,6 @@ import net.minecraft.world.GameMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -43,6 +41,8 @@ public class Arena {
     private String dimensionName;
     private ServerWorld world;
     private boolean isRunning, isProtected;
+
+    private boolean editMode = false;
     public int isEnabled;
 
     private final ArrayList<ServerPlayerEntity> arenaPlayers = new ArrayList<>();
@@ -84,7 +84,7 @@ public class Arena {
 
     private final RewardManager rewardManager = new RewardManager();
 
-    private final HashSet<BlockState> destroyedBlocks = new HashSet<>();
+    private final HashMap<BlockPos, BlockState> updatedBlockStates = new HashMap<>();
 
     final ScheduledExecutorService waveService = Executors.newSingleThreadScheduledExecutor();
     final ScheduledExecutorService entityService = Executors.newSingleThreadScheduledExecutor();
@@ -588,7 +588,21 @@ public class Arena {
         return scoreboard;
     }
 
-    public HashSet<BlockState> getDestroyedBlocks() {
-        return destroyedBlocks;
+    public HashMap<BlockPos, BlockState> getUpdatedBlockStates() {
+        return updatedBlockStates;
+    }
+
+    public void addBlockState(BlockPos pos, BlockState state) {
+        if (!updatedBlockStates.containsKey(pos)) {
+            updatedBlockStates.put(pos, state);
+        }
+    }
+
+    public boolean isEditMode() {
+        return editMode;
+    }
+
+    public void setEditMode(boolean editMode) {
+        this.editMode = editMode;
     }
 }

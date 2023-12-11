@@ -5,6 +5,7 @@
   "package": "mobarena.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AbstractBlockMixin",
     "CreeperEntityMixin",
     "DamageSourceMixin",
     "EndermanPickUpMixin",

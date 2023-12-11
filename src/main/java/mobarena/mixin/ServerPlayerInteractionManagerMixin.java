@@ -30,15 +30,7 @@ public abstract class ServerPlayerInteractionManagerMixin {
                         cir.setReturnValue(false);
                     }
                 }
-
-                if (!arena.getIsProtected()) {
-                    var block = this.world.getBlockState(pos);
-                    arena.getDestroyedBlocks().add(block);
-
-                }
-
             }
-
         }
     }
 }
