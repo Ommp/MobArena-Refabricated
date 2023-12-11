@@ -160,6 +160,7 @@ public class Arena {
 
     private void stopArena() {
         isRunning = false;
+        resetBlockStates();
         spawner.clearMonsters();
         waveService.shutdownNow();
         entityService.shutdownNow();
@@ -595,6 +596,12 @@ public class Arena {
     public void addBlockState(BlockPos pos, BlockState state) {
         if (!updatedBlockStates.containsKey(pos)) {
             updatedBlockStates.put(pos, state);
+        }
+    }
+
+    private void resetBlockStates() {
+        for (BlockPos pos: updatedBlockStates.keySet()) {
+            world.setBlockState(pos, updatedBlockStates.get(pos));
         }
     }
 
