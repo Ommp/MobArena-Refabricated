@@ -121,8 +121,6 @@ public class WaveManager {
     }
 
     public HashMap<String, Integer> prepareWaveReturnMobs(ArenaModel config, ArrayList<ServerPlayerEntity> arenaPlayers) {
-
-        incrementWave();
         decrementWaveFrequencies();
 
         pickWave();
@@ -132,7 +130,7 @@ public class WaveManager {
             if (config.usesCustomSpawns()) {
                 getWave().addDefaultCustomMobs(config.getMonsters());
             } else {
-            getWave().useDefaultMobs();
+                getWave().useDefaultMobs();
             }
         }
 

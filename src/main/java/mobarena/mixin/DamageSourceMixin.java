@@ -21,12 +21,13 @@ public abstract class DamageSourceMixin {
     private void inject(DamageSource damageSource, float originalHealth, float damage, CallbackInfo ci) {
         if (damageSource.getSource() instanceof ServerPlayerEntity p) {
             if (ArenaManager.isPlayerActive(p)) {
-                ArenaManager.getArenaFromPlayer(p).getScoreboard().increasePlayerDamage(p, originalHealth - getEntity().getHealth());
+                //NOTE: THIS COUNTS DAMAGE PAST THE MOB'S REMAINING HEALTH.
+                ArenaManager.getArenaFromPlayer(p).getScoreboard().increasePlayerDamage(p, damage);
             }
         } else if (damageSource.getSource() instanceof PersistentProjectileEntity projectile) {
             if (projectile.getOwner() instanceof ServerPlayerEntity player) {
                 if (ArenaManager.isPlayerActive(player)) {
-                    ArenaManager.getArenaFromPlayer(player).getScoreboard().increasePlayerDamage(player, originalHealth - getEntity().getHealth());
+                    ArenaManager.getArenaFromPlayer(player).getScoreboard().increasePlayerDamage(player, damage);
                 }
             }
         }

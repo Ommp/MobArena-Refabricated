@@ -25,11 +25,12 @@ public abstract class ServerPlayerInteractionManagerMixin {
         if (!Objects.equals(Registry.BLOCK.getId(world.getBlockState(pos).getBlock()).toString(), "minecraft:fire") && !Objects.equals(Registry.BLOCK.getId(world.getBlockState(pos).getBlock()).toString(), "minecraft:soul_fire") && !Objects.equals(Registry.BLOCK.getId(world.getBlockState(pos).getBlock()).toString(), "minecraft:tnt")) {
 
             for (var arena : ArenaManager.arenas.values()) {
-                if (arena.getArenaRegion().isInsideRegion(pos) && arena.getIsProtected()) {
-                    cir.setReturnValue(false);
+                if (arena.getIsProtected()) {
+                    if (arena.getArenaRegion().isInsideRegion(pos)) {
+                        cir.setReturnValue(false);
+                    }
                 }
             }
-
         }
     }
 }

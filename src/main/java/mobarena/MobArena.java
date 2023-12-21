@@ -48,10 +48,8 @@ public class MobArena implements ModInitializer {
 
 		ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
 
-			if (serverinstance == null) {
-				serverinstance = server.getOverworld().getServer();
-				ArenaManager.loadAllArenas();
-			}
+			serverinstance = server.getOverworld().getServer();
+			ArenaManager.loadAllArenas();
 
 			server.getScoreboard().addTeam("mobarena");
 			team = new Team(server.getScoreboard(), "mobarena");
@@ -65,10 +63,8 @@ public class MobArena implements ModInitializer {
 
 		ServerWorldEvents.LOAD.register(((server, world) -> {
 
-			if (serverinstance == null) {
-				serverinstance = server.getOverworld().getServer();
-				ArenaManager.loadAllArenas();
-			}
+			serverinstance = server.getOverworld().getServer();
+			ArenaManager.loadAllArenas();
 		}));
 
 		ServerPlayerEvents.ALLOW_DEATH.register(((player, source, amount) -> {

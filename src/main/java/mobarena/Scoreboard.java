@@ -2,6 +2,7 @@ package mobarena;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Scoreboard {
@@ -16,8 +17,10 @@ public class Scoreboard {
         playerDamage.put(p, 0f);
     }
 
-    public void incrementPlayerWave(ServerPlayerEntity p) {
-        wavesSurvived.put(p, wavesSurvived.get(p) + 1);
+    public void incrementPlayerWave(ArrayList<ServerPlayerEntity> players) {
+        for (var p: players) {
+            wavesSurvived.put(p, wavesSurvived.get(p) + 1);
+        }
     }
 
     public int getWavesSurvived(ServerPlayerEntity p) {

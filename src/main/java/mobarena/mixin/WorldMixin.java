@@ -27,7 +27,7 @@ public abstract class WorldMixin {
     private void inject(Entity entity, DamageSource damageSource, ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, Explosion.DestructionType destructionType, CallbackInfoReturnable<Explosion> cir) {
 
         for (var arena: ArenaManager.arenas.values()) {
-            if (arena.getArenaRegion().isInsideRegion(new BlockPos(x,y,z)) && arena.getIsProtected()) {
+            if (arena.getArenaRegion().isInsideRegion(new BlockPos((int) x, (int) y, (int) z)) && arena.getIsProtected()) {
 
                     Explosion noharmExplosion = new Explosion(arena.getWorld(), entity, x, y, z, power, createFire, Explosion.DestructionType.NONE);
                     noharmExplosion.collectBlocksAndDamageEntities();

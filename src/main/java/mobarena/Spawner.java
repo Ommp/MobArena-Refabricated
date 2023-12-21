@@ -11,6 +11,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
 import java.util.ArrayList;
@@ -43,14 +44,15 @@ public class Spawner {
             if (type.equals(WaveType.BOSS)) {
 
                 Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)).addTemporaryModifier(new EntityAttributeModifier("movement", monster.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED)*1.2, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).addTemporaryModifier(new EntityAttributeModifier("max health", 3+players, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).addTemporaryModifier(new EntityAttributeModifier("max health", (1)+(0.4)*(players*1.3), EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
                 monster.setHealth(monster.getMaxHealth());
-                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE)).addTemporaryModifier(new EntityAttributeModifier("attack damage", 2, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE)).addTemporaryModifier(new EntityAttributeModifier("attack damage", 1.8, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
 
             }
             if (type.equals(WaveType.SWARM)) {
-                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)).addTemporaryModifier(new EntityAttributeModifier("movement", monster.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED)*2.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)).addTemporaryModifier(new EntityAttributeModifier("movement", monster.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED)*1.6, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
                 Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).addTemporaryModifier(new EntityAttributeModifier("health", monster.getAttributeValue(EntityAttributes.GENERIC_MAX_HEALTH)/-2, EntityAttributeModifier.Operation.ADDITION));
+                Objects.requireNonNull(monster.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE)).addTemporaryModifier(new EntityAttributeModifier("attack damage", 0.6, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
                 monster.setHealth(monster.getMaxHealth());
 
             }
@@ -60,7 +62,7 @@ public class Spawner {
     public void spawnMobs(ServerWorld world){
         for (MobEntity entity: monsters) {
             ServerPlayerEntity p = ArenaManager.getArena(arenaName).getRandomArenaPlayer();
-            Vec3i spawnPoint = ArenaManager.getArena(arenaName).getSpawnPointNearPlayer(p);
+            BlockPos spawnPoint = ArenaManager.getArena(arenaName).getSpawnPointNearPlayer(p);
             ArenaManager.connectMobToArena(entity.getUuidAsString(), arenaName);
             entity.updatePosition(spawnPoint.getX(), spawnPoint.getY(), spawnPoint.getZ());
             entity.initialize(world, world.getLocalDifficulty(entity.getBlockPos()), SpawnReason.SPAWNER, null, null);
